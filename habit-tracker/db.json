@@ -1,689 +1,715 @@
 {
-    "users": [
-        {
-            "id": 1,
-            "username": "admin",
-            "email": "admin@example.com",
-            "password": "admin123",
-            "fullName": "Admin User",
-            "createdAt": "2024-01-01T00:00:00.000Z",
-            "preferences": {
-                "darkMode": false,
-                "notifications": true,
-                "language": "en"
-            }
-        },
-        {
-            "id": 2,
-            "username": "john_doe",
-            "email": "john@example.com",
-            "password": "password123",
-            "fullName": "John Doe",
-            "createdAt": "2024-02-15T10:30:00.000Z",
-            "preferences": {
-                "darkMode": true,
-                "notifications": true,
-                "language": "en"
-            }
-        },
-        {
-            "id": 3,
-            "username": "jane_smith",
-            "email": "jane@example.com",
-            "password": "mypass456",
-            "fullName": "Jane Smith",
-            "createdAt": "2024-03-10T14:20:00.000Z",
-            "preferences": {
-                "darkMode": false,
-                "notifications": false,
-                "language": "en"
-            }
-        }
-    ],
-    "habits": [
-        {
-            "id": 1,
-            "userId": 1,
-            "name": "Morning Exercise",
-            "description": "Do 30 minutes of exercise every morning",
-            "type": "daily",
-            "frequency": 1,
-            "startDate": "2024-01-01",
-            "endDate": "2024-12-31",
-            "priority": "high",
-            "color": "#ff6b6b",
-            "isActive": true,
-            "currentStreak": 15,
-            "longestStreak": 23,
-            "totalCompletions": 45,
-            "createdAt": "2024-01-01T06:00:00.000Z",
-            "updatedAt": "2024-08-14T07:30:00.000Z"
-        },
-        {
-            "id": 2,
-            "userId": 1,
-            "name": "Read Books",
-            "description": "Read at least 20 pages of a book",
-            "type": "daily",
-            "frequency": 1,
-            "startDate": "2024-02-01",
-            "endDate": "2024-12-31",
-            "priority": "medium",
-            "color": "#4ecdc4",
-            "isActive": true,
-            "currentStreak": 8,
-            "longestStreak": 12,
-            "totalCompletions": 34,
-            "createdAt": "2024-02-01T09:00:00.000Z",
-            "updatedAt": "2024-08-13T21:15:00.000Z"
-        },
-        {
-            "id": 3,
-            "userId": 1,
-            "name": "Meditation",
-            "description": "Practice mindfulness meditation for 15 minutes",
-            "type": "daily",
-            "frequency": 1,
-            "startDate": "2024-03-01",
-            "endDate": "2024-12-31",
-            "priority": "high",
-            "color": "#a8e6cf",
-            "isActive": true,
-            "currentStreak": 5,
-            "longestStreak": 18,
-            "totalCompletions": 28,
-            "createdAt": "2024-03-01T07:30:00.000Z",
-            "updatedAt": "2024-08-14T08:00:00.000Z"
-        },
-        {
-            "id": 4,
-            "userId": 1,
-            "name": "Weekly Grocery Shopping",
-            "description": "Plan and do grocery shopping for the week",
-            "type": "weekly",
-            "frequency": 1,
-            "startDate": "2024-01-07",
-            "endDate": "2024-12-31",
-            "priority": "medium",
-            "color": "#ffd93d",
-            "isActive": true,
-            "currentStreak": 3,
-            "longestStreak": 8,
-            "totalCompletions": 20,
-            "createdAt": "2024-01-07T10:00:00.000Z",
-            "updatedAt": "2024-08-11T16:45:00.000Z"
-        },
-        {
-            "id": 5,
-            "userId": 1,
-            "name": "Learn Programming",
-            "description": "Study programming for at least 3 hours",
-            "type": "weekly",
-            "frequency": 3,
-            "startDate": "2024-04-01",
-            "endDate": "2024-12-31",
-            "priority": "high",
-            "color": "#6c5ce7",
-            "isActive": true,
-            "currentStreak": 2,
-            "longestStreak": 6,
-            "totalCompletions": 25,
-            "createdAt": "2024-04-01T19:00:00.000Z",
-            "updatedAt": "2024-08-12T20:30:00.000Z"
-        },
-        {
-            "id": 6,
-            "userId": 1,
-            "name": "Monthly Budget Review",
-            "description": "Review and plan monthly budget and expenses",
-            "type": "monthly",
-            "frequency": 1,
-            "startDate": "2024-01-31",
-            "endDate": "2024-12-31",
-            "priority": "high",
-            "color": "#74b9ff",
-            "isActive": true,
-            "currentStreak": 1,
-            "longestStreak": 7,
-            "totalCompletions": 7,
-            "createdAt": "2024-01-31T15:00:00.000Z",
-            "updatedAt": "2024-07-31T18:20:00.000Z"
-        },
-        {
-            "id": 7,
-            "userId": 2,
-            "name": "Morning Run",
-            "description": "Go for a 5km run every morning",
-            "type": "daily",
-            "frequency": 1,
-            "startDate": "2024-02-15",
-            "endDate": "2024-12-31",
-            "priority": "high",
-            "color": "#e17055",
-            "isActive": true,
-            "currentStreak": 12,
-            "longestStreak": 18,
-            "totalCompletions": 89,
-            "createdAt": "2024-02-15T06:30:00.000Z",
-            "updatedAt": "2024-08-14T06:45:00.000Z"
-        },
-        {
-            "id": 8,
-            "userId": 2,
-            "name": "Drink Water",
-            "description": "Drink at least 8 glasses of water",
-            "type": "daily",
-            "frequency": 8,
-            "startDate": "2024-01-01",
-            "endDate": "2024-12-31",
-            "priority": "medium",
-            "color": "#00b894",
-            "isActive": true,
-            "currentStreak": 7,
-            "longestStreak": 15,
-            "totalCompletions": 156,
-            "createdAt": "2024-01-01T00:00:00.000Z",
-            "updatedAt": "2024-08-14T22:00:00.000Z"
-        },
-        {
-            "id": 9,
-            "userId": 3,
-            "name": "Yoga Practice",
-            "description": "Practice yoga for 45 minutes",
-            "type": "weekly",
-            "frequency": 3,
-            "startDate": "2024-03-10",
-            "endDate": "2024-12-31",
-            "priority": "medium",
-            "color": "#fd79a8",
-            "isActive": true,
-            "currentStreak": 4,
-            "longestStreak": 7,
-            "totalCompletions": 42,
-            "createdAt": "2024-03-10T17:00:00.000Z",
-            "updatedAt": "2024-08-13T18:30:00.000Z"
-        },
-        {
-            "id": 10,
-            "userId": 3,
-            "name": "Healthy Cooking",
-            "description": "Cook a healthy meal at home",
-            "type": "daily",
-            "frequency": 1,
-            "startDate": "2024-04-01",
-            "endDate": "2024-12-31",
-            "priority": "low",
-            "color": "#55a3ff",
-            "isActive": false,
-            "currentStreak": 0,
-            "longestStreak": 9,
-            "totalCompletions": 67,
-            "createdAt": "2024-04-01T12:00:00.000Z",
-            "updatedAt": "2024-08-10T19:45:00.000Z"
-        }
-    ],
-    "goals": [
-        {
-            "id": 1,
-            "userId": 1,
-            "name": "Fitness Transformation",
-            "description": "Complete a full fitness transformation this year",
-            "targetValue": 365,
-            "currentValue": 45,
-            "unit": "days",
-            "deadline": "2024-12-31",
-            "priority": "high",
-            "status": "in_progress",
-            "linkedHabits": [
-                1,
-                3
-            ],
-            "createdAt": "2024-01-01T00:00:00.000Z",
-            "updatedAt": "2024-08-14T10:30:00.000Z"
-        },
-        {
-            "id": 2,
-            "userId": 1,
-            "name": "Read 24 Books This Year",
-            "description": "Read at least 24 books throughout the year",
-            "targetValue": 24,
-            "currentValue": 8,
-            "unit": "books",
-            "deadline": "2024-12-31",
-            "priority": "medium",
-            "status": "in_progress",
-            "linkedHabits": [
-                2
-            ],
-            "createdAt": "2024-02-01T00:00:00.000Z",
-            "updatedAt": "2024-08-14T11:15:00.000Z"
-        },
-        {
-            "id": 3,
-            "userId": 1,
-            "name": "Master React Development",
-            "description": "Become proficient in React and complete 5 projects",
-            "targetValue": 5,
-            "currentValue": 2,
-            "unit": "projects",
-            "deadline": "2024-10-31",
-            "priority": "high",
-            "status": "in_progress",
-            "linkedHabits": [
-                5
-            ],
-            "createdAt": "2024-04-01T00:00:00.000Z",
-            "updatedAt": "2024-08-14T12:00:00.000Z"
-        },
-        {
-            "id": 4,
-            "userId": 2,
-            "name": "Run 1000km This Year",
-            "description": "Complete 1000 kilometers of running in 2024",
-            "targetValue": 1000,
-            "currentValue": 445,
-            "unit": "km",
-            "deadline": "2024-12-31",
-            "priority": "high",
-            "status": "in_progress",
-            "linkedHabits": [
-                7
-            ],
-            "createdAt": "2024-02-15T00:00:00.000Z",
-            "updatedAt": "2024-08-14T07:00:00.000Z"
-        },
-        {
-            "id": 5,
-            "userId": 2,
-            "name": "Hydration Challenge",
-            "description": "Drink recommended amount of water daily for 6 months",
-            "targetValue": 180,
-            "currentValue": 156,
-            "unit": "days",
-            "deadline": "2024-09-30",
-            "priority": "medium",
-            "status": "in_progress",
-            "linkedHabits": [
-                8
-            ],
-            "createdAt": "2024-01-01T00:00:00.000Z",
-            "updatedAt": "2024-08-14T23:00:00.000Z"
-        },
-        {
-            "id": 6,
-            "userId": 3,
-            "name": "Flexibility & Wellness",
-            "description": "Improve flexibility and mental wellness through yoga",
-            "targetValue": 100,
-            "currentValue": 42,
-            "unit": "sessions",
-            "deadline": "2024-11-30",
-            "priority": "medium",
-            "status": "in_progress",
-            "linkedHabits": [
-                9
-            ],
-            "createdAt": "2024-03-10T00:00:00.000Z",
-            "updatedAt": "2024-08-13T19:00:00.000Z"
-        }
-    ],
-    "checkins": [
-        {
-            "id": 1,
-            "userId": 1,
-            "habitId": 1,
-            "date": "2024-08-14",
-            "completed": true,
-            "notes": "Great morning workout!",
-            "completedAt": "2024-08-14T07:30:00.000Z"
-        },
-        {
-            "id": 2,
-            "userId": 1,
-            "habitId": 1,
-            "date": "2024-08-13",
-            "completed": true,
-            "notes": "Felt energized after exercise",
-            "completedAt": "2024-08-13T07:15:00.000Z"
-        },
-        {
-            "id": 3,
-            "userId": 1,
-            "habitId": 1,
-            "date": "2024-08-12",
-            "completed": true,
-            "notes": "",
-            "completedAt": "2024-08-12T07:45:00.000Z"
-        },
-        {
-            "id": 4,
-            "userId": 1,
-            "habitId": 2,
-            "date": "2024-08-13",
-            "completed": true,
-            "notes": "Finished chapter 5 of 'Clean Code'",
-            "completedAt": "2024-08-13T21:15:00.000Z"
-        },
-        {
-            "id": 5,
-            "userId": 1,
-            "habitId": 2,
-            "date": "2024-08-12",
-            "completed": true,
-            "notes": "Read about design patterns",
-            "completedAt": "2024-08-12T20:30:00.000Z"
-        },
-        {
-            "id": 6,
-            "userId": 1,
-            "habitId": 3,
-            "date": "2024-08-14",
-            "completed": true,
-            "notes": "Very peaceful session",
-            "completedAt": "2024-08-14T08:00:00.000Z"
-        },
-        {
-            "id": 7,
-            "userId": 1,
-            "habitId": 3,
-            "date": "2024-08-13",
-            "completed": true,
-            "notes": "Focused on breathing",
-            "completedAt": "2024-08-13T08:15:00.000Z"
-        },
-        {
-            "id": 8,
-            "userId": 1,
-            "habitId": 4,
-            "date": "2024-08-11",
-            "completed": true,
-            "notes": "Bought groceries for the week",
-            "completedAt": "2024-08-11T16:45:00.000Z"
-        },
-        {
-            "id": 9,
-            "userId": 1,
-            "habitId": 5,
-            "date": "2024-08-12",
-            "completed": true,
-            "notes": "Worked on React components",
-            "completedAt": "2024-08-12T20:30:00.000Z"
-        },
-        {
-            "id": 10,
-            "userId": 1,
-            "habitId": 6,
-            "date": "2024-07-31",
-            "completed": true,
-            "notes": "Reviewed July expenses and planned August budget",
-            "completedAt": "2024-07-31T18:20:00.000Z"
-        },
-        {
-            "id": 11,
-            "userId": 2,
-            "habitId": 7,
-            "date": "2024-08-14",
-            "completed": true,
-            "notes": "5.2km in 28 minutes",
-            "completedAt": "2024-08-14T06:45:00.000Z"
-        },
-        {
-            "id": 12,
-            "userId": 2,
-            "habitId": 7,
-            "date": "2024-08-13",
-            "completed": true,
-            "notes": "Perfect weather for running",
-            "completedAt": "2024-08-13T06:30:00.000Z"
-        },
-        {
-            "id": 13,
-            "userId": 2,
-            "habitId": 8,
-            "date": "2024-08-14",
-            "completed": true,
-            "notes": "Stayed hydrated all day",
-            "completedAt": "2024-08-14T22:00:00.000Z"
-        },
-        {
-            "id": 14,
-            "userId": 2,
-            "habitId": 8,
-            "date": "2024-08-13",
-            "completed": true,
-            "notes": "8 glasses completed",
-            "completedAt": "2024-08-13T21:30:00.000Z"
-        },
-        {
-            "id": 15,
-            "userId": 3,
-            "habitId": 9,
-            "date": "2024-08-13",
-            "completed": true,
-            "notes": "45-minute vinyasa flow",
-            "completedAt": "2024-08-13T18:30:00.000Z"
-        },
-        {
-            "id": 16,
-            "userId": 3,
-            "habitId": 9,
-            "date": "2024-08-11",
-            "completed": true,
-            "notes": "Morning yoga session",
-            "completedAt": "2024-08-11T07:00:00.000Z"
-        },
-        {
-            "id": 17,
-            "userId": 3,
-            "habitId": 10,
-            "date": "2024-08-10",
-            "completed": true,
-            "notes": "Made quinoa salad with vegetables",
-            "completedAt": "2024-08-10T19:45:00.000Z"
-        }
-    ],
-    "reminders": [
-        {
-            "id": 1,
-            "userId": 1,
-            "habitId": 1,
-            "time": "07:00",
-            "enabled": true,
-            "days": [
-                "monday",
-                "tuesday",
-                "wednesday",
-                "thursday",
-                "friday",
-                "saturday",
-                "sunday"
-            ],
-            "message": "Time for your morning exercise!",
-            "createdAt": "2024-01-01T00:00:00.000Z"
-        },
-        {
-            "id": 2,
-            "userId": 1,
-            "habitId": 2,
-            "time": "21:00",
-            "enabled": true,
-            "days": [
-                "monday",
-                "tuesday",
-                "wednesday",
-                "thursday",
-                "friday",
-                "saturday",
-                "sunday"
-            ],
-            "message": "Don't forget to read your book!",
-            "createdAt": "2024-02-01T00:00:00.000Z"
-        },
-        {
-            "id": 3,
-            "userId": 1,
-            "habitId": 3,
-            "time": "08:00",
-            "enabled": true,
-            "days": [
-                "monday",
-                "tuesday",
-                "wednesday",
-                "thursday",
-                "friday",
-                "saturday",
-                "sunday"
-            ],
-            "message": "Time for meditation 🧘",
-            "createdAt": "2024-03-01T00:00:00.000Z"
-        },
-        {
-            "id": 4,
-            "userId": 1,
-            "habitId": 4,
-            "time": "16:00",
-            "enabled": true,
-            "days": [
-                "sunday"
-            ],
-            "message": "Weekly grocery shopping time!",
-            "createdAt": "2024-01-07T00:00:00.000Z"
-        },
-        {
-            "id": 5,
-            "userId": 1,
-            "habitId": 5,
-            "time": "19:00",
-            "enabled": true,
-            "days": [
-                "monday",
-                "wednesday",
-                "friday"
-            ],
-            "message": "Time to code! 💻",
-            "createdAt": "2024-04-01T00:00:00.000Z"
-        },
-        {
-            "id": 6,
-            "userId": 2,
-            "habitId": 7,
-            "time": "06:30",
-            "enabled": true,
-            "days": [
-                "monday",
-                "tuesday",
-                "wednesday",
-                "thursday",
-                "friday",
-                "saturday",
-                "sunday"
-            ],
-            "message": "Time for your morning run! 🏃",
-            "createdAt": "2024-02-15T00:00:00.000Z"
-        },
-        {
-            "id": 7,
-            "userId": 2,
-            "habitId": 8,
-            "time": "09:00",
-            "enabled": true,
-            "days": [
-                "monday",
-                "tuesday",
-                "wednesday",
-                "thursday",
-                "friday",
-                "saturday",
-                "sunday"
-            ],
-            "message": "Remember to drink water! 💧",
-            "createdAt": "2024-01-01T00:00:00.000Z"
-        },
-        {
-            "id": 8,
-            "userId": 3,
-            "habitId": 9,
-            "time": "18:00",
-            "enabled": true,
-            "days": [
-                "monday",
-                "wednesday",
-                "friday"
-            ],
-            "message": "Yoga time! Stretch and relax 🧘‍♀️",
-            "createdAt": "2024-03-10T00:00:00.000Z"
-        },
-        {
-            "id": 9,
-            "userId": 3,
-            "habitId": 10,
-            "time": "17:30",
-            "enabled": false,
-            "days": [
-                "monday",
-                "tuesday",
-                "wednesday",
-                "thursday",
-                "friday",
-                "saturday",
-                "sunday"
-            ],
-            "message": "Time to cook a healthy meal! 🥗",
-            "createdAt": "2024-04-01T00:00:00.000Z"
-        }
-    ],
-    "statistics": [
-        {
-            "id": 1,
-            "userId": 1,
-            "month": "2024-08",
-            "totalHabits": 6,
-            "activeHabits": 6,
-            "completionRate": 0.78,
-            "totalCheckins": 89,
-            "longestStreak": 23,
-            "averageStreak": 8.5,
-            "habitsCreated": 0,
-            "createdAt": "2024-08-01T00:00:00.000Z"
-        },
-        {
-            "id": 2,
-            "userId": 1,
-            "month": "2024-07",
-            "totalHabits": 6,
-            "activeHabits": 6,
-            "completionRate": 0.85,
-            "totalCheckins": 127,
-            "longestStreak": 23,
-            "averageStreak": 12.3,
-            "habitsCreated": 0,
-            "createdAt": "2024-07-01T00:00:00.000Z"
-        },
-        {
-            "id": 3,
-            "userId": 2,
-            "month": "2024-08",
-            "totalHabits": 2,
-            "activeHabits": 2,
-            "completionRate": 0.92,
-            "totalCheckins": 45,
-            "longestStreak": 18,
-            "averageStreak": 9.5,
-            "habitsCreated": 0,
-            "createdAt": "2024-08-01T00:00:00.000Z"
-        },
-        {
-            "id": 4,
-            "userId": 3,
-            "month": "2024-08",
-            "totalHabits": 2,
-            "activeHabits": 1,
-            "completionRate": 0.67,
-            "totalCheckins": 12,
-            "longestStreak": 9,
-            "averageStreak": 4.0,
-            "habitsCreated": 0,
-            "createdAt": "2024-08-01T00:00:00.000Z"
-        }
-    ]
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "email": "admin@email.com",
+      "password": "admin",
+      "fullName": "Admin User",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "preferences": {
+        "darkMode": false,
+        "notifications": true,
+        "language": "en"
+      }
+    },
+    {
+      "id": 2,
+      "username": "john",
+      "email": "john@email.com",
+      "password": "123",
+      "fullName": "John Doe",
+      "createdAt": "2024-02-15T10:30:00.000Z",
+      "preferences": {
+        "darkMode": true,
+        "notifications": true,
+        "language": "en"
+      }
+    },
+    {
+      "id": 3,
+      "username": "jane",
+      "email": "jane@email.com",
+      "password": "123",
+      "fullName": "Jane Smith",
+      "createdAt": "2024-03-10T14:20:00.000Z",
+      "preferences": {
+        "darkMode": false,
+        "notifications": false,
+        "language": "en"
+      }
+    },
+    {
+      "id": 1755243018995,
+      "username": "nvdk",
+      "email": "dk@gmail.com",
+      "password": "123",
+      "fullName": "Nguyễn Vũ Đăng Khánh",
+      "createdAt": "2025-08-15T07:30:18.995Z",
+      "preferences": {
+        "darkMode": false,
+        "notifications": true,
+        "language": "en"
+      }
+    },
+    {
+      "id": 1755243206140,
+      "username": "oke",
+      "email": "oke@gmail.com",
+      "password": "123",
+      "fullName": "Nguyễn Vũ Đăng Khánh",
+      "createdAt": "2025-08-15T07:33:26.140Z",
+      "preferences": {
+        "darkMode": false,
+        "notifications": true,
+        "language": "en"
+      }
+    }
+  ],
+  "habits": [
+    {
+      "id": 1,
+      "userId": 1,
+      "name": "Morning Exercise",
+      "description": "Do 30 minutes of exercise every morning",
+      "type": "daily",
+      "frequency": 1,
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "priority": "high",
+      "color": "#ff6b6b",
+      "isActive": true,
+      "currentStreak": 15,
+      "longestStreak": 23,
+      "totalCompletions": 45,
+      "createdAt": "2024-01-01T06:00:00.000Z",
+      "updatedAt": "2024-08-14T07:30:00.000Z"
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "name": "Read Books",
+      "description": "Read at least 20 pages of a book",
+      "type": "daily",
+      "frequency": 1,
+      "startDate": "2024-02-01",
+      "endDate": "2024-12-31",
+      "priority": "medium",
+      "color": "#4ecdc4",
+      "isActive": true,
+      "currentStreak": 8,
+      "longestStreak": 12,
+      "totalCompletions": 34,
+      "createdAt": "2024-02-01T09:00:00.000Z",
+      "updatedAt": "2024-08-13T21:15:00.000Z"
+    },
+    {
+      "id": 3,
+      "userId": 1,
+      "name": "Meditation",
+      "description": "Practice mindfulness meditation for 15 minutes",
+      "type": "daily",
+      "frequency": 1,
+      "startDate": "2024-03-01",
+      "endDate": "2024-12-31",
+      "priority": "high",
+      "color": "#a8e6cf",
+      "isActive": true,
+      "currentStreak": 5,
+      "longestStreak": 18,
+      "totalCompletions": 28,
+      "createdAt": "2024-03-01T07:30:00.000Z",
+      "updatedAt": "2024-08-14T08:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "userId": 1,
+      "name": "Weekly Grocery Shopping",
+      "description": "Plan and do grocery shopping for the week",
+      "type": "weekly",
+      "frequency": 1,
+      "startDate": "2024-01-07",
+      "endDate": "2024-12-31",
+      "priority": "medium",
+      "color": "#ffd93d",
+      "isActive": true,
+      "currentStreak": 3,
+      "longestStreak": 8,
+      "totalCompletions": 20,
+      "createdAt": "2024-01-07T10:00:00.000Z",
+      "updatedAt": "2024-08-11T16:45:00.000Z"
+    },
+    {
+      "id": 5,
+      "userId": 1,
+      "name": "Learn Programming",
+      "description": "Study programming for at least 3 hours",
+      "type": "weekly",
+      "frequency": 3,
+      "startDate": "2024-04-01",
+      "endDate": "2024-12-31",
+      "priority": "high",
+      "color": "#6c5ce7",
+      "isActive": true,
+      "currentStreak": 2,
+      "longestStreak": 6,
+      "totalCompletions": 25,
+      "createdAt": "2024-04-01T19:00:00.000Z",
+      "updatedAt": "2024-08-12T20:30:00.000Z"
+    },
+    {
+      "id": 6,
+      "userId": 1,
+      "name": "Monthly Budget Review",
+      "description": "Review and plan monthly budget and expenses",
+      "type": "monthly",
+      "frequency": 1,
+      "startDate": "2024-01-31",
+      "endDate": "2024-12-31",
+      "priority": "high",
+      "color": "#74b9ff",
+      "isActive": true,
+      "currentStreak": 1,
+      "longestStreak": 7,
+      "totalCompletions": 7,
+      "createdAt": "2024-01-31T15:00:00.000Z",
+      "updatedAt": "2024-07-31T18:20:00.000Z"
+    },
+    {
+      "id": 7,
+      "userId": 2,
+      "name": "Morning Run",
+      "description": "Go for a 5km run every morning",
+      "type": "daily",
+      "frequency": 1,
+      "startDate": "2024-02-15",
+      "endDate": "2024-12-31",
+      "priority": "high",
+      "color": "#e17055",
+      "isActive": true,
+      "currentStreak": 12,
+      "longestStreak": 18,
+      "totalCompletions": 89,
+      "createdAt": "2024-02-15T06:30:00.000Z",
+      "updatedAt": "2024-08-14T06:45:00.000Z"
+    },
+    {
+      "id": 8,
+      "userId": 2,
+      "name": "Drink Water",
+      "description": "Drink at least 8 glasses of water",
+      "type": "daily",
+      "frequency": 8,
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "priority": "medium",
+      "color": "#00b894",
+      "isActive": true,
+      "currentStreak": 7,
+      "longestStreak": 15,
+      "totalCompletions": 156,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-08-14T22:00:00.000Z"
+    },
+    {
+      "id": 9,
+      "userId": 3,
+      "name": "Yoga Practice",
+      "description": "Practice yoga for 45 minutes",
+      "type": "weekly",
+      "frequency": 3,
+      "startDate": "2024-03-10",
+      "endDate": "2024-12-31",
+      "priority": "medium",
+      "color": "#fd79a8",
+      "isActive": true,
+      "currentStreak": 4,
+      "longestStreak": 7,
+      "totalCompletions": 42,
+      "createdAt": "2024-03-10T17:00:00.000Z",
+      "updatedAt": "2024-08-13T18:30:00.000Z"
+    },
+    {
+      "id": 10,
+      "userId": 3,
+      "name": "Healthy Cooking",
+      "description": "Cook a healthy meal at home",
+      "type": "daily",
+      "frequency": 1,
+      "startDate": "2024-04-01",
+      "endDate": "2024-12-31",
+      "priority": "low",
+      "color": "#55a3ff",
+      "isActive": false,
+      "currentStreak": 0,
+      "longestStreak": 9,
+      "totalCompletions": 67,
+      "createdAt": "2024-04-01T12:00:00.000Z",
+      "updatedAt": "2024-08-10T19:45:00.000Z"
+    }
+  ],
+  "goals": [
+    {
+      "id": 1,
+      "userId": 1,
+      "name": "Fitness Transformation",
+      "description": "Complete a full fitness transformation this year",
+      "targetValue": 365,
+      "currentValue": 45,
+      "unit": "days",
+      "deadline": "2024-12-31",
+      "priority": "high",
+      "status": "in_progress",
+      "linkedHabits": [
+        1,
+        3
+      ],
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-08-14T10:30:00.000Z"
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "name": "Read 24 Books This Year",
+      "description": "Read at least 24 books throughout the year",
+      "targetValue": 24,
+      "currentValue": 8,
+      "unit": "books",
+      "deadline": "2024-12-31",
+      "priority": "medium",
+      "status": "in_progress",
+      "linkedHabits": [
+        2
+      ],
+      "createdAt": "2024-02-01T00:00:00.000Z",
+      "updatedAt": "2024-08-14T11:15:00.000Z"
+    },
+    {
+      "id": 3,
+      "userId": 1,
+      "name": "Master React Development",
+      "description": "Become proficient in React and complete 5 projects",
+      "targetValue": 5,
+      "currentValue": 2,
+      "unit": "projects",
+      "deadline": "2024-10-31",
+      "priority": "high",
+      "status": "in_progress",
+      "linkedHabits": [
+        5
+      ],
+      "createdAt": "2024-04-01T00:00:00.000Z",
+      "updatedAt": "2024-08-14T12:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "userId": 2,
+      "name": "Run 1000km This Year",
+      "description": "Complete 1000 kilometers of running in 2024",
+      "targetValue": 1000,
+      "currentValue": 445,
+      "unit": "km",
+      "deadline": "2024-12-31",
+      "priority": "high",
+      "status": "in_progress",
+      "linkedHabits": [
+        7
+      ],
+      "createdAt": "2024-02-15T00:00:00.000Z",
+      "updatedAt": "2024-08-14T07:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "userId": 2,
+      "name": "Hydration Challenge",
+      "description": "Drink recommended amount of water daily for 6 months",
+      "targetValue": 180,
+      "currentValue": 156,
+      "unit": "days",
+      "deadline": "2024-09-30",
+      "priority": "medium",
+      "status": "in_progress",
+      "linkedHabits": [
+        8
+      ],
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-08-14T23:00:00.000Z"
+    },
+    {
+      "id": 6,
+      "userId": 3,
+      "name": "Flexibility & Wellness",
+      "description": "Improve flexibility and mental wellness through yoga",
+      "targetValue": 100,
+      "currentValue": 42,
+      "unit": "sessions",
+      "deadline": "2024-11-30",
+      "priority": "medium",
+      "status": "in_progress",
+      "linkedHabits": [
+        9
+      ],
+      "createdAt": "2024-03-10T00:00:00.000Z",
+      "updatedAt": "2024-08-13T19:00:00.000Z"
+    }
+  ],
+  "checkins": [
+    {
+      "id": 1,
+      "userId": 1,
+      "habitId": 1,
+      "date": "2024-08-14",
+      "completed": true,
+      "notes": "Great morning workout!",
+      "completedAt": "2024-08-14T07:30:00.000Z"
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "habitId": 1,
+      "date": "2024-08-13",
+      "completed": true,
+      "notes": "Felt energized after exercise",
+      "completedAt": "2024-08-13T07:15:00.000Z"
+    },
+    {
+      "id": 3,
+      "userId": 1,
+      "habitId": 1,
+      "date": "2024-08-12",
+      "completed": true,
+      "notes": "",
+      "completedAt": "2024-08-12T07:45:00.000Z"
+    },
+    {
+      "id": 4,
+      "userId": 1,
+      "habitId": 2,
+      "date": "2024-08-13",
+      "completed": true,
+      "notes": "Finished chapter 5 of 'Clean Code'",
+      "completedAt": "2024-08-13T21:15:00.000Z"
+    },
+    {
+      "id": 5,
+      "userId": 1,
+      "habitId": 2,
+      "date": "2024-08-12",
+      "completed": true,
+      "notes": "Read about design patterns",
+      "completedAt": "2024-08-12T20:30:00.000Z"
+    },
+    {
+      "id": 6,
+      "userId": 1,
+      "habitId": 3,
+      "date": "2024-08-14",
+      "completed": true,
+      "notes": "Very peaceful session",
+      "completedAt": "2024-08-14T08:00:00.000Z"
+    },
+    {
+      "id": 7,
+      "userId": 1,
+      "habitId": 3,
+      "date": "2024-08-13",
+      "completed": true,
+      "notes": "Focused on breathing",
+      "completedAt": "2024-08-13T08:15:00.000Z"
+    },
+    {
+      "id": 8,
+      "userId": 1,
+      "habitId": 4,
+      "date": "2024-08-11",
+      "completed": true,
+      "notes": "Bought groceries for the week",
+      "completedAt": "2024-08-11T16:45:00.000Z"
+    },
+    {
+      "id": 9,
+      "userId": 1,
+      "habitId": 5,
+      "date": "2024-08-12",
+      "completed": true,
+      "notes": "Worked on React components",
+      "completedAt": "2024-08-12T20:30:00.000Z"
+    },
+    {
+      "id": 10,
+      "userId": 1,
+      "habitId": 6,
+      "date": "2024-07-31",
+      "completed": true,
+      "notes": "Reviewed July expenses and planned August budget",
+      "completedAt": "2024-07-31T18:20:00.000Z"
+    },
+    {
+      "id": 11,
+      "userId": 2,
+      "habitId": 7,
+      "date": "2024-08-14",
+      "completed": true,
+      "notes": "5.2km in 28 minutes",
+      "completedAt": "2024-08-14T06:45:00.000Z"
+    },
+    {
+      "id": 12,
+      "userId": 2,
+      "habitId": 7,
+      "date": "2024-08-13",
+      "completed": true,
+      "notes": "Perfect weather for running",
+      "completedAt": "2024-08-13T06:30:00.000Z"
+    },
+    {
+      "id": 13,
+      "userId": 2,
+      "habitId": 8,
+      "date": "2024-08-14",
+      "completed": true,
+      "notes": "Stayed hydrated all day",
+      "completedAt": "2024-08-14T22:00:00.000Z"
+    },
+    {
+      "id": 14,
+      "userId": 2,
+      "habitId": 8,
+      "date": "2024-08-13",
+      "completed": true,
+      "notes": "8 glasses completed",
+      "completedAt": "2024-08-13T21:30:00.000Z"
+    },
+    {
+      "id": 15,
+      "userId": 3,
+      "habitId": 9,
+      "date": "2024-08-13",
+      "completed": true,
+      "notes": "45-minute vinyasa flow",
+      "completedAt": "2024-08-13T18:30:00.000Z"
+    },
+    {
+      "id": 16,
+      "userId": 3,
+      "habitId": 9,
+      "date": "2024-08-11",
+      "completed": true,
+      "notes": "Morning yoga session",
+      "completedAt": "2024-08-11T07:00:00.000Z"
+    },
+    {
+      "id": 17,
+      "userId": 3,
+      "habitId": 10,
+      "date": "2024-08-10",
+      "completed": true,
+      "notes": "Made quinoa salad with vegetables",
+      "completedAt": "2024-08-10T19:45:00.000Z"
+    }
+  ],
+  "reminders": [
+    {
+      "id": 1,
+      "userId": 1,
+      "habitId": 1,
+      "time": "07:00",
+      "enabled": true,
+      "days": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ],
+      "message": "Time for your morning exercise!",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "habitId": 2,
+      "time": "21:00",
+      "enabled": true,
+      "days": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ],
+      "message": "Don't forget to read your book!",
+      "createdAt": "2024-02-01T00:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "userId": 1,
+      "habitId": 3,
+      "time": "08:00",
+      "enabled": true,
+      "days": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ],
+      "message": "Time for meditation 🧘",
+      "createdAt": "2024-03-01T00:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "userId": 1,
+      "habitId": 4,
+      "time": "16:00",
+      "enabled": true,
+      "days": [
+        "sunday"
+      ],
+      "message": "Weekly grocery shopping time!",
+      "createdAt": "2024-01-07T00:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "userId": 1,
+      "habitId": 5,
+      "time": "19:00",
+      "enabled": true,
+      "days": [
+        "monday",
+        "wednesday",
+        "friday"
+      ],
+      "message": "Time to code! 💻",
+      "createdAt": "2024-04-01T00:00:00.000Z"
+    },
+    {
+      "id": 6,
+      "userId": 2,
+      "habitId": 7,
+      "time": "06:30",
+      "enabled": true,
+      "days": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ],
+      "message": "Time for your morning run! 🏃",
+      "createdAt": "2024-02-15T00:00:00.000Z"
+    },
+    {
+      "id": 7,
+      "userId": 2,
+      "habitId": 8,
+      "time": "09:00",
+      "enabled": true,
+      "days": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ],
+      "message": "Remember to drink water! 💧",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": 8,
+      "userId": 3,
+      "habitId": 9,
+      "time": "18:00",
+      "enabled": true,
+      "days": [
+        "monday",
+        "wednesday",
+        "friday"
+      ],
+      "message": "Yoga time! Stretch and relax 🧘‍♀️",
+      "createdAt": "2024-03-10T00:00:00.000Z"
+    },
+    {
+      "id": 9,
+      "userId": 3,
+      "habitId": 10,
+      "time": "17:30",
+      "enabled": false,
+      "days": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ],
+      "message": "Time to cook a healthy meal! 🥗",
+      "createdAt": "2024-04-01T00:00:00.000Z"
+    }
+  ],
+  "statistics": [
+    {
+      "id": 1,
+      "userId": 1,
+      "month": "2024-08",
+      "totalHabits": 6,
+      "activeHabits": 6,
+      "completionRate": 0.78,
+      "totalCheckins": 89,
+      "longestStreak": 23,
+      "averageStreak": 8.5,
+      "habitsCreated": 0,
+      "createdAt": "2024-08-01T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "month": "2024-07",
+      "totalHabits": 6,
+      "activeHabits": 6,
+      "completionRate": 0.85,
+      "totalCheckins": 127,
+      "longestStreak": 23,
+      "averageStreak": 12.3,
+      "habitsCreated": 0,
+      "createdAt": "2024-07-01T00:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "userId": 2,
+      "month": "2024-08",
+      "totalHabits": 2,
+      "activeHabits": 2,
+      "completionRate": 0.92,
+      "totalCheckins": 45,
+      "longestStreak": 18,
+      "averageStreak": 9.5,
+      "habitsCreated": 0,
+      "createdAt": "2024-08-01T00:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "userId": 3,
+      "month": "2024-08",
+      "totalHabits": 2,
+      "activeHabits": 1,
+      "completionRate": 0.67,
+      "totalCheckins": 12,
+      "longestStreak": 9,
+      "averageStreak": 4,
+      "habitsCreated": 0,
+      "createdAt": "2024-08-01T00:00:00.000Z"
+    }
+  ]
 }
