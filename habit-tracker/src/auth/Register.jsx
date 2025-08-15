@@ -2,217 +2,226 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Eye, EyeOff } from 'lucide-react';
+import {
+    Container,
+    Row,
+    Col,
+    Card,
+    Form,
+    InputGroup,
+    Button,
+    Alert,
+    Spinner
+} from 'react-bootstrap';
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    fullName: '',
-    password: '',
-    confirmPassword: ''
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState('');
-
-  const { register, loading, error } = useAuth();
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        fullName: '',
+        password: '',
+        confirmPassword: ''
     });
-  };
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage('');
+    const { register, loading, error } = useAuth();
+    const navigate = useNavigate();
 
-    // Validation
-    if (formData.password !== formData.confirmPassword) {
-      setMessage('Mật khẩu xác nhận không khớp');
-      setMessageType('danger');
-      return;
-    }
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
 
-    if (formData.password.length < 3) {
-      setMessage('Mật khẩu phải có ít nhất 3 ký tự');
-      setMessageType('danger');
-      return;
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setMessage('');
 
-    if (formData.username.length < 3) {
-      setMessage('Tên đăng nhập phải có ít nhất 3 ký tự');
-      setMessageType('danger');
-      return;
-    }
+        if (formData.password !== formData.confirmPassword) {
+            setMessage('Confirm password does not match');
+            setMessageType('danger');
+            return;
+        }
 
-    const { confirmPassword, ...userData } = formData;
-    const result = await register(userData);
-    
-    if (result.success) {
-      setMessage(result.message);
-      setMessageType('success');
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
-    } else {
-      setMessage(result.message);
-      setMessageType('danger');
-    }
-  };
+        if (formData.password.length < 3) {
+            setMessage('Password must be at least 3 characters long');
+            setMessageType('danger');
+            return;
+        }
 
-  return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-gradient" 
-         style={{background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'}}>
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-md-6 col-lg-5">
-            <div className="card shadow-lg border-0">
-              <div className="card-body p-5">
-                <div className="text-center mb-4">
-                  <UserPlus size={48} className="text-danger mb-3" />
-                  <h2 className="card-title text-dark mb-2">Đăng Ký</h2>
-                  <p className="text-muted">Tạo tài khoản mới để bắt đầu!</p>
-                </div>
-                
-                {(error || message) && (
-                  <div className={`alert alert-${messageType === 'danger' || error ? 'danger' : 'success'}`} role="alert">
-                    {error || message}
-                  </div>
-                )}
+        if (formData.username.length < 3) {
+            setMessage('Username must be at least 3 characters long');
+            setMessageType('danger');
+            return;
+        }
 
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-3">
-                    <label htmlFor="fullName" className="form-label">
-                      Họ và tên
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="fullName"
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleChange}
-                      placeholder="Nguyễn Văn A"
-                      required
-                    />
-                  </div>
+        const { confirmPassword, ...userData } = formData;
+        const result = await register(userData);
 
-                  <div className="mb-3">
-                    <label htmlFor="username" className="form-label">
-                      Tên đăng nhập
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="username"
-                      name="username"
-                      value={formData.username}
-                      onChange={handleChange}
-                      placeholder="username123"
-                      required
-                    />
-                  </div>
+        if (result.success) {
+            setMessage(result.message);
+            setMessageType('success');
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+        } else {
+            setMessage(result.message);
+            setMessageType('danger');
+        }
+    };
 
-                  <div className="mb-3">
-                    <label htmlFor="email" className="form-label">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                                              placeholder="email@email.com"
-                      required
-                    />
-                  </div>
+    return (
+        <div
+            className="min-vh-100 d-flex align-items-center justify-content-center"
+            style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}
+        >
+            <Container>
+                <Row className="justify-content-center">
+                    <Col md={6} lg={5}>
+                        <Card className="shadow-lg border-0">
+                            <Card.Body className="p-5">
+                                <div className="text-center mb-4">
+                                    <UserPlus size={48} className="text-danger mb-3" />
+                                    <h2 className="text-dark mb-2">Register</h2>
+                                    <p className="text-muted">Create a new account to get started!</p>
+                                </div>
 
-                  <div className="mb-3">
-                    <label htmlFor="password" className="form-label">
-                      Mật khẩu
-                    </label>
-                    <div className="input-group">
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        className="form-control"
-                        id="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        placeholder="Ít nhất 3 ký tự"
-                        required
-                      />
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                      </button>
-                    </div>
-                  </div>
+                                {(error || message) && (
+                                    <Alert
+                                        variant={
+                                            messageType === 'danger' || error ? 'danger' : 'success'
+                                        }
+                                    >
+                                        {error || message}
+                                    </Alert>
+                                )}
 
-                  <div className="mb-4">
-                    <label htmlFor="confirmPassword" className="form-label">
-                      Xác nhận mật khẩu
-                    </label>
-                    <div className="input-group">
-                      <input
-                        type={showConfirmPassword ? 'text' : 'password'}
-                        className="form-control"
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        placeholder="Nhập lại mật khẩu"
-                        required
-                      />
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      >
-                        {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                      </button>
-                    </div>
-                  </div>
+                                <Form onSubmit={handleSubmit}>
+                                    <Form.Group className="mb-3" controlId="fullName">
+                                        <Form.Label>Full Name</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            name="fullName"
+                                            value={formData.fullName}
+                                            onChange={handleChange}
+                                            placeholder="John Doe"
+                                            required
+                                        />
+                                    </Form.Group>
 
-                  <button
-                    type="submit"
-                    className="btn btn-danger btn-lg w-100 mb-3"
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Đang đăng ký...
-                      </>
-                    ) : (
-                      'Đăng Ký'
-                    )}
-                  </button>
-                </form>
+                                    <Form.Group className="mb-3" controlId="username">
+                                        <Form.Label>Username</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            name="username"
+                                            value={formData.username}
+                                            onChange={handleChange}
+                                            placeholder="username123"
+                                            required
+                                        />
+                                    </Form.Group>
 
-                <hr />
-                <p className="text-center mb-0">
-                  Đã có tài khoản? {' '}
-                  <Link to="/login" className="text-decoration-none fw-bold">
-                    Đăng nhập ngay
-                  </Link>
-                </p>
-              </div>
-            </div>
-          </div>
+                                    <Form.Group className="mb-3" controlId="email">
+                                        <Form.Label>Email</Form.Label>
+                                        <Form.Control
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            placeholder="email@example.com"
+                                            required
+                                        />
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3" controlId="password">
+                                        <Form.Label>Password</Form.Label>
+                                        <InputGroup>
+                                            <Form.Control
+                                                type={showPassword ? 'text' : 'password'}
+                                                name="password"
+                                                value={formData.password}
+                                                onChange={handleChange}
+                                                placeholder="At least 3 characters"
+                                                required
+                                            />
+                                            <Button
+                                                variant="outline-secondary"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                            >
+                                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                            </Button>
+                                        </InputGroup>
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-4" controlId="confirmPassword">
+                                        <Form.Label>Confirm Password</Form.Label>
+                                        <InputGroup>
+                                            <Form.Control
+                                                type={showConfirmPassword ? 'text' : 'password'}
+                                                name="confirmPassword"
+                                                value={formData.confirmPassword}
+                                                onChange={handleChange}
+                                                placeholder="Re-enter your password"
+                                                required
+                                            />
+                                            <Button
+                                                variant="outline-secondary"
+                                                onClick={() =>
+                                                    setShowConfirmPassword(!showConfirmPassword)
+                                                }
+                                            >
+                                                {showConfirmPassword ? (
+                                                    <EyeOff size={20} />
+                                                ) : (
+                                                    <Eye size={20} />
+                                                )}
+                                            </Button>
+                                        </InputGroup>
+                                    </Form.Group>
+
+                                    <Button
+                                        type="submit"
+                                        variant="danger"
+                                        size="lg"
+                                        className="w-100 mb-3"
+                                        disabled={loading}
+                                    >
+                                        {loading ? (
+                                            <>
+                                                <Spinner
+                                                    as="span"
+                                                    animation="border"
+                                                    size="sm"
+                                                    role="status"
+                                                    aria-hidden="true"
+                                                    className="me-2"
+                                                />
+                                                Registering...
+                                            </>
+                                        ) : (
+                                            'Register'
+                                        )}
+                                    </Button>
+                                </Form>
+
+                                <hr />
+                                <p className="text-center mb-0">
+                                    Already have an account?{' '}
+                                    <Link to="/login" className="fw-bold text-decoration-none">
+                                        Login now
+                                    </Link>
+                                </p>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
+            </Container>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Register;

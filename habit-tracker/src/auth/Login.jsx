@@ -35,19 +35,6 @@ const Login = () => {
     }
   };
 
-  const demoAccounts = [
-    { username: 'admin', password: 'admin', name: 'Admin User' },
-    { username: 'john_doe', password: '123', name: 'John Doe' },
-    { username: 'jane_smith', password: '123', name: 'Jane Smith' }
-  ];
-
-  const loginDemo = (account) => {
-    setFormData({
-      username: account.username,
-      password: account.password
-    });
-  };
-
   return (
     <div className="min-vh-100 d-flex align-items-center justify-content-center bg-gradient" 
          style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}}>
@@ -58,8 +45,8 @@ const Login = () => {
               <div className="card-body p-5">
                 <div className="text-center mb-4">
                   <LogIn size={48} className="text-primary mb-3" />
-                  <h2 className="card-title text-dark mb-2">Đăng Nhập</h2>
-                  <p className="text-muted">Chào mừng bạn trở lại!</p>
+                  <h2 className="card-title text-dark mb-2">Welcome Back</h2>
+                  <p className="text-muted">Sign in to your Habit Tracker account!</p>
                 </div>
                 
                 {error && (
@@ -77,7 +64,7 @@ const Login = () => {
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
                     <label htmlFor="username" className="form-label">
-                      Tên đăng nhập hoặc Email
+                      Username or Email
                     </label>
                     <input
                       type="text"
@@ -86,14 +73,14 @@ const Login = () => {
                       name="username"
                       value={formData.username}
                       onChange={handleChange}
-                      placeholder="admin hoặc admin@email.com"
+                      placeholder="example@email.com"
                       required
                     />
                   </div>
 
                   <div className="mb-3">
                     <label htmlFor="password" className="form-label">
-                      Mật khẩu
+                      Password
                     </label>
                     <div className="input-group">
                       <input
@@ -103,7 +90,7 @@ const Login = () => {
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
-                        placeholder="Nhập mật khẩu"
+                        placeholder="Enter your password"
                         required
                       />
                       <button
@@ -124,36 +111,19 @@ const Login = () => {
                     {loading ? (
                       <>
                         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Đang đăng nhập...
+                        Login...
                       </>
                     ) : (
-                      'Đăng Nhập'
+                      'Login'
                     )}
                   </button>
                 </form>
 
-                <div className="mb-3">
-                  <p className="text-center text-muted mb-2 small">
-                    Tài khoản demo:
-                  </p>
-                  <div className="d-grid gap-2">
-                    {demoAccounts.map((account, index) => (
-                      <button
-                        key={index}
-                        onClick={() => loginDemo(account)}
-                        className="btn btn-outline-secondary btn-sm"
-                      >
-                        {account.name} - {account.username}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
                 <hr />
                 <p className="text-center mb-0">
-                  Chưa có tài khoản? {' '}
+                  Don&apos;t have an account? {' '}
                   <Link to="/register" className="text-decoration-none fw-bold">
-                    Đăng ký ngay
+                    Register Now
                   </Link>
                 </p>
               </div>

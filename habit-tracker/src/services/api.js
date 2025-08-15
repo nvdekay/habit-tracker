@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080'; // Địa chỉ của JSON Server
-
+const API_BASE_URL = 'http://localhost:8080';
 // Tạo axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -38,7 +37,7 @@ export const authAPI = {
       }
       
       if (!user) {
-        throw new Error('Tên đăng nhập hoặc mật khẩu không đúng');
+        throw new Error('Username or password is incorrect.');
       }
 
       // Tạo fake token
@@ -59,12 +58,12 @@ export const authAPI = {
           preferences: user.preferences
         },
         token,
-        message: 'Đăng nhập thành công'
+        message: 'Login successfully'
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || 'Đăng nhập thất bại'
+        message: error.message || 'Login failed'
       };
     }
   },
@@ -75,13 +74,13 @@ export const authAPI = {
       // Kiểm tra username đã tồn tại
       const existingUsername = await api.get(`/users?username=${userData.username}`);
       if (existingUsername.data.length > 0) {
-        throw new Error('Tên đăng nhập đã được sử dụng');
+        throw new Error('Username has already been used.');
       }
 
       // Kiểm tra email đã tồn tại
       const existingEmail = await api.get(`/users?email=${userData.email}`);
       if (existingEmail.data.length > 0) {
-        throw new Error('Email đã được sử dụng');
+        throw new Error('Email has already been used.');
       }
 
       // Tạo user mới

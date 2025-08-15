@@ -1,92 +1,69 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { LogOut, User } from 'lucide-react';
+import { useAuth } from "../context/AuthContext";
+import { useNavigate, Link } from "react-router-dom"; 
 
-const Navbar = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+export default function Navbar() {
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await logout();
-    navigate('/');
-  };
+        await logout();
+    };
+
+  if (!user) return null;
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+    <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm border-bottom">
       <div className="container">
-        <Link className="navbar-brand fw-bold" to="/">
-          Habit Tracker
+        {/* Logo */}
+        <Link className="navbar-brand fw-bold text-primary" to="/dashboard">
+          HabitTracker
         </Link>
 
-        <button 
-          className="navbar-toggler" 
-          type="button" 
-          data-bs-toggle="collapse" 
-          data-bs-target="#navbarNav"
+        {/* Toggle button for mobile */}
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavDropdown"
+          aria-controls="navbarNavDropdown"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto">
+        {/* Menu items */}
+        <div className="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <Link className="nav-link" to="/">Trang chủ</Link>
+              <Link className="nav-link" to="/dashboard">Dashboard</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/habit">Habit</Link>
+              <Link className="nav-link" to="/habits">Habits</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/goals">Goals</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/checkin">Check-in</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/settings">Settings</Link>
             </li>
           </ul>
 
-          <ul className="navbar-nav">
-            {isAuthenticated ? (
-              <>
-                <li className="nav-item dropdown">
-                  <a 
-                    className="nav-link dropdown-toggle d-flex align-items-center" 
-                    href="#" 
-                    role="button" 
-                    data-bs-toggle="dropdown"
-                  >
-                    <User size={20} className="me-2" />
-                    {user?.fullName}
-                  </a>
-                  <ul className="dropdown-menu">
-                    <li>
-                      <Link className="dropdown-item" to="/dashboard">
-                        Dashboard
-                      </Link>
-                    </li>
-                    <li><hr className="dropdown-divider" /></li>
-                    <li>
-                      <button 
-                        className="dropdown-item text-danger" 
-                        onClick={handleLogout}
-                      >
-                        <LogOut size={16} className="me-2" />
-                        Đăng xuất
-                      </button>
-                    </li>
-                  </ul>
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login">Đăng nhập</Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="btn btn-primary ms-2" to="/register">
-                    Đăng ký
-                  </Link>
-                </li>
-              </>
-            )}
-          </ul>
+          {/* User Info + Logout */}
+          <div className="d-flex align-items-center">
+            <span className="me-3 fw-medium">{user.name}</span>
+            <button
+              className="btn btn-outline-secondary btn-sm"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}

@@ -5,13 +5,13 @@ import { AuthProvider } from './context/AuthContext';
 // Components
 import Navbar from './components/Navbar';
 import Home from './components/Home';
-import Dashboard from './components/Dashboard';
+import Dashboard from './dashboard/Dashboard';
+import Habit from './habits/Habit';
 
 // Auth components
 import Login from './auth/Login';
 import Register from './auth/Register';
 import ProtectedRoute from './auth/ProtectedRoute';
-import Habit from './components/Habit';
 
 function App() {
   return (
@@ -20,19 +20,30 @@ function App() {
         <div className="d-flex flex-column min-vh-100">
           <Navbar />
           <main className="flex-grow-1">
-            {/* Public routes */}
             <Routes>
+              {/* Public routes */}
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+
+              {/* Private routes */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/habits"
+                element={
+                  <ProtectedRoute>
+                    <Habit />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
-            {/* Protected routes */}
-            <ProtectedRoute>
-              <Routes>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/habit" element={<Habit />} />
-              </Routes>
-            </ProtectedRoute>
           </main>
         </div>
       </BrowserRouter>
