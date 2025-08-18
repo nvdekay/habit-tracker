@@ -70,7 +70,7 @@ export default function Navbar() {
             <User size={18} className="me-1" />
             <span className="me-3">{user.fullName}</span>
             <button
-              className="btn btn-outline-secondary btn-sm d-flex align-items-center"
+              className="btn btn-outline-danger btn-sm d-flex align-items-center"
               onClick={handleLogout}
             >
               <LogOut size={16} className="me-1" /> Logout

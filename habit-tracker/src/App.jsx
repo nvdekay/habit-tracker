@@ -6,11 +6,14 @@ import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Dashboard from './dashboard/Dashboard';
 import Habit from './habits/Habit';
+import Goal from './goals/Goal';
 
 // Auth components
 import Login from './auth/Login';
 import Register from './auth/Register';
 import ProtectedRoute from './auth/ProtectedRoute';
+import { Check } from 'lucide-react';
+import CheckIn from './checkin/CheckIn';
 
 function App() {
   return (
@@ -39,6 +42,22 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Habit />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/goals"
+                element={
+                  <ProtectedRoute>
+                    <Goal />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/checkin"
+                element={
+                  <ProtectedRoute>
+                    <CheckIn />
                   </ProtectedRoute>
                 }
               />
