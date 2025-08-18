@@ -81,7 +81,7 @@ export const authAPI = {
             }
 
             const newUser = {
-                id: Date.now(),
+                id: Math.random().toString(36).substr(2, 9), // Tạo ID ngẫu nhiên
                 username: userData.username,
                 email: userData.email,
                 password: userData.password,
