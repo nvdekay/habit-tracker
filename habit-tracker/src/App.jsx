@@ -4,7 +4,6 @@ import { AuthProvider } from './context/AuthContext';
 
 // Components
 import Navbar from './components/Navbar';
-import Home from './components/Home';
 import Dashboard from './dashboard/Dashboard';
 import Habit from './habits/Habit';
 
@@ -22,7 +21,7 @@ function App() {
           <main className="flex-grow-1">
             <Routes>
               {/* Public routes */}
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Login />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
