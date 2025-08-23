@@ -141,7 +141,7 @@
     },
     {
       "id": 5,
-      "userId": 1,
+      "userId": 2,
       "name": "Learn Programming",
       "description": "Study programming for at least 3 hours",
       "type": "weekly",
@@ -286,15 +286,15 @@
     },
     {
       "id": 3,
-      "userId": 1,
+      "userId": 2,
       "name": "Master React Development",
       "description": "Become proficient in React and complete 5 projects",
       "targetValue": 5,
-      "currentValue": 2,
+      "currentValue": 5,
       "unit": "projects",
       "deadline": "2024-10-31",
       "priority": "high",
-      "status": "in_progress",
+      "status": "completed",
       "linkedHabits": [
         5
       ],
