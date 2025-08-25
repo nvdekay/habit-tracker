@@ -1,3 +1,0 @@
-# Habit Tracker
-
-Updating README...
