@@ -1,30 +1,40 @@
 import { useState, useEffect } from "react"
-import { Button, Container, Row, Col } from "react-bootstrap"
+import { Button, Card } from "react-bootstrap"
 import { getCalendarData } from "../../services/checkInService"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
+import { useAuth } from "../../context/AuthContext"
 
-function CalendarView({ selectedDate, onDateSelect }) {
+function CalendarView({ selectedDate, onDateSelect, calendarData, onCalendarDataUpdate }) {
     const [currentMonth, setCurrentMonth] = useState(new Date())
-    const [calendarData, setCalendarData] = useState({})
+    const [internalCalendarData, setInternalCalendarData] = useState({})
     const [loading, setLoading] = useState(false)
+    const { user } = useAuth()
 
     useEffect(() => {
-        const loadCalendarData = async () => {
-            try {
-                setLoading(true)
-                const year = currentMonth.getFullYear()
-                const month = currentMonth.getMonth()
-                const data = await getCalendarData(year, month)
-                setCalendarData(data)
-            } catch (error) {
-                console.error("Failed to load calendar data:", error)
-            } finally {
-                setLoading(false)
-            }
+        if (user) {
+            loadCalendarData()
         }
+    }, [currentMonth, user])
 
-        loadCalendarData()
-    }, [currentMonth])
+    const loadCalendarData = async () => {
+        try {
+            setLoading(true)
+            const year = currentMonth.getFullYear()
+            const month = currentMonth.getMonth()
+            const data = await getCalendarData(year, month)
+            setInternalCalendarData(data)
+            if (onCalendarDataUpdate) {
+                onCalendarDataUpdate(data)
+            }
+        } catch (error) {
+            console.error("Failed to load calendar data:", error)
+            setInternalCalendarData({})
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const finalCalendarData = { ...internalCalendarData, ...calendarData }
 
     const navigateMonth = (direction) => {
         setCurrentMonth(prevMonth => {
@@ -38,20 +48,29 @@ function CalendarView({ selectedDate, onDateSelect }) {
         })
     }
 
-    const getCompletionColor = (rate) => {
-        if (!rate) return "bg-secondary"
-        if (rate >= 80) return "bg-success"
-        if (rate >= 60) return "bg-warning"
-        if (rate >= 40) return "bg-orange"
-        return "bg-danger"
-    }
-
     const getDaysInMonth = (year, month) => {
         return new Date(year, month + 1, 0).getDate()
     }
 
     const getFirstDayOfMonth = (year, month) => {
         return new Date(year, month, 1).getDay()
+    }
+
+    const isToday = (date) => {
+        const today = new Date()
+        return date.toDateString() === today.toDateString()
+    }
+
+    const isSelected = (dateStr) => {
+        return selectedDate === dateStr
+    }
+
+    const getCompletionDotColor = (rate) => {
+        if (!rate || rate === 0) return "#e9ecef"
+        if (rate >= 80) return "#28a745" // Green
+        if (rate >= 60) return "#ffc107" // Yellow
+        if (rate >= 40) return "#fd7e14" // Orange
+        return "#dc3545" // Red
     }
 
     const renderCalendarDays = () => {
@@ -72,19 +91,22 @@ function CalendarView({ selectedDate, onDateSelect }) {
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(year, month, day)
             const dateStr = date.toISOString().split('T')[0]
-            const isSelected = selectedDate === dateStr
-            const completionRate = calendarData[dateStr] || 0
+            const completionRate = finalCalendarData[dateStr] || 0
+            const isCurrentSelected = isSelected(dateStr)
+            const isTodayDate = isToday(date)
 
             days.push(
                 <div
                     key={dateStr}
-                    className={`calendar-day ${isSelected ? 'selected' : ''}`}
-                    onClick={() => onDateSelect(dateStr)}
+                    className={`calendar-day ${isCurrentSelected ? 'selected' : ''} ${isTodayDate ? 'today' : ''}`}
+                    onClick={() => onDateSelect && onDateSelect(dateStr)}
+                    role="button"
+                    tabIndex={0}
                 >
                     <div className="day-number">{day}</div>
                     <div 
-                        className={`completion-indicator ${getCompletionColor(completionRate)}`}
-                        title={`${completionRate}% completed`}
+                        className="completion-dot"
+                        style={{ backgroundColor: getCompletionDotColor(completionRate) }}
                     ></div>
                 </div>
             )
@@ -94,100 +116,82 @@ function CalendarView({ selectedDate, onDateSelect }) {
     }
 
     return (
-        <Container className="my-3">
-            <Row className="align-items-center mb-3">
-                <Col xs="auto">
+        <Card className="shadow-sm border-0">
+            <Card.Body className="p-4">
+                {/* Header */}
+                <div className="d-flex align-items-center mb-3">
+                    <Calendar size={20} className="me-2 text-muted" />
+                    <h5 className="mb-0 fw-semibold">Calendar View</h5>
+                </div>
+                <p className="text-muted small mb-4">Select a date to view or update check-ins</p>
+
+                {/* Month Navigation */}
+                <div className="d-flex align-items-center justify-content-between mb-4">
                     <Button
-                        variant="outline-secondary"
-                        size="sm"
+                        variant="link"
+                        className="p-0 text-decoration-none text-muted"
                         onClick={() => navigateMonth("prev")}
                         disabled={loading}
                     >
-                        <ChevronLeft size={16} />
+                        <ChevronLeft size={20} />
                     </Button>
-                </Col>
-                <Col className="text-center">
-                    <h5 className="fw-semibold mb-0">
-                        {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                    
+                    <h5 className="mb-0 fw-semibold">
+                        {currentMonth.toLocaleDateString("en-US", { 
+                            month: "long", 
+                            year: "numeric" 
+                        })}
                     </h5>
-                </Col>
-                <Col xs="auto">
+                    
                     <Button
-                        variant="outline-secondary"
-                        size="sm"
+                        variant="link"
+                        className="p-0 text-decoration-none text-muted"
                         onClick={() => navigateMonth("next")}
                         disabled={loading}
                     >
-                        <ChevronRight size={16} />
+                        <ChevronRight size={20} />
                     </Button>
-                </Col>
-            </Row>
-
-            <div className={`calendar-grid ${loading ? "opacity-50" : ""}`}>
-                <div className="weekday">Sun</div>
-                <div className="weekday">Mon</div>
-                <div className="weekday">Tue</div>
-                <div className="weekday">Wed</div>
-                <div className="weekday">Thu</div>
-                <div className="weekday">Fri</div>
-                <div className="weekday">Sat</div>
-                {renderCalendarDays()}
-            </div>
-
-            <div className="mt-3 small text-muted">
-                <div className="fw-semibold">Completion Rate:</div>
-                <div className="d-flex align-items-center flex-wrap gap-2 mt-1">
-                    <span className="d-flex align-items-center">
-                        <span className="d-inline-block rounded-circle bg-secondary me-1" style={{ width: 12, height: 12 }}></span>
-                        No data/0%
-                    </span>
-                    <span className="d-flex align-items-center">
-                        <span className="d-inline-block rounded-circle bg-danger me-1" style={{ width: 12, height: 12 }}></span>
-                        1-39%
-                    </span>
-                    <span className="d-flex align-items-center">
-                        <span className="d-inline-block rounded-circle bg-orange me-1" style={{ width: 12, height: 12 }}></span>
-                        40-59%
-                    </span>
-                    <span className="d-flex align-items-center">
-                        <span className="d-inline-block rounded-circle bg-warning me-1" style={{ width: 12, height: 12 }}></span>
-                        60-79%
-                    </span>
-                    <span className="d-flex align-items-center">
-                        <span className="d-inline-block rounded-circle bg-success me-1" style={{ width: 12, height: 12 }}></span>
-                        80-100%
-                    </span>
                 </div>
-            </div>
+
+                {/* Calendar Grid */}
+                <div className="calendar-grid">
+                    <div className="weekday">Sun</div>
+                    <div className="weekday">Mon</div>
+                    <div className="weekday">Tue</div>
+                    <div className="weekday">Wed</div>
+                    <div className="weekday">Thu</div>
+                    <div className="weekday">Fri</div>
+                    <div className="weekday">Sat</div>
+                    {renderCalendarDays()}
+                </div>
+            </Card.Body>
 
             <style jsx>{`
                 .calendar-grid {
                     display: grid;
                     grid-template-columns: repeat(7, 1fr);
                     gap: 2px;
-                    background-color: #f8f9fa;
-                    padding: 2px;
-                    border-radius: 8px;
                 }
 
                 .weekday {
                     text-align: center;
-                    padding: 8px;
-                    font-weight: 600;
-                    font-size: 0.875rem;
+                    padding: 8px 4px;
+                    font-weight: 500;
+                    font-size: 14px;
                     color: #6c757d;
                 }
 
                 .calendar-day {
                     aspect-ratio: 1;
-                    background-color: white;
-                    padding: 4px;
-                    cursor: pointer;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    border-radius: 4px;
-                    transition: all 0.2s;
+                    justify-content: center;
+                    cursor: pointer;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    position: relative;
+                    padding: 8px 4px;
                 }
 
                 .calendar-day:hover {
@@ -195,26 +199,62 @@ function CalendarView({ selectedDate, onDateSelect }) {
                 }
 
                 .calendar-day.selected {
-                    background-color: #e9ecef;
+                    background-color: #007bff;
+                    color: white;
+                }
+
+                .calendar-day.today {
+                    background-color: #6f42c1;
+                    color: white;
+                }
+
+                .calendar-day.today.selected {
+                    background-color: #007bff;
                 }
 
                 .calendar-day.empty {
-                    background-color: transparent;
                     cursor: default;
                 }
 
+                .calendar-day.empty:hover {
+                    background-color: transparent;
+                }
+
                 .day-number {
-                    font-size: 0.875rem;
+                    font-size: 14px;
+                    font-weight: 500;
                     margin-bottom: 4px;
                 }
 
-                .completion-indicator {
-                    width: 8px;
-                    height: 8px;
+                .completion-dot {
+                    width: 6px;
+                    height: 6px;
                     border-radius: 50%;
                 }
+
+                .legend-dot {
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    margin-right: 8px;
+                }
+
+                @media (max-width: 768px) {
+                    .calendar-day {
+                        padding: 4px;
+                    }
+                    
+                    .day-number {
+                        font-size: 12px;
+                    }
+                    
+                    .completion-dot {
+                        width: 4px;
+                        height: 4px;
+                    }
+                }
             `}</style>
-        </Container>
+        </Card>
     )
 }
 
