@@ -3,7 +3,7 @@
     {
       "id": 1,
       "username": "admin",
-      "email": "admin@email.com",
+      "email": "admin@gmail.com",
       "password": "admin",
       "fullName": "Admin",
       "createdAt": "2024-01-01T00:00:00.000Z",
@@ -14,38 +14,12 @@
       }
     },
     {
-      "id": 2,
-      "username": "john",
-      "email": "john@email.com",
+      "id": "uc9w8sn9z",
+      "username": "thuanlv",
+      "email": "thuanlv@gmail.com",
       "password": "123",
-      "fullName": "John Doe",
-      "createdAt": "2024-02-15T10:30:00.000Z",
-      "preferences": {
-        "darkMode": true,
-        "notifications": true,
-        "language": "en"
-      }
-    },
-    {
-      "id": 3,
-      "username": "jane",
-      "email": "jane@email.com",
-      "password": "123",
-      "fullName": "Jane Smith",
-      "createdAt": "2024-03-10T14:20:00.000Z",
-      "preferences": {
-        "darkMode": false,
-        "notifications": false,
-        "language": "en"
-      }
-    },
-    {
-      "id": 1755243018995,
-      "username": "nvdk",
-      "email": "dk@gmail.com",
-      "password": "123",
-      "fullName": "Nguyễn Vũ Đăng Khánh",
-      "createdAt": "2025-08-15T07:30:18.995Z",
+      "fullName": "Lê Văn Thuận",
+      "createdAt": "2025-08-18T09:50:27.327Z",
       "preferences": {
         "darkMode": false,
         "notifications": true,
@@ -53,12 +27,12 @@
       }
     },
     {
-      "id": 1755243206140,
-      "username": "oke",
-      "email": "oke@gmail.com",
+      "id": "b02mw541u",
+      "username": "khanhnvd",
+      "email": "khanhnvd@gmail.com",
       "password": "123",
       "fullName": "Nguyễn Vũ Đăng Khánh",
-      "createdAt": "2025-08-15T07:33:26.140Z",
+      "createdAt": "2025-08-18T09:51:21.351Z",
       "preferences": {
         "darkMode": false,
         "notifications": true,
