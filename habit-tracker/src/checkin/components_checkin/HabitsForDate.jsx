@@ -95,20 +95,20 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
         marginRight: '16px'
     });
 
-    if (loading) {
-        return (
-            <Card className="shadow-sm border-0">
-                <Card.Body className="p-4">
-                    <div className="text-center py-4">
-                        <div className="spinner-border text-primary mb-3" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                        </div>
-                        <p className="text-muted mb-0">Loading habits...</p>
-                    </div>
-                </Card.Body>
-            </Card>
-        );
-    }
+    // if (loading) {
+    //     return (
+    //         <Card className="shadow-sm border-0">
+    //             <Card.Body className="p-4">
+    //                 <div className="text-center py-4">
+    //                     <div className="spinner-border text-primary mb-3" role="status">
+    //                         <span className="visually-hidden">Loading...</span>
+    //                     </div>
+    //                     <p className="text-muted mb-0">Loading habits...</p>
+    //                 </div>
+    //             </Card.Body>
+    //         </Card>
+    //     );
+    // }
 
     return (
         <Card className="shadow-sm border-0">
