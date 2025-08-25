@@ -486,27 +486,27 @@
       "userId": "b02mw541u",
       "habitId": 1,
       "date": "2025-08-25",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-25T18:53:28.964Z"
+      "completedAt": "2025-08-25T19:24:46.700Z"
     },
     {
       "id": "6b86",
       "userId": "b02mw541u",
       "habitId": 2,
       "date": "2025-08-25",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-25T18:53:30.112Z"
+      "completedAt": "2025-08-25T19:24:47.536Z"
     },
     {
       "id": "43ca",
       "userId": "b02mw541u",
       "habitId": 3,
       "date": "2025-08-25",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-25T18:53:30.715Z"
+      "completedAt": "2025-08-25T19:24:48.343Z"
     },
     {
       "id": "82c1",
@@ -515,7 +515,7 @@
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
-      "completedAt": "2025-08-25T18:53:31.424Z"
+      "completedAt": "2025-08-25T19:27:39.669Z"
     },
     {
       "id": "c61e",
@@ -561,6 +561,33 @@
       "completed": false,
       "notes": "",
       "completedAt": "2025-08-25T18:53:37.101Z"
+    },
+    {
+      "id": "890c",
+      "userId": "b02mw541u",
+      "habitId": 1,
+      "date": "2025-08-13",
+      "completed": true,
+      "notes": "",
+      "completedAt": "2025-08-25T19:14:57.696Z"
+    },
+    {
+      "id": "4e7c",
+      "userId": "b02mw541u",
+      "habitId": 2,
+      "date": "2025-08-13",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-25T19:14:48.735Z"
+    },
+    {
+      "id": "0ac6",
+      "userId": "b02mw541u",
+      "habitId": 3,
+      "date": "2025-08-13",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-25T19:14:48.180Z"
     }
   ],
   "reminders": [
