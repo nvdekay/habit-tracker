@@ -1,5 +1,5 @@
 import React, { use, useEffect, useState } from "react";
-import { Button, Card, CardBody, CardHeader, CardTitle, Modal, ProgressBar } from "react-bootstrap";
+import { Button, Card, CardBody, CardFooter, CardHeader, CardTitle, Modal, ProgressBar } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import "../index.css";
 import { useAuth } from "../context/AuthContext";
@@ -107,7 +107,7 @@ export default function Goal() {
 
             fetchFilteredGoals();
         }
-    }, [filters])
+    }, [filters]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -184,7 +184,7 @@ export default function Goal() {
             setError(prev => ({ ...prev, deadline: "" }));
             valid = true;
         }
-        if(newGoal.unit.trim() == ""){
+        if (newGoal.unit.trim() == "") {
             setError(prev => ({ ...prev, unit: "Unit is required" }));
             valid = false;
         }
@@ -224,6 +224,21 @@ export default function Goal() {
             }
         }
     }
+
+    const handleCheckLinkedHabit = (e) => {
+
+        if(e.target.checked){
+            const linkedHabits = newGoal.linkedHabits;
+            linkedHabits.push(e.target.value);
+            setNewGoal({...newGoal, linkedHabits});
+            console.log(`Linked habits: ${linkedHabits}, and new element: ${e.target.value}`);
+        }else{
+            const linkedHabits = newGoal.linkedHabits;
+            linkedHabits.pop(e.target.value);
+            setNewGoal({...newGoal, linkedHabits});
+            console.log(`Linked habits: ${linkedHabits}, and new element was deleted: ${e.target.value}`);
+        }
+    } 
 
     return (
         <div className="container py-4">
@@ -329,6 +344,18 @@ export default function Goal() {
                                 />
                             </div>
                         </CardBody>
+                        <CardFooter>
+                            <>
+                                <CardTitle className="flex items-center text-lg">Linked Habit</CardTitle>
+                                <ul>
+                                    {goal.linkedHabits?.map((habit) => (
+                                        <li>
+                                            {habits.find((h) => h.id == habit).name}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
+                        </CardFooter>
                     </Card>
                 ))}
             </div>
@@ -421,7 +448,7 @@ export default function Goal() {
                         <label className="d-block mb-2">Link Habit</label>
                         {habits?.map((habit) => (
                             <div className="form-check" key={habit.id}>
-                                <input className="form-check-input" type="checkbox" value={habit.id} id={`habit-${habit.id}`} />
+                                <input className="form-check-input" type="checkbox" value={habit.id} id={`habit-${habit.id}`} checked={newGoal?.linkedHabits?.includes(habit.id)} onChange={(e)=>handleCheckLinkedHabit(e)} />
                                 <label className="form-check-label" htmlFor={`habit-${habit.id}`}>
                                     {habit.name}
                                 </label>
