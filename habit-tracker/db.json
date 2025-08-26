@@ -683,7 +683,7 @@
     {
       "id": "5dce",
       "userId": "b02mw541u",
-      "habitId": null,
+      "habitId": "2",
       "date": "2025-08-26",
       "completed": true,
       "notes": "",
@@ -701,7 +701,7 @@
     {
       "id": "f0ea",
       "userId": "b02mw541u",
-      "habitId": null,
+      "habitId": "2",
       "date": "2025-08-24",
       "completed": true,
       "notes": "",
@@ -710,7 +710,7 @@
     {
       "id": "0579",
       "userId": "b02mw541u",
-      "habitId": null,
+      "habitId": "3",
       "date": "2025-08-23",
       "completed": true,
       "notes": "",
@@ -719,7 +719,7 @@
     {
       "id": "b0b7",
       "userId": "b02mw541u",
-      "habitId": "2",
+      "habitId": "4",
       "date": "2025-08-27",
       "completed": false,
       "notes": "",
