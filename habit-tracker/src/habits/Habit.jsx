@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getHabits, updateHabit, deleteHabit } from '../services/habitService';
-import { Button, Form, Card, Badge, Spinner, Alert, Col, Row, Container } from 'react-bootstrap';
+import { Button, Form, Card, Badge, Spinner, Toast, ToastContainer, Col, Row, Container } from 'react-bootstrap';
 import { Trash2 } from 'lucide-react';
 import Create from './components_habits/Create';
 import Edit from './components_habits/Edit';
@@ -153,11 +153,52 @@ const Habit = () => {
         )}
       </div>
 
-      {error && <Alert variant="danger">{error}</Alert>}
-      {success && <Alert variant="success">{success}</Alert>}
+      <ToastContainer position="top-end" className="pt-5" style={{ zIndex: 1050 }}>
+        {error && (
+          <Toast
+            onClose={() => setError(null)}
+            show={!!error}
+            delay={3000}
+            autohide
+            bg="danger"
+            className="text-white"
+          >
+            <Toast.Header>
+              <strong className="me-auto">Error</strong>
+            </Toast.Header>
+            <Toast.Body>{error}</Toast.Body>
+          </Toast>
+        )}
+        {success && (
+          <Toast
+            onClose={() => setSuccess(null)}
+            show={!!success}
+            delay={3000}
+            autohide
+            bg="success"
+            className="text-white"
+          >
+            <Toast.Header>
+              <strong className="me-auto">Success</strong>
+            </Toast.Header>
+            <Toast.Body>{success}</Toast.Body>
+          </Toast>
+        )}
+      </ToastContainer>
 
       {!user ? (
-        <Alert variant="warning">Please log in to use this feature.</Alert>
+        <ToastContainer position="top-end" className="pt-5" style={{ zIndex: 1050 }}>
+          <Toast
+            show={true}
+            bg="warning"
+            className="text-dark"
+          >
+            <Toast.Header>
+              <strong className="me-auto">Warning</strong>
+            </Toast.Header>
+            <Toast.Body>Please log in to use this feature.</Toast.Body>
+          </Toast>
+        </ToastContainer>
       ) : (
         <Row>
           <Col xs={2}>
@@ -187,8 +228,7 @@ const Habit = () => {
                 <option value="monthly">Monthly</option>
               </Form.Select>
             </Form.Group>
-            {/* <h4>Type</h4>
-            <div>
+            {/* <div>
               <input
                 type="radio"
                 name="type"
@@ -228,7 +268,6 @@ const Habit = () => {
                 disabled={loading}
               /> Monthly
             </div> */}
-
             <hr />
             <h4>Status</h4>
             <div>
@@ -261,7 +300,18 @@ const Habit = () => {
                 disabled={loading}
               /> Inactive
             </div>
-
+            {/* <Form.Group>
+              <Form.Select
+                name="isActive"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                disabled={loading}
+              >
+                <option value="">All</option>
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+              </Form.Select>
+            </Form.Group> */}
             <hr />
             <h4>Priority</h4>
             <div>
@@ -291,11 +341,23 @@ const Habit = () => {
                 disabled={loading}
               /> Low
             </div>
+            {/* <Form.Group>
+              <Form.Select
+                name="priority"
+                value={priorityFilter[0] || ""}
+                onChange={(e) => setPriorityFilter(e.target.value ? [e.target.value] : [])}
+                disabled={loading}
+              >
+                <option value="">All</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </Form.Select>
+            </Form.Group> */}
           </Col>
 
           <Col xs={10}>
             <div className="d-flex justify-content-between align-items-center mb-3">
-
               <Button
                 className="btn btn-primary"
                 onClick={MySort}
@@ -307,7 +369,7 @@ const Habit = () => {
             {loading && (!filteredHabits || filteredHabits.length === 0) ? (
               <Spinner animation="border" />
             ) : (
-              <Row xs={1} md={3} className="g-4">
+              <Row xs={1} md={2} className="g-4">
                 {filteredHabits.map((habit) => (
                   <Col key={habit.id}>
                     <Card style={{ minHeight: '200px', display: 'flex', flexDirection: 'column' }}>
