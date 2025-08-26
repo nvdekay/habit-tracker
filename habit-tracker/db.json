@@ -678,6 +678,42 @@
       "completed": false,
       "notes": "",
       "completedAt": "2025-08-26T06:46:05.060Z"
+    },
+    {
+      "id": "5dce",
+      "userId": "b02mw541u",
+      "habitId": null,
+      "date": "2025-08-26",
+      "completed": true,
+      "notes": "",
+      "completedAt": "2025-08-26T08:02:18.736Z"
+    },
+    {
+      "id": "3888",
+      "userId": "b02mw541u",
+      "habitId": "1",
+      "date": "2025-08-27",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T08:02:34.935Z"
+    },
+    {
+      "id": "f0ea",
+      "userId": "b02mw541u",
+      "habitId": null,
+      "date": "2025-08-24",
+      "completed": true,
+      "notes": "",
+      "completedAt": "2025-08-26T08:02:40.762Z"
+    },
+    {
+      "id": "0579",
+      "userId": "b02mw541u",
+      "habitId": null,
+      "date": "2025-08-23",
+      "completed": true,
+      "notes": "",
+      "completedAt": "2025-08-26T08:02:46.215Z"
     }
   ],
   "reminders": [

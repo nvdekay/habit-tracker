@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { getHabits, createHabit, updateHabit, deleteHabit } from '../services/habitService';
+import { getHabits, deleteHabit, updateHabit } from '../services/habitService';
 import { useAuth } from '../context/AuthContext';
-import { Button, Form, Card, Badge, Spinner, Alert, Modal, Col, Row } from 'react-bootstrap';
+import { Button, Form, Card, Badge, Spinner, Alert, Col, Row } from 'react-bootstrap';
 import { Pencil, Trash2 } from 'lucide-react';
+import Create from './components_habits/Create';
+import Edit from './components_habits/Edit';
 
 export default function Habit() {
   const { user } = useAuth();
@@ -11,23 +13,13 @@ export default function Habit() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [currentHabit, setCurrentHabit] = useState(null);
   const [filters, setFilters] = useState({
+    search: '',
     type: '',
     isActive: '',
-    priority: ''
+    priority: []
   });
-  const [newHabit, setNewHabit] = useState({
-    name: '',
-    description: '',
-    type: 'daily',
-    frequency: 1,
-    priority: 'medium',
-    isActive: true,
-    userId: user ? user.id : ''
-  });
+  const [sortBy, setSortBy] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -40,14 +32,29 @@ export default function Habit() {
   }, [user]);
 
   useEffect(() => {
-    setFilteredHabits(
-      habits.filter(habit =>
-        (!filters.type || habit.type === filters.type) &&
-        (filters.isActive === '' || habit.isActive === (filters.isActive === 'true')) &&
-        (!filters.priority || habit.priority === filters.priority)
-      )
+    let result = [...habits];
+
+    result = result.filter(habit =>
+      (!filters.search || habit.name.toLowerCase().includes(filters.search.toLowerCase())) &&
+      (!filters.type || habit.type === filters.type) &&
+      (filters.isActive === '' || habit.isActive === (filters.isActive === 'true')) &&
+      (filters.priority.length === 0 || filters.priority.includes(habit.priority))
     );
-  }, [habits, filters]);
+
+    if (sortBy) {
+      result.sort((a, b) => {
+        const order = ['daily', 'weekly', 'monthly'];
+        if (sortBy === 'type-asc') {
+          return order.indexOf(a.type) - order.indexOf(b.type);
+        } else if (sortBy === 'type-desc') {
+          return order.indexOf(b.type) - order.indexOf(a.type);
+        }
+        return 0;
+      });
+    }
+
+    setFilteredHabits(result);
+  }, [habits, filters, sortBy]);
 
   const fetchHabits = async () => {
     setLoading(true);
@@ -56,59 +63,6 @@ export default function Habit() {
       const userHabits = Array.isArray(habitData) ? habitData.filter(habit => habit.userId === user.id) : [];
       setHabits(userHabits);
       setFilteredHabits(userHabits);
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCreateHabit = async (e) => {
-    e.preventDefault();
-    if (!user) {
-      setError('Please log in to create a habit');
-      return;
-    }
-    setLoading(true);
-    try {
-      const createdHabit = await createHabit({ ...newHabit, userId: user.id });
-      setHabits([...habits, createdHabit]);
-      setFilteredHabits([...filteredHabits, createdHabit]);
-      setNewHabit({
-        name: '',
-        description: '',
-        type: 'daily',
-        frequency: 1,
-        priority: 'medium',
-        isActive: true,
-        userId: user.id
-      });
-      setShowCreateModal(false);
-      setSuccess('Habit created successfully');
-      setTimeout(() => setSuccess(null), 3000);
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEditHabit = async (e) => {
-    e.preventDefault();
-    if (!user) {
-      setError('Please log in to edit a habit');
-      return;
-    }
-    setLoading(true);
-    try {
-      const updatedHabit = await updateHabit(currentHabit.id, currentHabit);
-      setHabits(habits.map((h) => (h.id === currentHabit.id ? updatedHabit : h)));
-      setFilteredHabits(filteredHabits.map((h) => (h.id === currentHabit.id ? updatedHabit : h)));
-      setShowEditModal(false);
-      setSuccess('Habit updated successfully');
-      setTimeout(() => setSuccess(null), 3000);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -146,13 +100,21 @@ export default function Habit() {
   };
 
   const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
+    const { name, value, checked } = e.target;
+    if (name === 'priority') {
+      setFilters(prev => ({
+        ...prev,
+        priority: checked
+          ? [...prev.priority, value]
+          : prev.priority.filter(p => p !== value)
+      }));
+    } else {
+      setFilters({ ...filters, [name]: value });
+    }
   };
 
-  const openEditModal = (habit) => {
-    setCurrentHabit({ ...habit });
-    setShowEditModal(true);
+  const handleSortChange = (e) => {
+    setSortBy(e.target.value);
   };
 
   return (
@@ -163,9 +125,15 @@ export default function Habit() {
           <p className="fs-6">Manage and track your daily habits</p>
         </div>
         {user && (
-          <Button variant="success" onClick={() => setShowCreateModal(true)}>
-            +
-          </Button>
+          <Create
+            user={user}
+            setHabits={setHabits}
+            setFilteredHabits={setFilteredHabits}
+            setSuccess={setSuccess}
+            setError={setError}
+            loading={loading}
+            setLoading={setLoading}
+          />
         )}
       </div>
 
@@ -177,204 +145,103 @@ export default function Habit() {
       ) : (
         <>
           <Form className="mb-4">
-            <div className="d-flex gap-3">
-              <Form.Group>
-                <Form.Label>Type</Form.Label>
-                <Form.Select
-                  name="type"
-                  value={filters.type}
+            <div className="d-flex gap-3 flex-wrap">
+              <Form.Group style={{ minWidth: '200px' }}>
+                <Form.Label>Search by Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="search"
+                  value={filters.search}
                   onChange={handleFilterChange}
+                  placeholder="Enter habit name"
+                  disabled={loading}
+                />
+              </Form.Group>
+              <Form.Group style={{ minWidth: '200px' }}>
+                <Form.Label>Sort by Type</Form.Label>
+                <Form.Select
+                  name="sortBy"
+                  value={sortBy}
+                  onChange={handleSortChange}
                   disabled={loading}
                 >
-                  <option value="">All</option>
-                  <option value="daily">Daily</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
+                  <option value="">Default</option>
+                  <option value="type-asc">Daily to Monthly</option>
+                  <option value="type-desc">Monthly to Daily</option>
                 </Form.Select>
               </Form.Group>
-              <Form.Group>
+              <Form.Group style={{ minWidth: '200px' }}>
                 <Form.Label>Status</Form.Label>
-                <Form.Select
-                  name="isActive"
-                  value={filters.isActive}
-                  onChange={handleFilterChange}
-                  disabled={loading}
-                >
-                  <option value="">All</option>
-                  <option value="true">Active</option>
-                  <option value="false">Inactive</option>
-                </Form.Select>
+                <div>
+                  <Form.Check
+                    type="radio"
+                    label="All"
+                    name="isActive"
+                    value=""
+                    checked={filters.isActive === ''}
+                    onChange={handleFilterChange}
+                    disabled={loading}
+                    inline
+                  />
+                  <Form.Check
+                    type="radio"
+                    label="Active"
+                    name="isActive"
+                    value="true"
+                    checked={filters.isActive === 'true'}
+                    onChange={handleFilterChange}
+                    disabled={loading}
+                    inline
+                  />
+                  <Form.Check
+                    type="radio"
+                    label="Inactive"
+                    name="isActive"
+                    value="false"
+                    checked={filters.isActive === 'false'}
+                    onChange={handleFilterChange}
+                    disabled={loading}
+                    inline
+                  />
+                </div>
               </Form.Group>
-              <Form.Group>
+              <Form.Group style={{ minWidth: '200px' }}>
                 <Form.Label>Priority</Form.Label>
-                <Form.Select
-                  name="priority"
-                  value={filters.priority}
-                  onChange={handleFilterChange}
-                  disabled={loading}
-                >
-                  <option value="">All</option>
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
-                </Form.Select>
+                <div>
+                  <Form.Check
+                    type="checkbox"
+                    label="High"
+                    name="priority"
+                    value="high"
+                    checked={filters.priority.includes('high')}
+                    onChange={handleFilterChange}
+                    disabled={loading}
+                    inline
+                  />
+                  <Form.Check
+                    type="checkbox"
+                    label="Medium"
+                    name="priority"
+                    value="medium"
+                    checked={filters.priority.includes('medium')}
+                    onChange={handleFilterChange}
+                    disabled={loading}
+                    inline
+                  />
+                  <Form.Check
+                    type="checkbox"
+                    label="Low"
+                    name="priority"
+                    value="low"
+                    checked={filters.priority.includes('low')}
+                    onChange={handleFilterChange}
+                    disabled={loading}
+                    inline
+                  />
+                </div>
               </Form.Group>
             </div>
           </Form>
-
-          <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Create New Habit</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form onSubmit={handleCreateHabit}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Habit Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={newHabit.name}
-                    onChange={(e) => setNewHabit({ ...newHabit, name: e.target.value })}
-                    required
-                    disabled={loading}
-                  />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={newHabit.description}
-                    onChange={(e) => setNewHabit({ ...newHabit, description: e.target.value })}
-                    disabled={loading}
-                  />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Type</Form.Label>
-                  <Form.Select
-                    value={newHabit.type}
-                    onChange={(e) => setNewHabit({ ...newHabit, type: e.target.value })}
-                    disabled={loading}
-                  >
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                  </Form.Select>
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Frequency</Form.Label>
-                  <Form.Control
-                    type="number"
-                    value={newHabit.frequency}
-                    onChange={(e) => setNewHabit({ ...newHabit, frequency: parseInt(e.target.value) })}
-                    min="1"
-                    disabled={loading}
-                  />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Priority</Form.Label>
-                  <Form.Select
-                    value={newHabit.priority}
-                    onChange={(e) => setNewHabit({ ...newHabit, priority: e.target.value })}
-                    disabled={loading}
-                  >
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                  </Form.Select>
-                </Form.Group>
-                <Button type="submit" variant="success" disabled={loading}>
-                  {loading ? <Spinner animation="border" size="sm" /> : 'Create Habit'}
-                </Button>
-              </Form>
-            </Modal.Body>
-          </Modal>
-
-          <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Edit Habit</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              {currentHabit && (
-                <Form onSubmit={handleEditHabit}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Habit Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={currentHabit.name}
-                      onChange={(e) => setCurrentHabit({ ...currentHabit, name: e.target.value })}
-                      required
-                      disabled={loading}
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Description</Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={currentHabit.description}
-                      onChange={(e) => setCurrentHabit({ ...currentHabit, description: e.target.value })}
-                      disabled={loading}
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Type</Form.Label>
-                    <Form.Select
-                      value={currentHabit.type}
-                      onChange={(e) => setCurrentHabit({ ...currentHabit, type: e.target.value })}
-                      disabled={loading}
-                    >
-                      <option value="daily">Daily</option>
-                      <option value="weekly">Weekly</option>
-                      <option value="monthly">Monthly</option>
-                    </Form.Select>
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Frequency</Form.Label>
-                    <Form.Control
-                      type="number"
-                      value={currentHabit.frequency}
-                      onChange={(e) => setCurrentHabit({ ...currentHabit, frequency: parseInt(e.target.value) })}
-                      min="1"
-                      disabled={loading}
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Priority</Form.Label>
-                    <Form.Select
-                      value={currentHabit.priority}
-                      onChange={(e) => setCurrentHabit({ ...newHabit, priority: e.target.value })}
-                      disabled={loading}
-                    >
-                      <option value="high">High</option>
-                      <option value="medium">Medium</option>
-                      <option value="low">Low</option>
-                    </Form.Select>
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Current Streak</Form.Label>
-                    <Form.Control
-                      type="number"
-                      value={currentHabit.currentStreak || 0}
-                      onChange={(e) => setCurrentHabit({ ...currentHabit, currentStreak: parseInt(e.target.value) })}
-                      min="0"
-                      disabled={loading}
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Longest Streak</Form.Label>
-                    <Form.Control
-                      type="number"
-                      value={currentHabit.longestStreak || 0}
-                      onChange={(e) => setCurrentHabit({ ...currentHabit, longestStreak: parseInt(e.target.value) })}
-                      min="0"
-                      disabled={loading}
-                    />
-                  </Form.Group>
-                  <Button type="submit" variant="warning" disabled={loading}>
-                    {loading ? <Spinner animation="border" size="sm" /> : 'Save Changes'}
-                  </Button>
-                </Form>
-              )}
-            </Modal.Body>
-          </Modal>
 
           {loading && (!filteredHabits || filteredHabits.length === 0) ? (
             <Spinner animation="border" />
@@ -389,14 +256,15 @@ export default function Habit() {
                           {habit.name}
                         </Card.Title>
                         <div>
-                          <Button
-                            variant="warning"
-                            onClick={() => openEditModal(habit)}
-                            disabled={loading}
-                            className="p-1 me-2"
-                          >
-                            <Pencil size={20} />
-                          </Button>
+                          <Edit
+                            habit={habit}
+                            setHabits={setHabits}
+                            setFilteredHabits={setFilteredHabits}
+                            setSuccess={setSuccess}
+                            setError={setError}
+                            loading={loading}
+                            setLoading={setLoading}
+                          />
                           <Button
                             variant="danger"
                             onClick={() => handleDeleteHabit(habit.id)}
