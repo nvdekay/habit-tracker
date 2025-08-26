@@ -612,72 +612,81 @@
       "userId": "b02mw541u",
       "habitId": "1",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:12.261Z"
+      "completedAt": "2025-08-26T06:57:32.748Z"
     },
     {
       "id": "8f18",
       "userId": "b02mw541u",
       "habitId": "2",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:45:59.685Z"
+      "completedAt": "2025-08-26T06:57:33.253Z"
     },
     {
       "id": "95f2",
       "userId": "b02mw541u",
       "habitId": "3",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:00.662Z"
+      "completedAt": "2025-08-26T06:57:33.986Z"
     },
     {
       "id": "6131",
       "userId": "b02mw541u",
       "habitId": "4",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:01.563Z"
+      "completedAt": "2025-08-26T06:57:34.685Z"
     },
     {
       "id": "5a3d",
       "userId": "b02mw541u",
       "habitId": "5",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:02.378Z"
+      "completedAt": "2025-08-26T06:57:35.308Z"
     },
     {
       "id": "69de",
       "userId": "b02mw541u",
       "habitId": "6",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:03.070Z"
+      "completedAt": "2025-08-26T06:57:38.656Z"
     },
     {
       "id": "e30e",
       "userId": "b02mw541u",
       "habitId": "7",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:03.825Z"
+      "completedAt": "2025-08-26T06:57:39.205Z"
     },
     {
       "id": "7daa",
       "userId": "b02mw541u",
       "habitId": "8",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:05.060Z"
+      "completedAt": "2025-08-26T06:57:39.614Z"
+    },
+    {
+      "id": "0f65",
+      "userId": "b02mw541u",
+      "habitId": "9",
+      "date": "2025-08-26",
+      "completed": true,
+      "notes": "",
+      "completedAt": "2025-08-26T06:57:40.171Z"
     }
   ],
   "reminders": [

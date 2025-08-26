@@ -139,7 +139,6 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
                             >
                                 {/* Habit Icon */}
                                 <div style={getHabitIconStyle(habit.habitColor)}>
-                                    {habit.habitIcon || 'icon'}
                                 </div>
 
                                 {/* Habit Info */}
