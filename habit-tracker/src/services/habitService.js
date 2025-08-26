@@ -1,44 +1,47 @@
-// habitService.js
-const API_URL = "http://localhost:8080/api/habits";
+import axios from 'axios';
 
-// Lấy danh sách thói quen
+const API_URL = "http://localhost:8080";
+
 export async function getHabits() {
-    const res = await fetch(API_URL);
-    if (!res.ok) throw new Error("Failed to fetch habits");
-    return res.json();
+    try {
+        const res = await axios.get(`${API_URL}/habits`);
+        return res.data;
+    } catch (error) {
+        console.log("Failed to fetch habits" + error);
+    }
 }
 
-// Tạo mới thói quen
 export async function createHabit(habit) {
-    const res = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(habit),
-    });
-    if (!res.ok) throw new Error("Failed to create habit");
-    return res.json();
+    try {
+        const res = await axios.post(`${API_URL}/habits`, habit, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.log("Failed to create habits" + error);
+    }
 }
 
-// Cập nhật thói quen
 export async function updateHabit(id, habit) {
-    const res = await fetch(`${API_URL}/${id}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(habit),
-    });
-    if (!res.ok) throw new Error("Failed to update habit");
-    return res.json();
+    try {
+        const res = await axios.put(`${API_URL}/habits/${id}`, habit, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.log("Failed to update habits" + error);
+    }
 }
 
-// Xóa thói quen
 export async function deleteHabit(id) {
-    const res = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
-    });
-    if (!res.ok) throw new Error("Failed to delete habit");
-    return true;
+    try {
+        await axios.delete(`${API_URL}/habits/${id}`);
+        return true;
+    } catch (error) {
+        console.log("Failed to delete habits" + error);
+    }
 }
