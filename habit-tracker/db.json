@@ -214,7 +214,7 @@
       "endDate": "2024-12-31",
       "priority": "low",
       "color": "#55a3ff",
-      "isActive": false,
+      "isActive": true,
       "currentStreak": 0,
       "longestStreak": 9,
       "totalCompletions": 67,
@@ -329,8 +329,8 @@
     {
       "id": "e1ec",
       "userId": "b02mw541u",
-      "name": "Read 100 books",
-      "description": "Read 100 books",
+      "name": "Read 1000 books",
+      "description": "Read 1000 books",
       "startDate": "2025-08-27",
       "deadline": "2025-08-29",
       "priority": "medium",
@@ -341,7 +341,8 @@
       "linkedHabits": [
         1,
         2,
-        3
+        3,
+        "2"
       ]
     }
   ],
@@ -349,7 +350,7 @@
     {
       "id": "1",
       "userId": "1",
-      "habitId": 1,
+      "habitId": "1",
       "date": "2024-08-14",
       "completed": true,
       "notes": "Great morning workout!",
@@ -358,7 +359,7 @@
     {
       "id": "2",
       "userId": "1",
-      "habitId": 1,
+      "habitId": "1",
       "date": "2024-08-13",
       "completed": true,
       "notes": "Felt energized after exercise",
@@ -367,7 +368,7 @@
     {
       "id": "3",
       "userId": "1",
-      "habitId": 1,
+      "habitId": "1",
       "date": "2024-08-12",
       "completed": true,
       "notes": "",
@@ -376,7 +377,7 @@
     {
       "id": "4",
       "userId": "1",
-      "habitId": 2,
+      "habitId": "2",
       "date": "2024-08-13",
       "completed": true,
       "notes": "Finished chapter 5 of 'Clean Code'",
@@ -385,7 +386,7 @@
     {
       "id": "5",
       "userId": "1",
-      "habitId": 2,
+      "habitId": "2",
       "date": "2024-08-12",
       "completed": true,
       "notes": "Read about design patterns",
@@ -394,7 +395,7 @@
     {
       "id": "6",
       "userId": "1",
-      "habitId": 3,
+      "habitId": "3",
       "date": "2024-08-14",
       "completed": true,
       "notes": "Very peaceful session",
@@ -403,7 +404,7 @@
     {
       "id": "7",
       "userId": "1",
-      "habitId": 3,
+      "habitId": "3",
       "date": "2024-08-13",
       "completed": true,
       "notes": "Focused on breathing",
@@ -412,7 +413,7 @@
     {
       "id": "8",
       "userId": "1",
-      "habitId": 4,
+      "habitId": "4",
       "date": "2024-08-11",
       "completed": true,
       "notes": "Bought groceries for the week",
@@ -421,7 +422,7 @@
     {
       "id": "9",
       "userId": "1",
-      "habitId": 5,
+      "habitId": "5",
       "date": "2024-08-12",
       "completed": true,
       "notes": "Worked on React components",
@@ -430,7 +431,7 @@
     {
       "id": "10",
       "userId": "1",
-      "habitId": 6,
+      "habitId": "6",
       "date": "2024-07-31",
       "completed": true,
       "notes": "Reviewed July expenses and planned August budget",
@@ -439,7 +440,7 @@
     {
       "id": "11",
       "userId": "2",
-      "habitId": 7,
+      "habitId": "7",
       "date": "2024-08-14",
       "completed": true,
       "notes": "5.2km in 28 minutes",
@@ -448,7 +449,7 @@
     {
       "id": "12",
       "userId": "2",
-      "habitId": 7,
+      "habitId": "7",
       "date": "2024-08-13",
       "completed": true,
       "notes": "Perfect weather for running",
@@ -457,7 +458,7 @@
     {
       "id": "13",
       "userId": "2",
-      "habitId": 8,
+      "habitId": "8",
       "date": "2024-08-14",
       "completed": true,
       "notes": "Stayed hydrated all day",
@@ -466,7 +467,7 @@
     {
       "id": "14",
       "userId": "2",
-      "habitId": 8,
+      "habitId": "8",
       "date": "2024-08-13",
       "completed": true,
       "notes": "8 glasses completed",
@@ -475,7 +476,7 @@
     {
       "id": "15",
       "userId": "3",
-      "habitId": 9,
+      "habitId": "9",
       "date": "2024-08-13",
       "completed": true,
       "notes": "45-minute vinyasa flow",
@@ -484,7 +485,7 @@
     {
       "id": "16",
       "userId": "3",
-      "habitId": 9,
+      "habitId": "9",
       "date": "2024-08-11",
       "completed": true,
       "notes": "Morning yoga session",
@@ -493,7 +494,7 @@
     {
       "id": "17",
       "userId": "3",
-      "habitId": 10,
+      "habitId": "1",
       "date": "2024-08-10",
       "completed": true,
       "notes": "Made quinoa salad with vegetables",
@@ -502,7 +503,7 @@
     {
       "id": "87f3",
       "userId": "b02mw541u",
-      "habitId": 1,
+      "habitId": "1",
       "date": "2025-08-25",
       "completed": true,
       "notes": "",
@@ -511,7 +512,7 @@
     {
       "id": "6b86",
       "userId": "b02mw541u",
-      "habitId": 2,
+      "habitId": "2",
       "date": "2025-08-25",
       "completed": true,
       "notes": "",
@@ -520,7 +521,7 @@
     {
       "id": "43ca",
       "userId": "b02mw541u",
-      "habitId": 3,
+      "habitId": "3",
       "date": "2025-08-25",
       "completed": true,
       "notes": "",
@@ -529,7 +530,7 @@
     {
       "id": "82c1",
       "userId": "b02mw541u",
-      "habitId": 4,
+      "habitId": "4",
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
@@ -538,7 +539,7 @@
     {
       "id": "c61e",
       "userId": "b02mw541u",
-      "habitId": 5,
+      "habitId": "5",
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
@@ -547,7 +548,7 @@
     {
       "id": "e8d6",
       "userId": "b02mw541u",
-      "habitId": 6,
+      "habitId": "6",
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
@@ -556,7 +557,7 @@
     {
       "id": "9a59",
       "userId": "b02mw541u",
-      "habitId": 7,
+      "habitId": "7",
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
@@ -565,7 +566,7 @@
     {
       "id": "769c",
       "userId": "b02mw541u",
-      "habitId": 8,
+      "habitId": "8",
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
@@ -574,7 +575,7 @@
     {
       "id": "84ae",
       "userId": "b02mw541u",
-      "habitId": 9,
+      "habitId": "9",
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
@@ -583,7 +584,7 @@
     {
       "id": "890c",
       "userId": "b02mw541u",
-      "habitId": 1,
+      "habitId": "1",
       "date": "2025-08-13",
       "completed": true,
       "notes": "",
@@ -592,7 +593,7 @@
     {
       "id": "4e7c",
       "userId": "b02mw541u",
-      "habitId": 2,
+      "habitId": "2",
       "date": "2025-08-13",
       "completed": false,
       "notes": "",
@@ -601,7 +602,7 @@
     {
       "id": "0ac6",
       "userId": "b02mw541u",
-      "habitId": 3,
+      "habitId": "3",
       "date": "2025-08-13",
       "completed": false,
       "notes": "",
@@ -693,9 +694,9 @@
       "userId": "b02mw541u",
       "habitId": "1",
       "date": "2025-08-27",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T08:02:34.935Z"
+      "completedAt": "2025-08-26T14:52:20.759Z"
     },
     {
       "id": "f0ea",
@@ -714,6 +715,69 @@
       "completed": true,
       "notes": "",
       "completedAt": "2025-08-26T08:02:46.215Z"
+    },
+    {
+      "id": "b0b7",
+      "userId": "b02mw541u",
+      "habitId": "2",
+      "date": "2025-08-27",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T15:56:06.107Z"
+    },
+    {
+      "id": "de9f",
+      "userId": "b02mw541u",
+      "habitId": "3",
+      "date": "2025-08-27",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T15:56:05.535Z"
+    },
+    {
+      "id": "6297",
+      "userId": "b02mw541u",
+      "habitId": "4",
+      "date": "2025-08-27",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T15:56:05.071Z"
+    },
+    {
+      "id": "cf37",
+      "userId": "b02mw541u",
+      "habitId": "5",
+      "date": "2025-08-27",
+      "completed": true,
+      "notes": "",
+      "completedAt": "2025-08-26T15:56:04.645Z"
+    },
+    {
+      "id": "20ee",
+      "userId": "b02mw541u",
+      "habitId": "6",
+      "date": "2025-08-27",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T15:45:29.478Z"
+    },
+    {
+      "id": "4295",
+      "userId": "b02mw541u",
+      "habitId": "7",
+      "date": "2025-08-27",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T15:45:28.931Z"
+    },
+    {
+      "id": "109e",
+      "userId": "b02mw541u",
+      "habitId": "8",
+      "date": "2025-08-27",
+      "completed": true,
+      "notes": "",
+      "completedAt": "2025-08-26T15:45:28.382Z"
     }
   ],
   "reminders": [
