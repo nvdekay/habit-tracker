@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getHabits, createHabit, updateHabit, deleteHabit } from '../services/habitService';
 import { useAuth } from '../context/AuthContext';
-import { Button, Form, Table, Badge, Spinner, Alert, Modal } from 'react-bootstrap';
+import { Button, Form, Card, Badge, Spinner, Alert, Modal, Col, Row } from 'react-bootstrap';
+import { Pencil, Trash2 } from 'lucide-react';
 
 export default function Habit() {
   const { user } = useAuth();
@@ -9,7 +10,10 @@ export default function Habit() {
   const [filteredHabits, setFilteredHabits] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [success, setSuccess] = useState(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [currentHabit, setCurrentHabit] = useState(null);
   const [filters, setFilters] = useState({
     type: '',
     isActive: '',
@@ -21,7 +25,6 @@ export default function Habit() {
     type: 'daily',
     frequency: 1,
     priority: 'medium',
-    color: '#ffffff',
     isActive: true,
     userId: user ? user.id : ''
   });
@@ -78,11 +81,34 @@ export default function Habit() {
         type: 'daily',
         frequency: 1,
         priority: 'medium',
-        color: '#ffffff',
         isActive: true,
         userId: user.id
       });
-      setShowModal(false);
+      setShowCreateModal(false);
+      setSuccess('Habit created successfully');
+      setTimeout(() => setSuccess(null), 3000);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditHabit = async (e) => {
+    e.preventDefault();
+    if (!user) {
+      setError('Please log in to edit a habit');
+      return;
+    }
+    setLoading(true);
+    try {
+      const updatedHabit = await updateHabit(currentHabit.id, currentHabit);
+      setHabits(habits.map((h) => (h.id === currentHabit.id ? updatedHabit : h)));
+      setFilteredHabits(filteredHabits.map((h) => (h.id === currentHabit.id ? updatedHabit : h)));
+      setShowEditModal(false);
+      setSuccess('Habit updated successfully');
+      setTimeout(() => setSuccess(null), 3000);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -96,6 +122,8 @@ export default function Habit() {
       const updatedHabit = await updateHabit(id, { ...habit, isActive: !currentStatus });
       setHabits(habits.map((h) => (h.id === id ? updatedHabit : h)));
       setFilteredHabits(filteredHabits.map((h) => (h.id === id ? updatedHabit : h)));
+      setSuccess(`Habit status changed to ${!currentStatus ? 'Active' : 'Inactive'}`);
+      setTimeout(() => setSuccess(null), 3000);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -108,6 +136,8 @@ export default function Habit() {
         await deleteHabit(id);
         setHabits(habits.filter((h) => h.id !== id));
         setFilteredHabits(filteredHabits.filter((h) => h.id !== id));
+        setSuccess('Habit deleted successfully');
+        setTimeout(() => setSuccess(null), 3000);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -120,6 +150,11 @@ export default function Habit() {
     setFilters({ ...filters, [name]: value });
   };
 
+  const openEditModal = (habit) => {
+    setCurrentHabit({ ...habit });
+    setShowEditModal(true);
+  };
+
   return (
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -128,13 +163,14 @@ export default function Habit() {
           <p className="fs-6">Manage and track your daily habits</p>
         </div>
         {user && (
-          <Button variant="primary" onClick={() => setShowModal(true)}>
+          <Button variant="success" onClick={() => setShowCreateModal(true)}>
             +
           </Button>
         )}
       </div>
 
       {error && <Alert variant="danger">{error}</Alert>}
+      {success && <Alert variant="success">{success}</Alert>}
 
       {!user ? (
         <Alert variant="warning">Please log in to use this feature.</Alert>
@@ -180,12 +216,13 @@ export default function Habit() {
                   <option value="">All</option>
                   <option value="high">High</option>
                   <option value="medium">Medium</option>
+                  <option value="low">Low</option>
                 </Form.Select>
               </Form.Group>
             </div>
           </Form>
 
-          <Modal show={showModal} onHide={() => setShowModal(false)}>
+          <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)}>
             <Modal.Header closeButton>
               <Modal.Title>Create New Habit</Modal.Title>
             </Modal.Header>
@@ -241,81 +278,168 @@ export default function Habit() {
                   >
                     <option value="high">High</option>
                     <option value="medium">Medium</option>
+                    <option value="low">Low</option>
                   </Form.Select>
                 </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Color</Form.Label>
-                  <Form.Control
-                    type="color"
-                    value={newHabit.color}
-                    onChange={(e) => setNewHabit({ ...newHabit, color: e.target.value })}
-                    disabled={loading}
-                  />
-                </Form.Group>
-                <Button type="submit" disabled={loading}>
+                <Button type="submit" variant="success" disabled={loading}>
                   {loading ? <Spinner animation="border" size="sm" /> : 'Create Habit'}
                 </Button>
               </Form>
             </Modal.Body>
           </Modal>
 
+          <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Edit Habit</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {currentHabit && (
+                <Form onSubmit={handleEditHabit}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Habit Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={currentHabit.name}
+                      onChange={(e) => setCurrentHabit({ ...currentHabit, name: e.target.value })}
+                      required
+                      disabled={loading}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Description</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={currentHabit.description}
+                      onChange={(e) => setCurrentHabit({ ...currentHabit, description: e.target.value })}
+                      disabled={loading}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Type</Form.Label>
+                    <Form.Select
+                      value={currentHabit.type}
+                      onChange={(e) => setCurrentHabit({ ...currentHabit, type: e.target.value })}
+                      disabled={loading}
+                    >
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly">Monthly</option>
+                    </Form.Select>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Frequency</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={currentHabit.frequency}
+                      onChange={(e) => setCurrentHabit({ ...currentHabit, frequency: parseInt(e.target.value) })}
+                      min="1"
+                      disabled={loading}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Priority</Form.Label>
+                    <Form.Select
+                      value={currentHabit.priority}
+                      onChange={(e) => setCurrentHabit({ ...newHabit, priority: e.target.value })}
+                      disabled={loading}
+                    >
+                      <option value="high">High</option>
+                      <option value="medium">Medium</option>
+                      <option value="low">Low</option>
+                    </Form.Select>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Current Streak</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={currentHabit.currentStreak || 0}
+                      onChange={(e) => setCurrentHabit({ ...currentHabit, currentStreak: parseInt(e.target.value) })}
+                      min="0"
+                      disabled={loading}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Longest Streak</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={currentHabit.longestStreak || 0}
+                      onChange={(e) => setCurrentHabit({ ...currentHabit, longestStreak: parseInt(e.target.value) })}
+                      min="0"
+                      disabled={loading}
+                    />
+                  </Form.Group>
+                  <Button type="submit" variant="warning" disabled={loading}>
+                    {loading ? <Spinner animation="border" size="sm" /> : 'Save Changes'}
+                  </Button>
+                </Form>
+              )}
+            </Modal.Body>
+          </Modal>
+
           {loading && (!filteredHabits || filteredHabits.length === 0) ? (
             <Spinner animation="border" />
           ) : (
-            <Table striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Type</th>
-                  <th>Frequency</th>
-                  <th>Priority</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredHabits && filteredHabits.map((habit) => (
-                  <tr key={habit.id}>
-                    <td>{habit.name}</td>
-                    <td>{habit.description}</td>
-                    <td>{habit.type}</td>
-                    <td>{habit.frequency}</td>
-                    <td>
-                      <Badge
-                        bg={
-                          habit.priority === 'high'
-                            ? 'danger'
-                            : habit.priority === 'medium'
-                              ? 'warning'
-                              : 'success'
-                        }
-                      >
-                        {habit.priority}
-                      </Badge>
-                    </td>
-                    <td>
-                      <Form.Check
-                        type="switch"
-                        checked={habit.isActive}
-                        onChange={() => handleToggleActive(habit.id, habit.isActive, habit)}
-                        disabled={loading}
-                      />
-                    </td>
-                    <td>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleDeleteHabit(habit.id)}
-                        disabled={loading}
-                      >
-                        Delete
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+            <Row xs={1} md={3} className="g-4">
+              {filteredHabits && filteredHabits.map((habit) => (
+                <Col key={habit.id}>
+                  <Card style={{ minHeight: '200px', display: 'flex', flexDirection: 'column' }}>
+                    <Card.Header style={{ backgroundColor: '#e9ecef', padding: '0', border: 'none' }}>
+                      <div className="d-flex justify-content-between align-items-center p-2">
+                        <Card.Title style={{ margin: '0' }}>
+                          {habit.name}
+                        </Card.Title>
+                        <div>
+                          <Button
+                            variant="warning"
+                            onClick={() => openEditModal(habit)}
+                            disabled={loading}
+                            className="p-1 me-2"
+                          >
+                            <Pencil size={20} />
+                          </Button>
+                          <Button
+                            variant="danger"
+                            onClick={() => handleDeleteHabit(habit.id)}
+                            disabled={loading}
+                            className="p-1"
+                          >
+                            <Trash2 size={20} />
+                          </Button>
+                        </div>
+                      </div>
+                    </Card.Header>
+                    <Card.Body style={{ flex: '1' }}>
+                      <Card.Text>
+                        <strong>Description:</strong> {habit.description || 'No description'}<br />
+                        <div>
+                          <strong>Type:</strong> {habit.type} - <strong>Frequency:</strong> {habit.frequency}
+                        </div>
+                        <strong>Priority:</strong> {' '}
+                        <Badge
+                          bg={
+                            habit.priority === 'high'
+                              ? 'danger'
+                              : habit.priority === 'medium'
+                                ? 'warning'
+                                : 'success'
+                          }
+                        >
+                          {habit.priority}
+                        </Badge><br />
+                        <strong>Status:</strong> {' '}
+                        <Form.Check
+                          type="switch"
+                          checked={habit.isActive}
+                          onChange={() => handleToggleActive(habit.id, habit.isActive, habit)}
+                          disabled={loading}
+                          inline
+                        />
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
           )}
         </>
       )}

@@ -612,18 +612,18 @@
       "userId": "b02mw541u",
       "habitId": "1",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:12.261Z"
+      "completedAt": "2025-08-26T07:23:15.175Z"
     },
     {
       "id": "8f18",
       "userId": "b02mw541u",
       "habitId": "2",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:45:59.685Z"
+      "completedAt": "2025-08-26T07:23:15.976Z"
     },
     {
       "id": "95f2",
