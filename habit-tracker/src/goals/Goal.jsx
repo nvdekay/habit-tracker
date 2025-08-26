@@ -256,6 +256,7 @@ export default function Goal() {
 
     if (!valid) return;
     else {
+      console.log(newGoal);
       const res = await fetch("http://localhost:8080/goals", {
         method: "POST",
         headers: {
@@ -318,13 +319,30 @@ export default function Goal() {
         ...newGoal,
         linkedHabits: [...newGoal.linkedHabits, habitId],
       });
-      console.log('Create '+ [...newGoal.linkedHabits, habitId])
+      console.log("Create " + [...newGoal.linkedHabits, habitId]);
     } else {
       setNewGoal({
         ...newGoal,
         linkedHabits: newGoal.linkedHabits.filter((id) => id !== habitId),
       });
-      console.log("Delete "+newGoal.linkedHabits.filter((id) => id !== habitId))
+      console.log(
+        "Delete " + newGoal.linkedHabits.filter((id) => id !== habitId)
+      );
+    }
+  };
+
+  const handleCheckLinkedHabitUpdate = (e) => {
+    const habitId = e.target.value;
+    if (e.target.checked) {
+      setEditGoal({
+        ...editGoal,
+        linkedHabits: [...editGoal.linkedHabits, habitId],
+      });
+    } else {
+      setEditGoal({
+        ...editGoal,
+        linkedHabits: editGoal.linkedHabits.filter((id) => id !== habitId),
+      });
     }
   };
 
@@ -695,7 +713,10 @@ export default function Goal() {
                   value={habit.id}
                   id={`habit-${habit.id}`}
                   checked={newGoal.linkedHabits?.includes(habit.id)}
-                  onChange={(e) => {handleCheckLinkedHabit(e); console.log(typeof habit.id)}}
+                  onChange={(e) => {
+                    handleCheckLinkedHabit(e);
+                    console.log(typeof habit.id);
+                  }}
                 />
                 <label
                   className="form-check-label"
@@ -792,6 +813,29 @@ export default function Goal() {
                   <option value="medium">Medium</option>
                 </Form.Select>
               </div>
+
+              <label className="d-block mb-2">Link Habit</label>
+              {habits?.map((habit) => (
+                <div className="form-check" key={habit.id}>
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    value={habit.id}
+                    id={`habit-${habit.id}`}
+                    checked={editGoal.linkedHabits?.includes(habit.id)}
+                    onChange={(e) => {
+                      handleCheckLinkedHabitUpdate(e);
+                      console.log(typeof habit.id);
+                    }}
+                  />
+                  <label
+                    className="form-check-label"
+                    htmlFor={`habit-${habit.id}`}
+                  >
+                    {habit.name}
+                  </label>
+                </div>
+              ))}
             </form>
           )}
         </Modal.Body>
