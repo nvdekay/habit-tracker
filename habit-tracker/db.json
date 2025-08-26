@@ -42,7 +42,7 @@
   ],
   "habits": [
     {
-      "id": 1,
+      "id": "1",
       "userId": "b02mw541u",
       "name": "Morning Exercise",
       "description": "Do 30 minutes of exercise every morning",
@@ -60,7 +60,7 @@
       "updatedAt": "2024-08-14T07:30:00.000Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": "b02mw541u",
       "name": "Read Books",
       "description": "Read at least 20 pages of a book",
@@ -78,7 +78,7 @@
       "updatedAt": "2024-08-13T21:15:00.000Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "userId": "b02mw541u",
       "name": "Meditation",
       "description": "Practice mindfulness meditation for 15 minutes",
@@ -96,7 +96,7 @@
       "updatedAt": "2024-08-14T08:00:00.000Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "userId": "b02mw541u",
       "name": "Weekly Grocery Shopping",
       "description": "Plan and do grocery shopping for the week",
@@ -114,7 +114,7 @@
       "updatedAt": "2024-08-11T16:45:00.000Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "userId": "b02mw541u",
       "name": "Learn Programming",
       "description": "Study programming for at least 3 hours",
@@ -132,7 +132,7 @@
       "updatedAt": "2024-08-12T20:30:00.000Z"
     },
     {
-      "id": 6,
+      "id": "6",
       "userId": "b02mw541u",
       "name": "Monthly Budget Review",
       "description": "Review and plan monthly budget and expenses",
@@ -150,7 +150,7 @@
       "updatedAt": "2024-07-31T18:20:00.000Z"
     },
     {
-      "id": 7,
+      "id": "7",
       "userId": "b02mw541u",
       "name": "Morning Run",
       "description": "Go for a 5km run every morning",
@@ -168,7 +168,7 @@
       "updatedAt": "2024-08-14T06:45:00.000Z"
     },
     {
-      "id": 8,
+      "id": "8",
       "userId": "b02mw541u",
       "name": "Drink Water",
       "description": "Drink at least 8 glasses of water",
@@ -186,7 +186,7 @@
       "updatedAt": "2024-08-14T22:00:00.000Z"
     },
     {
-      "id": 9,
+      "id": "9",
       "userId": "b02mw541u",
       "name": "Yoga Practice",
       "description": "Practice yoga for 45 minutes",
@@ -204,7 +204,7 @@
       "updatedAt": "2024-08-13T18:30:00.000Z"
     },
     {
-      "id": 10,
+      "id": "10",
       "userId": "b02mw541u",
       "name": "Healthy Cooking",
       "description": "Cook a healthy meal at home",
@@ -224,8 +224,8 @@
   ],
   "goals": [
     {
-      "id": 1,
-      "userId": "1",
+      "id": "1",
+      "userId": "uc9w8sn9z",
       "name": "Fitness Transformation",
       "description": "Complete a full fitness transformation this year",
       "targetValue": 365,
@@ -242,8 +242,8 @@
       "updatedAt": "2024-08-14T10:30:00.000Z"
     },
     {
-      "id": 2,
-      "userId": "1",
+      "id": "2",
+      "userId": "uc9w8sn9z",
       "name": "Read 24 Books This Year",
       "description": "Read at least 24 books throughout the year",
       "targetValue": 24,
@@ -259,8 +259,8 @@
       "updatedAt": "2024-08-14T11:15:00.000Z"
     },
     {
-      "id": 3,
-      "userId": "2",
+      "id": "3",
+      "userId": "b02mw541u",
       "name": "Master React Development",
       "description": "Become proficient in React and complete 5 projects",
       "targetValue": 5,
@@ -276,8 +276,8 @@
       "updatedAt": "2024-08-14T12:00:00.000Z"
     },
     {
-      "id": 4,
-      "userId": "2",
+      "id": "4",
+      "userId": "b02mw541u",
       "name": "Run 1000km This Year",
       "description": "Complete 1000 kilometers of running in 2024",
       "targetValue": 1000,
@@ -293,8 +293,8 @@
       "updatedAt": "2024-08-14T07:00:00.000Z"
     },
     {
-      "id": 5,
-      "userId": "2",
+      "id": "5",
+      "userId": "b02mw541u",
       "name": "Hydration Challenge",
       "description": "Drink recommended amount of water daily for 6 months",
       "targetValue": 180,
@@ -310,7 +310,7 @@
       "updatedAt": "2024-08-14T23:00:00.000Z"
     },
     {
-      "id": 6,
+      "id": "6",
       "userId": "3",
       "name": "Flexibility & Wellness",
       "description": "Improve flexibility and mental wellness through yoga",
@@ -325,11 +325,29 @@
       ],
       "createdAt": "2024-03-10T00:00:00.000Z",
       "updatedAt": "2024-08-13T19:00:00.000Z"
+    },
+    {
+      "id": "e1ec",
+      "userId": "b02mw541u",
+      "name": "Read 100 books",
+      "description": "Read 100 books",
+      "startDate": "2025-08-27",
+      "deadline": "2025-08-29",
+      "priority": "medium",
+      "status": "in_progress",
+      "targetValue": "13",
+      "currentValue": 0,
+      "unit": "books",
+      "linkedHabits": [
+        1,
+        2,
+        3
+      ]
     }
   ],
   "checkins": [
     {
-      "id": 1,
+      "id": "1",
       "userId": "1",
       "habitId": 1,
       "date": "2024-08-14",
@@ -338,7 +356,7 @@
       "completedAt": "2024-08-14T07:30:00.000Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": "1",
       "habitId": 1,
       "date": "2024-08-13",
@@ -347,7 +365,7 @@
       "completedAt": "2024-08-13T07:15:00.000Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "userId": "1",
       "habitId": 1,
       "date": "2024-08-12",
@@ -356,7 +374,7 @@
       "completedAt": "2024-08-12T07:45:00.000Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "userId": "1",
       "habitId": 2,
       "date": "2024-08-13",
@@ -365,7 +383,7 @@
       "completedAt": "2024-08-13T21:15:00.000Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "userId": "1",
       "habitId": 2,
       "date": "2024-08-12",
@@ -374,7 +392,7 @@
       "completedAt": "2024-08-12T20:30:00.000Z"
     },
     {
-      "id": 6,
+      "id": "6",
       "userId": "1",
       "habitId": 3,
       "date": "2024-08-14",
@@ -383,7 +401,7 @@
       "completedAt": "2024-08-14T08:00:00.000Z"
     },
     {
-      "id": 7,
+      "id": "7",
       "userId": "1",
       "habitId": 3,
       "date": "2024-08-13",
@@ -392,7 +410,7 @@
       "completedAt": "2024-08-13T08:15:00.000Z"
     },
     {
-      "id": 8,
+      "id": "8",
       "userId": "1",
       "habitId": 4,
       "date": "2024-08-11",
@@ -401,7 +419,7 @@
       "completedAt": "2024-08-11T16:45:00.000Z"
     },
     {
-      "id": 9,
+      "id": "9",
       "userId": "1",
       "habitId": 5,
       "date": "2024-08-12",
@@ -410,7 +428,7 @@
       "completedAt": "2024-08-12T20:30:00.000Z"
     },
     {
-      "id": 10,
+      "id": "10",
       "userId": "1",
       "habitId": 6,
       "date": "2024-07-31",
@@ -419,7 +437,7 @@
       "completedAt": "2024-07-31T18:20:00.000Z"
     },
     {
-      "id": 11,
+      "id": "11",
       "userId": "2",
       "habitId": 7,
       "date": "2024-08-14",
@@ -428,7 +446,7 @@
       "completedAt": "2024-08-14T06:45:00.000Z"
     },
     {
-      "id": 12,
+      "id": "12",
       "userId": "2",
       "habitId": 7,
       "date": "2024-08-13",
@@ -437,7 +455,7 @@
       "completedAt": "2024-08-13T06:30:00.000Z"
     },
     {
-      "id": 13,
+      "id": "13",
       "userId": "2",
       "habitId": 8,
       "date": "2024-08-14",
@@ -446,7 +464,7 @@
       "completedAt": "2024-08-14T22:00:00.000Z"
     },
     {
-      "id": 14,
+      "id": "14",
       "userId": "2",
       "habitId": 8,
       "date": "2024-08-13",
@@ -455,7 +473,7 @@
       "completedAt": "2024-08-13T21:30:00.000Z"
     },
     {
-      "id": 15,
+      "id": "15",
       "userId": "3",
       "habitId": 9,
       "date": "2024-08-13",
@@ -464,7 +482,7 @@
       "completedAt": "2024-08-13T18:30:00.000Z"
     },
     {
-      "id": 16,
+      "id": "16",
       "userId": "3",
       "habitId": 9,
       "date": "2024-08-11",
@@ -473,7 +491,7 @@
       "completedAt": "2024-08-11T07:00:00.000Z"
     },
     {
-      "id": 17,
+      "id": "17",
       "userId": "3",
       "habitId": 10,
       "date": "2024-08-10",
@@ -588,11 +606,83 @@
       "completed": false,
       "notes": "",
       "completedAt": "2025-08-25T19:14:48.180Z"
+    },
+    {
+      "id": "0895",
+      "userId": "b02mw541u",
+      "habitId": "1",
+      "date": "2025-08-26",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T06:46:12.261Z"
+    },
+    {
+      "id": "8f18",
+      "userId": "b02mw541u",
+      "habitId": "2",
+      "date": "2025-08-26",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T06:45:59.685Z"
+    },
+    {
+      "id": "95f2",
+      "userId": "b02mw541u",
+      "habitId": "3",
+      "date": "2025-08-26",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T06:46:00.662Z"
+    },
+    {
+      "id": "6131",
+      "userId": "b02mw541u",
+      "habitId": "4",
+      "date": "2025-08-26",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T06:46:01.563Z"
+    },
+    {
+      "id": "5a3d",
+      "userId": "b02mw541u",
+      "habitId": "5",
+      "date": "2025-08-26",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T06:46:02.378Z"
+    },
+    {
+      "id": "69de",
+      "userId": "b02mw541u",
+      "habitId": "6",
+      "date": "2025-08-26",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T06:46:03.070Z"
+    },
+    {
+      "id": "e30e",
+      "userId": "b02mw541u",
+      "habitId": "7",
+      "date": "2025-08-26",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T06:46:03.825Z"
+    },
+    {
+      "id": "7daa",
+      "userId": "b02mw541u",
+      "habitId": "8",
+      "date": "2025-08-26",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-26T06:46:05.060Z"
     }
   ],
   "reminders": [
     {
-      "id": 1,
+      "id": "1",
       "userId": "1",
       "habitId": 1,
       "time": "07:00",
@@ -610,7 +700,7 @@
       "createdAt": "2024-01-01T00:00:00.000Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": "1",
       "habitId": 2,
       "time": "21:00",
@@ -628,7 +718,7 @@
       "createdAt": "2024-02-01T00:00:00.000Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "userId": "1",
       "habitId": 3,
       "time": "08:00",
@@ -646,7 +736,7 @@
       "createdAt": "2024-03-01T00:00:00.000Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "userId": "1",
       "habitId": 4,
       "time": "16:00",
@@ -658,7 +748,7 @@
       "createdAt": "2024-01-07T00:00:00.000Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "userId": "1",
       "habitId": 5,
       "time": "19:00",
@@ -672,7 +762,7 @@
       "createdAt": "2024-04-01T00:00:00.000Z"
     },
     {
-      "id": 6,
+      "id": "6",
       "userId": "2",
       "habitId": 7,
       "time": "06:30",
@@ -690,7 +780,7 @@
       "createdAt": "2024-02-15T00:00:00.000Z"
     },
     {
-      "id": 7,
+      "id": "7",
       "userId": "2",
       "habitId": 8,
       "time": "09:00",
@@ -708,7 +798,7 @@
       "createdAt": "2024-01-01T00:00:00.000Z"
     },
     {
-      "id": 8,
+      "id": "8",
       "userId": "3",
       "habitId": 9,
       "time": "18:00",
@@ -722,7 +812,7 @@
       "createdAt": "2024-03-10T00:00:00.000Z"
     },
     {
-      "id": 9,
+      "id": "9",
       "userId": "3",
       "habitId": 10,
       "time": "17:30",
@@ -742,7 +832,7 @@
   ],
   "statistics": [
     {
-      "id": 1,
+      "id": "1",
       "userId": "1",
       "month": "2024-08",
       "totalHabits": 6,
@@ -755,7 +845,7 @@
       "createdAt": "2024-08-01T00:00:00.000Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": "1",
       "month": "2024-07",
       "totalHabits": 6,
@@ -768,7 +858,7 @@
       "createdAt": "2024-07-01T00:00:00.000Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "userId": "2",
       "month": "2024-08",
       "totalHabits": 2,
@@ -781,7 +871,7 @@
       "createdAt": "2024-08-01T00:00:00.000Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "userId": "3",
       "month": "2024-08",
       "totalHabits": 2,
