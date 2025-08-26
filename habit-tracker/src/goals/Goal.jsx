@@ -1,4 +1,6 @@
 import React, { use, useEffect, useState } from "react";
+import { Settings } from "lucide-react";
+import { Trash } from "lucide-react";
 import {
   Button,
   Card,
@@ -13,6 +15,7 @@ import Form from "react-bootstrap/Form";
 import "../index.css";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Goal() {
   const { user } = useAuth();
@@ -62,14 +65,12 @@ export default function Goal() {
       const data = await res.json();
       setGoals(data);
       console.log(data);
-      console.log(`User: ${JSON.stringify(user)}`);
     }
   };
   const fetchHabits = async () => {
     const res = await fetch("http://localhost:8080/habits?userId=" + user.id);
     if (res.ok) {
       const data = await res.json();
-      console.log(data);
       setHabits(data);
     }
   };
@@ -86,78 +87,79 @@ export default function Goal() {
   }, []);
 
   useEffect(() => {
-  if (user) {
-    let url = `http://localhost:8080/goals?userId=${user.id}`;
+    if (user) {
+      let url = `http://localhost:8080/goals?userId=${user.id}`;
 
-    if (filters.status !== "all") {
-      url += `&status=${filters.status}`;
-    }
-    if (filters.priority !== "all") {
-      url += `&priority=${filters.priority}`;
-    }
-
-    const fetchFilteredGoals = async () => {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Fetch failed");
-        let data = await res.json();
-
-        // sort client cho tất cả sortBy
-        if (filters.sortBy) {
-          data.sort((a, b) => {
-            let valueA, valueB;
-
-            switch (filters.sortBy) {
-              case "progress":
-                valueA = a.currentValue / a.targetValue;
-                valueB = b.currentValue / b.targetValue;
-                break;
-              case "deadline":
-                valueA = new Date(a.deadline);
-                valueB = new Date(b.deadline);
-                break;
-              case "createdDate":
-                valueA = new Date(a.createdDate);
-                valueB = new Date(b.createdDate);
-                break;
-              case "priority":
-                // nếu priority là string "high"/"medium"/"low" → map sang số cho dễ sort
-                const priorityMap = { high: 3, medium: 2, low: 1 };
-                valueA = priorityMap[a.priority] || 0;
-                valueB = priorityMap[b.priority] || 0;
-                break;
-              default:
-                valueA = a[filters.sortBy];
-                valueB = b[filters.sortBy];
-            }
-
-            if (valueA instanceof Date && valueB instanceof Date) {
-              return filters.sortOrder === "asc"
-                ? valueA - valueB
-                : valueB - valueA;
-            } else if (typeof valueA === "string" && typeof valueB === "string") {
-              return filters.sortOrder === "asc"
-                ? valueA.localeCompare(valueB)
-                : valueB.localeCompare(valueA);
-            } else {
-              return filters.sortOrder === "asc"
-                ? valueA - valueB
-                : valueB - valueA;
-            }
-          });
-        }
-
-        setGoals(data);
-        console.log("Sorted data:", data);
-      } catch (err) {
-        console.error(err);
+      if (filters.status !== "all") {
+        url += `&status=${filters.status}`;
       }
-    };
+      if (filters.priority !== "all") {
+        url += `&priority=${filters.priority}`;
+      }
 
-    fetchFilteredGoals();
-  }
-}, [filters, user]);
+      const fetchFilteredGoals = async () => {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error("Fetch failed");
+          let data = await res.json();
 
+          // sort client cho tất cả sortBy
+          if (filters.sortBy) {
+            data.sort((a, b) => {
+              let valueA, valueB;
+
+              switch (filters.sortBy) {
+                case "progress":
+                  valueA = a.currentValue / a.targetValue;
+                  valueB = b.currentValue / b.targetValue;
+                  break;
+                case "deadline":
+                  valueA = new Date(a.deadline);
+                  valueB = new Date(b.deadline);
+                  break;
+                case "createdDate":
+                  valueA = new Date(a.createdDate);
+                  valueB = new Date(b.createdDate);
+                  break;
+                case "priority":
+                  // nếu priority là string "high"/"medium"/"low" → map sang số cho dễ sort
+                  const priorityMap = { high: 3, medium: 2, low: 1 };
+                  valueA = priorityMap[a.priority] || 0;
+                  valueB = priorityMap[b.priority] || 0;
+                  break;
+                default:
+                  valueA = a[filters.sortBy];
+                  valueB = b[filters.sortBy];
+              }
+
+              if (valueA instanceof Date && valueB instanceof Date) {
+                return filters.sortOrder === "asc"
+                  ? valueA - valueB
+                  : valueB - valueA;
+              } else if (
+                typeof valueA === "string" &&
+                typeof valueB === "string"
+              ) {
+                return filters.sortOrder === "asc"
+                  ? valueA.localeCompare(valueB)
+                  : valueB.localeCompare(valueA);
+              } else {
+                return filters.sortOrder === "asc"
+                  ? valueA - valueB
+                  : valueB - valueA;
+              }
+            });
+          }
+
+          setGoals(data);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
+      fetchFilteredGoals();
+    }
+  }, [filters, user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -250,7 +252,6 @@ export default function Goal() {
       });
       if (res.ok) {
         const data = await res.json();
-        console.log(data);
         handleClose();
         fetchGoals();
         fetchHabits();
@@ -278,22 +279,31 @@ export default function Goal() {
         ...newGoal,
         linkedHabits: [...newGoal.linkedHabits, habitId],
       });
-      console.log(
-        `Linked habits: ${[
-          ...newGoal.linkedHabits,
-          habitId,
-        ]}, and new element: ${habitId}`
-      );
     } else {
       setNewGoal({
         ...newGoal,
         linkedHabits: newGoal.linkedHabits.filter((id) => id !== habitId),
       });
-      console.log(
-        `Linked habits: ${newGoal.linkedHabits.filter(
-          (id) => id !== habitId
-        )}, and new element was deleted: ${habitId}`
-      );
+    }
+  };
+
+  const handleDelete = async (goalID) => {
+    if (window.confirm("Sure delete?")) {
+      try {
+        const res = await axios.delete(`http://localhost:8080/goals/${goalID}`);
+
+        if (res.data) {
+          alert("Xoá mục tiêu thành công!");
+          setGoals(prev => prev.filter(goal => goal.id !== goalID));
+        }
+        else{
+          alert("Xoá mục tiêu thất bại!");
+        }
+
+      } catch (error) {
+        console.error("Error deleting goal:", error);
+        alert("Xoá mục tiêu thất bại!");
+      }
     }
   };
 
@@ -385,10 +395,30 @@ export default function Goal() {
         {goals?.map((goal) => (
           <div key={goal.id} className="col-6">
             <Card key={goal.id} className="shadow-sm h-100 my-4">
-              <CardHeader>
-                <CardTitle className="d-flex items-center text-lg ">
-                  {goal.name}
-                </CardTitle>
+              <CardHeader className="d-flex justify-content-between align-items-center">
+                <CardTitle className="text-lg ">{goal.name}</CardTitle>
+                <div>
+                  <span
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Cannot edit a goal that is in progress or completed"
+                  >
+                    <button
+                      className={`btn btn-warning mx-1`}
+                      disabled={goal.currentValue !== 0}
+                      title={goal.currentValue == 0 ? "Edit GOAL" : ""}
+                    >
+                      <Settings />
+                    </button>
+                  </span>
+                  <button
+                    className={`btn btn-danger`}
+                    title="Delete GOAL"
+                    onClick={() => handleDelete(goal.id)}
+                  >
+                    <Trash />
+                  </button>
+                </div>
               </CardHeader>
               <CardBody>
                 <p>{goal.description}</p>
@@ -449,8 +479,8 @@ export default function Goal() {
                     Linked Habit
                   </CardTitle>
                   <ul>
-                    {goal.linkedHabits?.map((habit) => (
-                      <li>{habits.find((h) => h.id == habit).name}</li>
+                    {goal.linkedHabits?.map((habit, i) => (
+                      <li key={i}>{habits.find((h) => h.id == habit)?.name}</li>
                     ))}
                   </ul>
                 </>
@@ -470,6 +500,7 @@ export default function Goal() {
           fontSize: "30px",
           margin: "15px",
           textAlign: "center",
+          position: "fixed",
         }}
         onClick={() => handleShow()}
       >
@@ -496,7 +527,6 @@ export default function Goal() {
                     setNewGoal({ ...newGoal, name: e.target.value });
                     if (e.target.value && e.target.value.trim() !== "") {
                       setError((prev) => ({ ...prev, name: "" }));
-                      console.log(e.target.value);
                     }
                   }}
                 />
