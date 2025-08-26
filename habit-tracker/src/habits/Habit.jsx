@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getHabits, updateHabit, deleteHabit } from '../services/habitService';
 import { Button, Form, Card, Badge, Spinner, Alert, Col, Row, Container } from 'react-bootstrap';
@@ -67,20 +67,8 @@ const Habit = () => {
       result = result.filter(habit => priorityFilter.includes(habit.priority));
     }
 
-    if (sortOrder === 'asc') {
-      result = [...result].sort((a, b) => {
-        const order = ['daily', 'weekly', 'monthly'];
-        return order.indexOf(a.type) - order.indexOf(b.type);
-      });
-    } else if (sortOrder === 'desc') {
-      result = [...result].sort((a, b) => {
-        const order = ['daily', 'weekly', 'monthly'];
-        return order.indexOf(b.type) - order.indexOf(a.type);
-      });
-    }
-
     setFilteredHabits(result);
-  }, [habits, searchTerm, typeFilter, statusFilter, priorityFilter, sortOrder]);
+  }, [habits, searchTerm, typeFilter, statusFilter, priorityFilter]);
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this habit?')) {
@@ -120,8 +108,29 @@ const Habit = () => {
     );
   };
 
-  const handleSortByType = () => {
-    setSortOrder(prev => (prev === 'asc' ? 'desc' : prev === 'desc' ? 'none' : 'asc'));
+  const MySort = () => {
+    var object = [...filteredHabits];
+    if (sortOrder === 'asc') {
+      setSortOrder('none');
+      setFilteredHabits(habits);
+    } else {
+      object.sort((a, b) => {
+        const typeOrder = ['daily', 'weekly', 'monthly'];
+        const priorityOrder = ['high', 'medium', 'low'];
+
+        if (a.type !== b.type) {
+          return typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
+        }
+
+        if (a.priority !== b.priority) {
+          return priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority);
+        }
+
+        return a.name.localeCompare(b.name);
+      });
+      setFilteredHabits(object);
+      setSortOrder('asc');
+    }
   };
 
   return (
@@ -163,9 +172,22 @@ const Habit = () => {
                 disabled={loading}
               />
             </Form.Group>
-
             <hr />
             <h4>Type</h4>
+            <Form.Group>
+              <Form.Select
+                name="type"
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+                disabled={loading}
+              >
+                <option value="">All</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+              </Form.Select>
+            </Form.Group>
+            {/* <h4>Type</h4>
             <div>
               <input
                 type="radio"
@@ -205,7 +227,7 @@ const Habit = () => {
                 onChange={() => setTypeFilter('monthly')}
                 disabled={loading}
               /> Monthly
-            </div>
+            </div> */}
 
             <hr />
             <h4>Status</h4>
@@ -273,11 +295,12 @@ const Habit = () => {
 
           <Col xs={10}>
             <div className="d-flex justify-content-between align-items-center mb-3">
+
               <Button
                 className="btn btn-primary"
-                onClick={handleSortByType}
+                onClick={MySort}
               >
-                Sort by Type {sortOrder === 'asc' ? '↑' : sortOrder === 'desc' ? '↓' : ''}
+                Sort by Type, Priority & Name {sortOrder === 'asc' ? '↑' : ''}
               </Button>
             </div>
 
