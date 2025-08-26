@@ -35,6 +35,19 @@ export default function Goal() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const [showEdit, setShowEdit] = useState(false);
+  const [editGoal, setEditGoal] = useState(null);
+
+  const handleEditShow = (goal) => {
+    setEditGoal(goal);
+    setShowEdit(true);
+  };
+
+  const handleEditClose = () => {
+    setShowEdit(false);
+    setEditGoal(null);
+  };
+
   const [startDate, setStartDate] = useState();
   const [newGoal, setNewGoal] = useState({
     userId: user ? user.id : null,
@@ -272,18 +285,46 @@ export default function Goal() {
     }
   };
 
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!editGoal) return;
+
+    try {
+      const res = await axios.put(
+        `http://localhost:8080/goals/${editGoal.id}`,
+        editGoal,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (res.status === 200) {
+        alert("Cập nhật mục tiêu thành công!");
+        fetchGoals(); // reload lại danh sách
+        handleEditClose();
+      } else {
+        alert("Cập nhật thất bại!");
+      }
+    } catch (error) {
+      console.error("Error updating goal:", error);
+      alert("Cập nhật thất bại!");
+    }
+  };
+
   const handleCheckLinkedHabit = (e) => {
-    const habitId = parseInt(e.target.value);
+    const habitId = e.target.value;
     if (e.target.checked) {
       setNewGoal({
         ...newGoal,
         linkedHabits: [...newGoal.linkedHabits, habitId],
       });
+      console.log('Create '+ [...newGoal.linkedHabits, habitId])
     } else {
       setNewGoal({
         ...newGoal,
         linkedHabits: newGoal.linkedHabits.filter((id) => id !== habitId),
       });
+      console.log("Delete "+newGoal.linkedHabits.filter((id) => id !== habitId))
     }
   };
 
@@ -294,12 +335,10 @@ export default function Goal() {
 
         if (res.data) {
           alert("Xoá mục tiêu thành công!");
-          setGoals(prev => prev.filter(goal => goal.id !== goalID));
-        }
-        else{
+          setGoals((prev) => prev.filter((goal) => goal.id !== goalID));
+        } else {
           alert("Xoá mục tiêu thất bại!");
         }
-
       } catch (error) {
         console.error("Error deleting goal:", error);
         alert("Xoá mục tiêu thất bại!");
@@ -406,7 +445,10 @@ export default function Goal() {
                     <button
                       className={`btn btn-warning mx-1`}
                       disabled={goal.currentValue !== 0}
-                      title={goal.currentValue == 0 ? "Edit GOAL" : ""}
+                      title={
+                        goal.currentValue == 0 ? "Edit GOAL" : "Cannot edit"
+                      }
+                      onClick={() => handleEditShow(goal)}
                     >
                       <Settings />
                     </button>
@@ -633,7 +675,8 @@ export default function Goal() {
                   onChange={(e) =>
                     setNewGoal({ ...newGoal, targetValue: e.target.value })
                   }
-                  value={1}
+                  pattern="^[2-9]\d*$"
+                  oninvalid="this.setCustomValidity('Number must be bigger than 1')"
                 />
                 {error.targetValue && (
                   <p className="text-red-500 text-sm mb-2">
@@ -652,7 +695,7 @@ export default function Goal() {
                   value={habit.id}
                   id={`habit-${habit.id}`}
                   checked={newGoal.linkedHabits?.includes(habit.id)}
-                  onChange={(e) => handleCheckLinkedHabit(e)}
+                  onChange={(e) => {handleCheckLinkedHabit(e); console.log(typeof habit.id)}}
                 />
                 <label
                   className="form-check-label"
@@ -673,6 +716,91 @@ export default function Goal() {
           </Button>
           <Button variant="primary" onClick={(e) => handleSubmit(e)}>
             Lưu
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        show={showEdit}
+        onHide={handleEditClose}
+        centered
+        backdrop="static"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Goal</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {editGoal && (
+            <form>
+              <div className="mb-3">
+                <label className="form-label">Goal Title</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editGoal.name}
+                  onChange={(e) =>
+                    setEditGoal({ ...editGoal, name: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Description</label>
+                <textarea
+                  className="form-control"
+                  rows="3"
+                  value={editGoal.description}
+                  onChange={(e) =>
+                    setEditGoal({ ...editGoal, description: e.target.value })
+                  }
+                ></textarea>
+              </div>
+
+              <div className="d-flex gap-2">
+                <div className="flex-fill">
+                  <label className="form-label">Start Date</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    value={editGoal.startDate?.split("T")[0]}
+                    onChange={(e) =>
+                      setEditGoal({ ...editGoal, startDate: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="flex-fill">
+                  <label className="form-label">Deadline</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    value={editGoal.deadline?.split("T")[0]}
+                    onChange={(e) =>
+                      setEditGoal({ ...editGoal, deadline: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="mb-3 mt-3">
+                <label className="form-label">Priority</label>
+                <Form.Select
+                  value={editGoal.priority}
+                  onChange={(e) =>
+                    setEditGoal({ ...editGoal, priority: e.target.value })
+                  }
+                >
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                </Form.Select>
+              </div>
+            </form>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleEditClose}>
+            Hủy
+          </Button>
+          <Button variant="primary" onClick={handleUpdate}>
+            Lưu thay đổi
           </Button>
         </Modal.Footer>
       </Modal>
