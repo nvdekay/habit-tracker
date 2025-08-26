@@ -1,6 +1,9 @@
 import React, { use, useEffect, useState } from "react";
 import { Settings } from "lucide-react";
+import { Check } from "lucide-react";
 import { Trash } from "lucide-react";
+import { Undo2 } from "lucide-react";
+
 import {
   Button,
   Card,
@@ -173,6 +176,75 @@ export default function Goal() {
       fetchFilteredGoals();
     }
   }, [filters, user]);
+
+  const handleMark = async (goalId) => {
+    try {
+      const goal = goals.find((g) => g.id === goalId);
+      if (!goal) return;
+
+      let updatedValue = goal.currentValue + 1;
+
+      if (updatedValue > goal.targetValue) {
+        updatedValue = goal.targetValue;
+      }
+
+      const updatedGoal = {
+        ...goal,
+        currentValue: updatedValue,
+        status: updatedValue >= goal.targetValue ? "completed" : goal.status,
+      };
+
+      const res = await axios.put(
+        `http://localhost:8080/goals/${goalId}`,
+        updatedGoal,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      if (res.status === 200) {
+        setGoals((prev) =>
+          prev.map((g) => (g.id === goalId ? updatedGoal : g))
+        );
+      }
+    } catch (err) {
+      console.error("Error marking goal:", err);
+    }
+  };
+
+  const handleReverse = async (goalId) => {
+    if (window.confirm("Are you sure you want to reverse the mark action?")) {
+      try {
+        const goal = goals.find((g) => g.id === goalId);
+        if (!goal) return;
+
+        let updatedValue = goal.currentValue - 1;
+
+        if (updatedValue < 0) {
+          updatedValue = 0;
+        }
+
+        const updatedGoal = {
+          ...goal,
+          currentValue: updatedValue,
+          status:
+            updatedValue >= goal.targetValue ? "completed" : "in_progress",
+        };
+
+        const res = await axios.put(
+          `http://localhost:8080/goals/${goalId}`,
+          updatedGoal,
+          { headers: { "Content-Type": "application/json" } }
+        );
+
+        if (res.status === 200) {
+          setGoals((prev) =>
+            prev.map((g) => (g.id === goalId ? updatedGoal : g))
+          );
+        }
+      } catch (err) {
+        console.error("Error reversing goal:", err);
+      }
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -531,6 +603,9 @@ export default function Goal() {
                         : "primary"
                     }
                   />
+                  <div>
+                    {goal.currentValue} / {goal.targetValue} {goal.unit}
+                  </div>
                 </div>
               </CardBody>
               <CardFooter>
@@ -544,6 +619,20 @@ export default function Goal() {
                     ))}
                   </ul>
                 </>
+                {goal.status === "in_progress" && (
+                  <button
+                    className="btn btn-success mx-3"
+                    onClick={(e) => handleMark(goal.id)}
+                  >
+                    <Check /> Mark as done 1 {goal.unit}
+                  </button>
+                )}
+                <button
+                  className="btn btn-danger"
+                  onClick={(e) => handleReverse(goal.id)}
+                >
+                  <Undo2 /> Return action done 1 {goal.unit}
+                </button>
               </CardFooter>
             </Card>
           </div>
