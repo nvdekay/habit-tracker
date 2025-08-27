@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Badge } from 'react-bootstrap';
-import { TrendingUp } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { getCheckInsForDate, checkInHabit } from '../../services/checkInService';
+import { getHabits } from '../../services/habitService';
 import { useAuth } from '../../context/AuthContext';
 
 // Hiển thị danh sách thói quen của một ngày
@@ -29,8 +30,63 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
     const loadDayData = async (date) => {
         try {
             setLoading(true); // Bật trạng thái loading
-            const data = await getCheckInsForDate(date); // Gọi API lấy data
-            setDayData(data); // Cập nhật state với dữ liệu nhận được
+            
+            // Get check-ins for the day
+            const checkInData = await getCheckInsForDate(date);
+            
+            // Get all habits to get time information
+            const habitsResponse = await fetch(`http://localhost:8080/habits?userId=${user.id}&isActive=true`);
+            const allHabits = await habitsResponse.json();
+            
+            // Enrich habits data with time information and sort by time
+            const enrichedHabits = checkInData.habits.map(habit => {
+                const fullHabit = allHabits.find(h => h.id.toString() === habit.habitId.toString());
+                let startTime = null;
+                
+                if (fullHabit) {
+                    const targetDate = new Date(date);
+                    const dayOfWeek = targetDate.getDay();
+                    const dayOfMonth = targetDate.getDate();
+                    
+                    if (fullHabit.type === 'daily') {
+                        startTime = fullHabit.frequency.startTime;
+                    } else if (fullHabit.type === 'weekly') {
+                        const todayFreq = fullHabit.frequency.find(freq => {
+                            const habitDay = freq.weekday === 7 ? 0 : freq.weekday;
+                            return habitDay === dayOfWeek;
+                        });
+                        startTime = todayFreq ? todayFreq.startTime : null;
+                    } else if (fullHabit.type === 'monthly') {
+                        const todayFreq = fullHabit.frequency.find(freq => freq.day === dayOfMonth);
+                        startTime = todayFreq ? todayFreq.startTime : null;
+                    }
+                }
+                
+                return {
+                    ...habit,
+                    startTime,
+                    endTime: fullHabit?.frequency?.endTime || null,
+                    priority: fullHabit?.priority || 'medium',
+                    type: fullHabit?.type
+                };
+            }).sort((a, b) => {
+                // Sort by time (earliest first), habits without time go to end
+                if (!a.startTime && !b.startTime) return 0;
+                if (!a.startTime) return 1;
+                if (!b.startTime) return -1;
+                
+                const timeA = a.startTime.split(':').map(Number);
+                const timeB = b.startTime.split(':').map(Number);
+                const minutesA = timeA[0] * 60 + timeA[1];
+                const minutesB = timeB[0] * 60 + timeB[1];
+                
+                return minutesA - minutesB;
+            });
+            
+            setDayData({
+                ...checkInData,
+                habits: enrichedHabits
+            });
         } catch (error) {
             console.error('Failed to load day data:', error);
             // Nếu lỗi thì set state mặc định (không có habits)
@@ -105,19 +161,43 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
         });
     };
 
-    // Style inline cho icon habit (hình tròn có màu nền)
-    const getHabitIconStyle = (color) => ({
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%', // Làm tròn thành hình tròn
-        backgroundColor: color || '#6c757d', // Nếu không có màu thì mặc định xám
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'white',
-        fontSize: '18px',
-        marginRight: '16px'
-    });
+    // Hàm format thời gian
+    const formatTime = (timeString) => {
+        if (!timeString) return '';
+        const [hours, minutes] = timeString.split(':');
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const hour12 = hour % 12 || 12;
+        return `${hour12}:${minutes} ${ampm}`;
+    };
+
+    // Get priority badge color
+    const getPriorityColor = (priority) => {
+        switch (priority) {
+            case 'high': return 'danger';
+            case 'medium': return 'warning';
+            case 'low': return 'secondary';
+            default: return 'secondary';
+        }
+    };
+
+    // Check if habit is due soon (within 30 minutes)
+    const isHabitDueSoon = (startTime) => {
+        if (!startTime) return false;
+        
+        const now = new Date();
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Only check for today
+        if (selectedDate !== today) return false;
+        
+        const [hours, minutes] = startTime.split(':').map(Number);
+        const habitTime = new Date();
+        habitTime.setHours(hours, minutes, 0);
+        
+        const timeDiff = habitTime - now;
+        return timeDiff > 0 && timeDiff <= 30 * 60 * 1000; // 30 minutes
+    };
 
     // JSX để render UI
     return (
@@ -137,7 +217,9 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
                     </Badge>
                 </div>
 
-                <p className="text-muted small mb-4">View or update past check-ins</p>
+                <p className="text-muted small mb-4">
+                    Habits are sorted by scheduled time (earliest first)
+                </p>
 
                 {/* Danh sách habits */}
                 <div className="habits-list">
@@ -146,26 +228,47 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
                         dayData.habits.map((habit) => (
                             <div
                                 key={habit.habitId}
-                                className="habit-item d-flex align-items-center py-3"
+                                className={`habit-item d-flex align-items-center py-3 ${
+                                    isHabitDueSoon(habit.startTime) && !habit.completed ? 'due-soon' : ''
+                                }`}
                                 style={{ borderBottom: '1px solid #f1f3f4' }}
                             >
-                                {/* Icon Habit */}
-                                <div style={getHabitIconStyle(habit.habitColor)}>
-                                    {habit.habitIcon || ''}
-                                </div>
+                                {/* Simple habit indicator */}
+                                <div 
+                                    className="habit-indicator me-3"
+                                    style={{
+                                        width: '12px',
+                                        height: '12px',
+                                        borderRadius: '50%',
+                                        backgroundColor: habit.completed ? '#28a745' : '#e9ecef',
+                                        border: habit.completed ? 'none' : '2px solid #6c757d'
+                                    }}
+                                />
 
                                 {/* Thông tin Habit */}
                                 <div className="flex-grow-1">
-                                    <h6 className="mb-1 fw-medium" style={{ fontSize: '16px' }}>
-                                        {habit.habitName}
-                                    </h6>
-                                    {/* Hiển thị streak nếu > 0 */}
-                                    {habit.streak > 0 && (
-                                        <div className="d-flex align-items-center">
-                                            <TrendingUp size={14} className="me-1" style={{ color: '#6c757d' }} />
-                                            <span className="small text-muted">
-                                                {habit.streak} day streak
-                                            </span>
+                                    <div className="d-flex align-items-center mb-1">
+                                        <h6 className="mb-0 fw-medium me-2" style={{ fontSize: '16px' }}>
+                                            {habit.habitName}
+                                        </h6>
+                                        <Badge 
+                                            bg={getPriorityColor(habit.priority)} 
+                                            className="me-2"
+                                            style={{ fontSize: '10px' }}
+                                        >
+                                            {habit.priority}
+                                        </Badge>
+                                        {isHabitDueSoon(habit.startTime) && !habit.completed && (
+                                            <Badge bg="info" className="animate-pulse">
+                                                Due Soon!
+                                            </Badge>
+                                        )}
+                                    </div>
+                                    
+                                    {habit.startTime && (
+                                        <div className="d-flex align-items-center text-muted small">
+                                            <Clock size={14} className="me-1" />
+                                            {formatTime(habit.startTime)}
                                         </div>
                                     )}
                                 </div>
@@ -220,12 +323,37 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
                     padding-right: 16px !important;
                 }
 
+                .habit-item.due-soon {
+                    background-color: #fff3cd;
+                    border-left: 4px solid #ffc107;
+                    padding-left: 12px !important;
+                    animation: pulse-highlight 2s infinite;
+                }
+
+                @keyframes pulse-highlight {
+                    0%, 100% { background-color: #fff3cd; }
+                    50% { background-color: #ffeaa7; }
+                }
+
+                .animate-pulse {
+                    animation: pulse 2s infinite;
+                }
+
+                @keyframes pulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.5; }
+                }
+
                 .btn {
                     transition: all 0.2s ease;
                 }
 
                 .btn:hover {
                     transform: translateY(-1px);
+                }
+
+                .habit-indicator {
+                    transition: all 0.2s ease;
                 }
             `}</style>
         </Card>
