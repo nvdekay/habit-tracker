@@ -281,7 +281,7 @@
       "name": "Run 1000km This Year",
       "description": "Complete 1000 kilometers of running in 2024",
       "targetValue": 1000,
-      "currentValue": 445,
+      "currentValue": 446,
       "unit": "km",
       "deadline": "2024-12-31",
       "priority": "high",
@@ -325,24 +325,6 @@
       ],
       "createdAt": "2024-03-10T00:00:00.000Z",
       "updatedAt": "2024-08-13T19:00:00.000Z"
-    },
-    {
-      "id": "e1ec",
-      "userId": "b02mw541u",
-      "name": "Read 100 books",
-      "description": "Read 100 books",
-      "startDate": "2025-08-27",
-      "deadline": "2025-08-29",
-      "priority": "medium",
-      "status": "in_progress",
-      "targetValue": "13",
-      "currentValue": 0,
-      "unit": "books",
-      "linkedHabits": [
-        1,
-        2,
-        3
-      ]
     }
   ],
   "checkins": [

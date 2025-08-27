@@ -19,7 +19,13 @@ import "../index.css";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { createGoal, deleteGoal, getHabits, updateGoal } from "../services/goalService";
+import {
+  createGoal,
+  deleteGoal,
+  getGoalsByUserID,
+  getHabits,
+  updateGoal,
+} from "../services/goalService";
 
 export default function Goal() {
   const { user } = useAuth();
@@ -311,9 +317,7 @@ export default function Goal() {
 
       alert("Thêm mục tiêu thành công!");
       handleClose();
-      fetchGoals();
-      fetchHabits();
-      setGoals(pre => [...pre, newGoal])
+      setGoals((pre) => [...pre, newGoal]);
 
       setNewGoal({
         userId: user ? user.id : null,
@@ -339,9 +343,17 @@ export default function Goal() {
 
     try {
       const res = await updateGoal(editGoal); // gọi service
+
       if (res.status === 200) {
         alert("Cập nhật mục tiêu thành công!");
-        fetchGoals(); // reload lại danh sách
+
+        // gọi lại API để đồng bộ state với DB
+        const goalsData = await getGoalsByUserID(user.id);
+        setGoals(goalsData);
+
+        const habitsData = await getHabits(user.id);
+        setHabits(habitsData);
+
         handleEditClose();
       } else {
         alert("Cập nhật thất bại!");
@@ -867,6 +879,48 @@ export default function Goal() {
                   <option value="high">High</option>
                   <option value="medium">Medium</option>
                 </Form.Select>
+              </div>
+
+              <div className="d-flex gap-2">
+                <div className="flex-fill">
+                  <label className="d-block mb-2 mt-3">Unit</label>
+                  <input
+                    type="text"
+                    className={`form-control mb-3 ${
+                      error.unit ? "is-invalid" : ""
+                    }`}
+                    placeholder="e.g., km, books, days"
+                    onChange={(e) => {
+                      setEditGoal({ ...editGoal, unit: e.target.value });
+                      if (e.target.value && e.target.value.trim() !== "") {
+                        setError((prev) => ({ ...prev, unit: "" }));
+                      }
+                    }}
+                    value={editGoal.unit}
+                  />
+                  {error.unit && (
+                    <p className="text-red-500 text-sm mb-2">{error.unit}</p>
+                  )}
+                </div>
+                <div className="flex-fill">
+                  <label className="d-block mb-2 mt-3">Target Value</label>
+                  <input
+                    type="number"
+                    className={`form-control mb-3}`}
+                    min={1}
+                    onChange={(e) =>
+                      setEditGoal({ ...editGoal, targetValue: e.target.value })
+                    }
+                    value={editGoal.targetValue}
+                    pattern="^[2-9]\d*$"
+                    oninvalid="this.setCustomValidity('Number must be bigger than 1')"
+                  />
+                  {error.targetValue && (
+                    <p className="text-red-500 text-sm mb-2">
+                      {error.targetValue}
+                    </p>
+                  )}
+                </div>
               </div>
 
               <label className="d-block mb-2">Link Habit</label>
