@@ -19,6 +19,7 @@ import "../index.css";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { createGoal, deleteGoal, getHabits, updateGoal } from "../services/goalService";
 
 export default function Goal() {
   const { user } = useAuth();
@@ -76,22 +77,16 @@ export default function Goal() {
 
   //FETCH DATA
   const fetchGoals = async () => {
-    const res = await fetch("http://localhost:8080/goals?userId=" + user.id);
-    if (res.ok) {
-      const data = await res.json();
-      setGoals(data);
-      console.log(data);
-    }
+    const data = await getGoalsByUserID(user.id);
+    setGoals(data);
+    console.log(data);
   };
   const fetchHabits = async () => {
-    const res = await fetch("http://localhost:8080/habits?userId=" + user.id);
-    if (res.ok) {
-      const data = await res.json();
-      setHabits(data);
-    }
+    const data = await getHabits(user.id);
+    setHabits(data);
   };
 
-  //USE EFFECT
+  //USE EFFECT: Get DATA
   useEffect(() => {
     if (!user) {
       setGoals([]);
@@ -102,6 +97,7 @@ export default function Goal() {
     }
   }, []);
 
+  //Filter - Sort
   useEffect(() => {
     if (user) {
       let url = `http://localhost:8080/goals?userId=${user.id}`;
@@ -249,28 +245,30 @@ export default function Goal() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let valid = true;
-    if (newGoal.name.trim() == "") {
+
+    // Validate input (giữ lại trong component vì liên quan đến state UI)
+    if (newGoal.name.trim() === "") {
       setError((prev) => ({ ...prev, name: "Goal name is required" }));
       valid = false;
     } else {
       setError((prev) => ({ ...prev, name: "" }));
-      valid = true;
     }
-    if (newGoal.startDate == "") {
+
+    if (newGoal.startDate === "") {
       setError((prev) => ({ ...prev, startDate: "Start date is required" }));
       valid = false;
     } else {
       setError((prev) => ({ ...prev, startDate: "" }));
-      valid = true;
     }
-    if (newGoal.deadline == "") {
+
+    if (newGoal.deadline === "") {
       setError((prev) => ({ ...prev, deadline: "Deadline is required" }));
       valid = false;
     } else {
       setError((prev) => ({ ...prev, deadline: "" }));
-      valid = true;
     }
-    if (newGoal.linkedHabits.length == 0) {
+
+    if (newGoal.linkedHabits.length === 0) {
       setError((prev) => ({
         ...prev,
         linkedHabits: "At least one habit must be linked",
@@ -278,15 +276,15 @@ export default function Goal() {
       valid = false;
     } else {
       setError((prev) => ({ ...prev, linkedHabits: "" }));
-      valid = true;
     }
-    if (newGoal.description.trim() == "") {
+
+    if (newGoal.description.trim() === "") {
       setError((prev) => ({ ...prev, description: "Description is required" }));
       valid = false;
     } else {
       setError((prev) => ({ ...prev, description: "" }));
-      valid = true;
     }
+
     if (newGoal.targetValue <= 0) {
       setError((prev) => ({
         ...prev,
@@ -295,66 +293,43 @@ export default function Goal() {
       valid = false;
     } else {
       setError((prev) => ({ ...prev, targetValue: "" }));
-      valid = true;
-    }
-    if (newGoal.unit.trim() == "") {
-      setError((prev) => ({ ...prev, unit: "Unit is required" }));
-      valid = false;
-    } else {
-      setError((prev) => ({ ...prev, unit: "" }));
-      valid = true;
-    }
-    if (!newGoal.startDate) {
-      setError((prev) => ({ ...prev, startDate: "Start date is required" }));
-      valid = false;
-    } else {
-      setError((prev) => ({ ...prev, startDate: "" }));
-      valid = true;
-    }
-    if (!newGoal.deadline) {
-      setError((prev) => ({ ...prev, deadline: "Deadline is required" }));
-      valid = false;
-    } else {
-      setError((prev) => ({ ...prev, deadline: "" }));
-      valid = true;
-    }
-    if (newGoal.unit.trim() == "") {
-      setError((prev) => ({ ...prev, unit: "Unit is required" }));
-      valid = false;
-    } else {
-      setError((prev) => ({ ...prev, unit: "" }));
-      valid = true;
     }
 
+    if (newGoal.unit.trim() === "") {
+      setError((prev) => ({ ...prev, unit: "Unit is required" }));
+      valid = false;
+    } else {
+      setError((prev) => ({ ...prev, unit: "" }));
+    }
+
+    // Nếu fail validation thì dừng lại
     if (!valid) return;
-    else {
-      console.log(newGoal);
-      const res = await fetch("http://localhost:8080/goals", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newGoal),
+
+    // Nếu ok thì gọi API từ service
+    try {
+      const data = await createGoal(newGoal);
+
+      alert("Thêm mục tiêu thành công!");
+      handleClose();
+      fetchGoals();
+      fetchHabits();
+      setGoals(pre => [...pre, newGoal])
+
+      setNewGoal({
+        userId: user ? user.id : null,
+        name: "",
+        description: "",
+        startDate: "",
+        deadline: "",
+        priority: "medium",
+        status: "in_progress",
+        targetValue: 0,
+        currentValue: 0,
+        unit: "",
+        linkedHabits: [],
       });
-      if (res.ok) {
-        const data = await res.json();
-        handleClose();
-        fetchGoals();
-        fetchHabits();
-        setNewGoal({
-          userId: user ? user.id : null,
-          name: "",
-          description: "",
-          startDate: "",
-          deadline: "",
-          priority: "medium",
-          status: "in_progress",
-          targetValue: 0,
-          currentValue: 0,
-          unit: "",
-          linkedHabits: [],
-        });
-      }
+    } catch (error) {
+      alert("Thêm mục tiêu thất bại!");
     }
   };
 
@@ -363,14 +338,7 @@ export default function Goal() {
     if (!editGoal) return;
 
     try {
-      const res = await axios.put(
-        `http://localhost:8080/goals/${editGoal.id}`,
-        editGoal,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
+      const res = await updateGoal(editGoal); // gọi service
       if (res.status === 200) {
         alert("Cập nhật mục tiêu thành công!");
         fetchGoals(); // reload lại danh sách
@@ -379,7 +347,6 @@ export default function Goal() {
         alert("Cập nhật thất bại!");
       }
     } catch (error) {
-      console.error("Error updating goal:", error);
       alert("Cập nhật thất bại!");
     }
   };
@@ -421,7 +388,7 @@ export default function Goal() {
   const handleDelete = async (goalID) => {
     if (window.confirm("Sure delete?")) {
       try {
-        const res = await axios.delete(`http://localhost:8080/goals/${goalID}`);
+        const res = await deleteGoal(goalID);
 
         if (res.data) {
           alert("Xoá mục tiêu thành công!");
@@ -430,7 +397,6 @@ export default function Goal() {
           alert("Xoá mục tiêu thất bại!");
         }
       } catch (error) {
-        console.error("Error deleting goal:", error);
         alert("Xoá mục tiêu thất bại!");
       }
     }
