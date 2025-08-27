@@ -442,6 +442,7 @@ export default function Goal() {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 className="fw-bold">My Goals</h2>
+          <p className="text-muted">Set and achieve your personal goals</p>
         </div>
       </div>
 

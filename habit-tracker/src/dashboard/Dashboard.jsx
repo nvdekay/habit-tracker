@@ -324,8 +324,6 @@ export default function Dashboard() {
                     <p className="fs-6">Track your habits and achieve your goals</p>
                 </div>
                 <div>
-                    <button className="btn btn-outline-secondary me-2">Export PDF</button>
-                    <button className="btn btn-outline-secondary">Export CSV</button>
                     <button
                         className="btn btn-outline-primary ms-2"
                         onClick={fetchDashboardData}
@@ -424,15 +422,6 @@ export default function Dashboard() {
                                     className="d-flex justify-content-between align-items-center mb-3"
                                 >
                                     <div>
-                                        <span className="me-2">
-                                            {habit.name.includes("Exercise") && "💪"}
-                                            {habit.name.includes("Read") && "📚"}
-                                            {habit.name.includes("Water") && "💧"}
-                                            {habit.name.includes("Planning") && "🗓️"}
-                                            {habit.name.includes("Meditation") && "🧘"}
-                                            {habit.name.includes("Shopping") && "🛒"}
-                                            {habit.name.includes("Programming") && "💻"}
-                                        </span>
                                         <strong>{habit.name}</strong>
                                         <div className="text-muted small">
                                             {habit.currentStreak} day streak

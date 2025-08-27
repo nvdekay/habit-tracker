@@ -13,16 +13,21 @@ export default function CheckIn() {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const { user } = useAuth();
 
+    // Xử lý khi user chọn ngày mới trên calendar
     const handleDateSelect = useCallback((date) => {
         setSelectedDate(date);
     }, []);
 
+    // Cập nhật dữ liệu completion rate từ CalendarView
     const handleCalendarDataUpdate = useCallback((data) => {
         setCalendarData(data);
     }, []);
 
+    // Xử lý khi status của habit thay đổi
     const handleStatusChange = useCallback((date) => {
-        setRefreshTrigger(prev => prev + 1);
+        setRefreshTrigger(prev => prev + 1); // Trigger refresh
+        
+        // Reset data cho ngày đó để load lại
         setCalendarData(prev => ({
             ...prev,
             [date]: undefined

@@ -21,8 +21,10 @@ function CalendarView({ selectedDate, onDateSelect, calendarData, onCalendarData
             setLoading(true)
             const year = currentMonth.getFullYear()
             const month = currentMonth.getMonth()
+            // Gọi API lấy completion rate cho tất cả ngày trong tháng
             const data = await getCalendarData(year, month)
             setInternalCalendarData(data)
+            // Truyền data lên parent component
             if (onCalendarDataUpdate) {
                 onCalendarDataUpdate(data)
             }
@@ -48,72 +50,87 @@ function CalendarView({ selectedDate, onDateSelect, calendarData, onCalendarData
         })
     }
 
+    // Hàm lấy số ngày trong một tháng cụ thể
     const getDaysInMonth = (year, month) => {
+        // new Date(year, month + 1, 0): tạo ra ngày cuối cùng của tháng (0 nghĩa là ngày trước ngày 1 của tháng tiếp theo)
+        // getDate() sẽ trả về số ngày trong tháng đó
         return new Date(year, month + 1, 0).getDate()
     }
 
+    // Hàm lấy ngày trong tuần của ngày đầu tiên trong tháng
     const getFirstDayOfMonth = (year, month) => {
+        // new Date(year, month, 1): tạo ra ngày đầu tiên trong tháng
+        // getDay() trả về số nguyên 0–6 (0 = Chủ Nhật, 1 = Thứ Hai, ...)
         return new Date(year, month, 1).getDay()
     }
 
+    // Hàm kiểm tra xem một date có phải là hôm nay hay không
     const isToday = (date) => {
-        const today = new Date()
+        const today = new Date() // Lấy ngày hiện tại
+        // So sánh chuỗi ngày (yyyy-mm-dd) của date với today
         return date.toDateString() === today.toDateString()
     }
 
+    // Hàm kiểm tra xem ngày hiện tại có phải là ngày được chọn không
     const isSelected = (dateStr) => {
+        // so sánh string của ngày (ISO format: yyyy-mm-dd) với selectedDate trong state
         return selectedDate === dateStr
     }
 
+    // Hàm xác định màu dot theo tỷ lệ hoàn thành
     const getCompletionDotColor = (rate) => {
-        if (!rate || rate === 0) return "#e9ecef"
-        if (rate >= 80) return "#28a745" // Green
-        if (rate >= 60) return "#ffc107" // Yellow
-        if (rate >= 40) return "#fd7e14" // Orange
-        return "#dc3545" // Red
+        if (!rate || rate === 0) return "#e9ecef"  // Chưa có dữ liệu → màu xám
+        if (rate >= 80) return "#28a745"           // >=80% → xanh lá
+        if (rate >= 60) return "#ffc107"           // >=60% → vàng
+        if (rate >= 40) return "#fd7e14"           // >=40% → cam
+        return "#dc3545"                           // <40% → đỏ
     }
 
+    // Hàm render tất cả các ngày trong tháng ra calendar
     const renderCalendarDays = () => {
-        const year = currentMonth.getFullYear()
-        const month = currentMonth.getMonth()
-        const daysInMonth = getDaysInMonth(year, month)
-        const firstDay = getFirstDayOfMonth(year, month)
-        const days = []
+        const year = currentMonth.getFullYear() // Lấy năm hiện tại từ currentMonth
+        const month = currentMonth.getMonth()   // Lấy tháng hiện tại (0-11)
 
-        // Add empty cells for days before the first day of the month
+        const daysInMonth = getDaysInMonth(year, month) // Số ngày trong tháng
+        const firstDay = getFirstDayOfMonth(year, month) // Ngày bắt đầu của tháng (0–6)
+        const days = [] // Mảng chứa các element ngày để render
+
+        // Thêm các ô trống trước ngày đầu tiên trong tháng (để căn đúng thứ trong tuần)
         for (let i = 0; i < firstDay; i++) {
             days.push(
                 <div key={`empty-${i}`} className="calendar-day empty"></div>
             )
         }
 
-        // Add cells for each day of the month
+        // Thêm từng ngày trong tháng
         for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(year, month, day)
-            const dateStr = date.toISOString().split('T')[0]
-            const completionRate = finalCalendarData[dateStr] || 0
-            const isCurrentSelected = isSelected(dateStr)
-            const isTodayDate = isToday(date)
+            const date = new Date(year, month, day)              // Tạo object Date cho ngày hiện tại
+            const dateStr = date.toISOString().split('T')[0]    // Lấy chuỗi yyyy-mm-dd
+            const completionRate = finalCalendarData[dateStr] || 0 // Lấy tỷ lệ hoàn thành từ dữ liệu, mặc định = 0
+            const isCurrentSelected = isSelected(dateStr)       // Kiểm tra có được chọn không
+            const isTodayDate = isToday(date)                   // Kiểm tra có phải hôm nay không
 
+            // Push một ô ngày vào mảng days
             days.push(
                 <div
-                    key={dateStr}
+                    key={dateStr} // key duy nhất
                     className={`calendar-day ${isCurrentSelected ? 'selected' : ''} ${isTodayDate ? 'today' : ''}`}
-                    onClick={() => onDateSelect && onDateSelect(dateStr)}
-                    role="button"
-                    tabIndex={0}
+                    onClick={() => onDateSelect && onDateSelect(dateStr)} // Khi click gọi callback chọn ngày
+                    role="button" // Để hỗ trợ accessibility (screen reader)
+                    tabIndex={0}  // Để có thể focus bằng bàn phím
                 >
-                    <div className="day-number">{day}</div>
-                    <div 
+                    <div className="day-number">{day}</div> {/* Hiển thị số ngày */}
+                    <div
                         className="completion-dot"
-                        style={{ backgroundColor: getCompletionDotColor(completionRate) }}
+                        style={{ backgroundColor: getCompletionDotColor(completionRate) }} // Màu dot theo tỷ lệ hoàn thành
                     ></div>
                 </div>
             )
         }
 
-        return days
+        return days // Trả về mảng các element ngày để render
     }
+
 
     return (
         <Card className="shadow-sm border-0">
@@ -135,14 +152,14 @@ function CalendarView({ selectedDate, onDateSelect, calendarData, onCalendarData
                     >
                         <ChevronLeft size={20} />
                     </Button>
-                    
+
                     <h5 className="mb-0 fw-semibold">
-                        {currentMonth.toLocaleDateString("en-US", { 
-                            month: "long", 
-                            year: "numeric" 
+                        {currentMonth.toLocaleDateString("en-US", {
+                            month: "long",
+                            year: "numeric"
                         })}
                     </h5>
-                    
+
                     <Button
                         variant="link"
                         className="p-0 text-decoration-none text-muted"

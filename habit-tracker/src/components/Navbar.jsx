@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Home, Target, Calendar, Settings, LogOut, ListChecks, User } from "lucide-react";
+import { Home, Target, Calendar, LogOut, ListChecks, User } from "lucide-react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function Navbar() {
@@ -56,11 +56,6 @@ export default function Navbar() {
             <li className="nav-item">
               <Link className="nav-link d-flex align-items-center" to="/checkin">
                 <Calendar size={18} className="me-1" /> Check-in
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link d-flex align-items-center" to="/settings">
-                <Settings size={18} className="me-1" /> Settings
               </Link>
             </li>
           </ul>

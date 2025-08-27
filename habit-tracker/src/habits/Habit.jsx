@@ -134,11 +134,11 @@ const Habit = () => {
   };
 
   return (
-    <Container className="py-4">
+    <Container className="py-4" style={{ backgroundColor: "#f9fafb", minHeight: "100vh" }}>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 className="fw-bold">My Habits</h2>
-          <p className="fs-6">Manage and track your daily habits</p>
+          <p className="text-muted">Manage and track your daily habits easily</p>
         </div>
         {user && (
           <Create
@@ -153,6 +153,7 @@ const Habit = () => {
         )}
       </div>
 
+      {/* Toast Notifications */}
       <ToastContainer position="top-end" className="pt-5" style={{ zIndex: 1050 }}>
         {error && (
           <Toast
@@ -161,9 +162,9 @@ const Habit = () => {
             delay={3000}
             autohide
             bg="danger"
-            className="text-white"
+            className="text-white shadow"
           >
-            <Toast.Header>
+            <Toast.Header closeButton={false}>
               <strong className="me-auto">Error</strong>
             </Toast.Header>
             <Toast.Body>{error}</Toast.Body>
@@ -176,9 +177,9 @@ const Habit = () => {
             delay={3000}
             autohide
             bg="success"
-            className="text-white"
+            className="text-white shadow"
           >
-            <Toast.Header>
+            <Toast.Header closeButton={false}>
               <strong className="me-auto">Success</strong>
             </Toast.Header>
             <Toast.Body>{success}</Toast.Body>
@@ -187,225 +188,131 @@ const Habit = () => {
       </ToastContainer>
 
       {!user ? (
-        <ToastContainer position="top-end" className="pt-5" style={{ zIndex: 1050 }}>
-          <Toast
-            show={true}
-            bg="warning"
-            className="text-dark"
-          >
-            <Toast.Header>
-              <strong className="me-auto">Warning</strong>
-            </Toast.Header>
-            <Toast.Body>Please log in to use this feature.</Toast.Body>
-          </Toast>
-        </ToastContainer>
+        <Card className="p-4 text-center bg-light border-0 shadow-sm">
+          <h5 className="text-warning">⚠ Please log in to use this feature</h5>
+        </Card>
       ) : (
         <Row>
-          <Col xs={2}>
-            <h4>Filters</h4>
-            <Form.Group>
-              <Form.Label>Search by Name</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter habit name"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                disabled={loading}
-              />
-            </Form.Group>
-            <hr />
-            <h4>Type</h4>
-            <Form.Group>
-              <Form.Select
-                name="type"
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                disabled={loading}
-              >
-                <option value="">All</option>
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-              </Form.Select>
-            </Form.Group>
-            {/* <div>
-              <input
-                type="radio"
-                name="type"
-                value=""
-                checked={typeFilter === ''}
-                onChange={() => setTypeFilter('')}
-                disabled={loading}
-              /> All
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="type"
-                value="daily"
-                checked={typeFilter === 'daily'}
-                onChange={() => setTypeFilter('daily')}
-                disabled={loading}
-              /> Daily
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="type"
-                value="weekly"
-                checked={typeFilter === 'weekly'}
-                onChange={() => setTypeFilter('weekly')}
-                disabled={loading}
-              /> Weekly
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="type"
-                value="monthly"
-                checked={typeFilter === 'monthly'}
-                onChange={() => setTypeFilter('monthly')}
-                disabled={loading}
-              /> Monthly
-            </div> */}
-            <hr />
-            <h4>Status</h4>
-            <div>
-              <input
-                type="radio"
-                name="isActive"
-                value=""
-                checked={statusFilter === ''}
-                onChange={() => setStatusFilter('')}
-                disabled={loading}
-              /> All
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="isActive"
-                value="true"
-                checked={statusFilter === 'true'}
-                onChange={() => setStatusFilter('true')}
-                disabled={loading}
-              /> Active
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="isActive"
-                value="false"
-                checked={statusFilter === 'false'}
-                onChange={() => setStatusFilter('false')}
-                disabled={loading}
-              /> Inactive
-            </div>
-            {/* <Form.Group>
-              <Form.Select
-                name="isActive"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                disabled={loading}
-              >
-                <option value="">All</option>
-                <option value="true">Active</option>
-                <option value="false">Inactive</option>
-              </Form.Select>
-            </Form.Group> */}
-            <hr />
-            <h4>Priority</h4>
-            <div>
-              <input
-                type="checkbox"
-                value="high"
-                checked={priorityFilter.includes('high')}
-                onChange={() => togglePriority('high')}
-                disabled={loading}
-              /> High
-            </div>
-            <div>
-              <input
-                type="checkbox"
-                value="medium"
-                checked={priorityFilter.includes('medium')}
-                onChange={() => togglePriority('medium')}
-                disabled={loading}
-              /> Medium
-            </div>
-            <div>
-              <input
-                type="checkbox"
-                value="low"
-                checked={priorityFilter.includes('low')}
-                onChange={() => togglePriority('low')}
-                disabled={loading}
-              /> Low
-            </div>
-            {/* <Form.Group>
-              <Form.Select
-                name="priority"
-                value={priorityFilter[0] || ""}
-                onChange={(e) => setPriorityFilter(e.target.value ? [e.target.value] : [])}
-                disabled={loading}
-              >
-                <option value="">All</option>
-                <option value="high">High</option>
-                <option value="medium">Medium</option>
-                <option value="low">Low</option>
-              </Form.Select>
-            </Form.Group> */}
+          {/* Sidebar Filters */}
+          <Col xs={12} md={3} className="mb-4">
+            <Card className="p-3 shadow-sm border-0">
+              <h5 className="fw-semibold text-primary mb-3">Filters</h5>
+
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-medium">Search</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Search by name..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  disabled={loading}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-medium">Type</Form.Label>
+                <Form.Select
+                  name="type"
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  disabled={loading}
+                >
+                  <option value="">All</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-medium">Status</Form.Label>
+                <Form.Check
+                  type="radio"
+                  label="All"
+                  name="isActive"
+                  value=""
+                  checked={statusFilter === ''}
+                  onChange={() => setStatusFilter('')}
+                />
+                <Form.Check
+                  type="radio"
+                  label="Active"
+                  name="isActive"
+                  value="true"
+                  checked={statusFilter === 'true'}
+                  onChange={() => setStatusFilter('true')}
+                />
+                <Form.Check
+                  type="radio"
+                  label="Inactive"
+                  name="isActive"
+                  value="false"
+                  checked={statusFilter === 'false'}
+                  onChange={() => setStatusFilter('false')}
+                />
+              </Form.Group>
+
+              <Form.Group>
+                <Form.Label className="fw-medium">Priority</Form.Label>
+                {['high', 'medium', 'low'].map(p => (
+                  <Form.Check
+                    key={p}
+                    type="checkbox"
+                    label={p.charAt(0).toUpperCase() + p.slice(1)}
+                    value={p}
+                    checked={priorityFilter.includes(p)}
+                    onChange={() => togglePriority(p)}
+                  />
+                ))}
+              </Form.Group>
+            </Card>
           </Col>
 
-          <Col xs={10}>
+          {/* Habits List */}
+          <Col xs={12} md={9}>
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <Button
-                className="btn btn-primary"
-                onClick={MySort}
-              >
+              <Button variant="outline-primary" onClick={MySort}>
                 Sort by Type, Priority & Name {sortOrder === 'asc' ? '↑' : ''}
               </Button>
             </div>
 
             {loading && (!filteredHabits || filteredHabits.length === 0) ? (
-              <Spinner animation="border" />
+              <div className="text-center my-5">
+                <Spinner animation="border" variant="primary" />
+              </div>
             ) : (
               <Row xs={1} md={2} className="g-4">
                 {filteredHabits.map((habit) => (
                   <Col key={habit.id}>
-                    <Card style={{ minHeight: '200px', display: 'flex', flexDirection: 'column' }}>
-                      <Card.Header style={{ backgroundColor: '#e9ecef', padding: '0', border: 'none' }}>
-                        <div className="d-flex justify-content-between align-items-center p-2">
-                          <Card.Title style={{ margin: '0' }}>
-                            {habit.name}
-                          </Card.Title>
-                          <div>
-                            <Edit
-                              habit={habit}
-                              setHabits={setHabits}
-                              setFilteredHabits={setFilteredHabits}
-                              setSuccess={setSuccess}
-                              setError={setError}
-                              loading={loading}
-                              setLoading={setLoading}
-                            />
-                            <Button
-                              variant="danger"
-                              onClick={() => handleDelete(habit.id)}
-                              disabled={loading}
-                              className="p-1"
-                            >
-                              <Trash2 size={20} />
-                            </Button>
-                          </div>
+                    <Card className="shadow-sm border-0 h-100 habit-card">
+                      <Card.Header className="bg-light d-flex justify-content-between align-items-center">
+                        <h6 className="fw-semibold mb-0 text-primary">{habit.name}</h6>
+                        <div>
+                          <Edit
+                            habit={habit}
+                            setHabits={setHabits}
+                            setFilteredHabits={setFilteredHabits}
+                            setSuccess={setSuccess}
+                            setError={setError}
+                            loading={loading}
+                            setLoading={setLoading}
+                          />
+                          <Button
+                            variant="outline-danger"
+                            onClick={() => handleDelete(habit.id)}
+                            disabled={loading}
+                            size="sm"
+                            className="ms-2"
+                          >
+                            <Trash2 size={18} />
+                          </Button>
                         </div>
                       </Card.Header>
-                      <Card.Body style={{ flex: '1' }}>
-                        <Card.Text>
-                          <strong>Description:</strong> {habit.description || 'No description'}<br />
-                          <div>
-                            <strong>Type:</strong> {habit.type} - <strong>Frequency:</strong> {habit.frequency}
-                          </div>
-                          <strong>Priority:</strong> {' '}
+                      <Card.Body>
+                        <p className="mb-2 text-muted">{habit.description || 'No description provided'}</p>
+                        <p className="mb-1"><strong>Type:</strong> {habit.type} ({habit.frequency})</p>
+                        <p className="mb-1">
+                          <strong>Priority:</strong>{' '}
                           <Badge
                             bg={
                               habit.priority === 'high'
@@ -416,16 +323,17 @@ const Habit = () => {
                             }
                           >
                             {habit.priority}
-                          </Badge><br />
-                          <strong>Status:</strong> {' '}
+                          </Badge>
+                        </p>
+                        <p>
+                          <strong>Status:</strong>{' '}
                           <Form.Check
                             type="switch"
                             checked={habit.isActive}
                             onChange={() => handleToggleActive(habit.id, habit.isActive, habit)}
-                            disabled={loading}
                             inline
                           />
-                        </Card.Text>
+                        </p>
                       </Card.Body>
                     </Card>
                   </Col>
@@ -435,6 +343,16 @@ const Habit = () => {
           </Col>
         </Row>
       )}
+
+      <style jsx>{`
+        .habit-card {
+          transition: all 0.2s ease;
+        }
+        .habit-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+      `}</style>
     </Container>
   );
 };

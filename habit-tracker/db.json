@@ -640,45 +640,45 @@
       "userId": "b02mw541u",
       "habitId": "4",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:01.563Z"
+      "completedAt": "2025-08-27T02:53:55.706Z"
     },
     {
       "id": "5a3d",
       "userId": "b02mw541u",
       "habitId": "5",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:02.378Z"
+      "completedAt": "2025-08-27T02:53:56.211Z"
     },
     {
       "id": "69de",
       "userId": "b02mw541u",
       "habitId": "6",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:03.070Z"
+      "completedAt": "2025-08-27T02:53:56.783Z"
     },
     {
       "id": "e30e",
       "userId": "b02mw541u",
       "habitId": "7",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:03.825Z"
+      "completedAt": "2025-08-27T02:53:57.778Z"
     },
     {
       "id": "7daa",
       "userId": "b02mw541u",
       "habitId": "8",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:05.060Z"
+      "completedAt": "2025-08-27T02:53:58.192Z"
     },
     {
       "id": "5dce",
@@ -723,16 +723,16 @@
       "date": "2025-08-27",
       "completed": false,
       "notes": "",
-      "completedAt": "2025-08-26T15:56:06.107Z"
+      "completedAt": "2025-08-27T03:44:54.927Z"
     },
     {
       "id": "de9f",
       "userId": "b02mw541u",
       "habitId": "3",
       "date": "2025-08-27",
-      "completed": true,
+      "completed": false,
       "notes": "",
-      "completedAt": "2025-08-26T16:56:01.664Z"
+      "completedAt": "2025-08-27T03:44:54.410Z"
     },
     {
       "id": "6297",
@@ -748,9 +748,9 @@
       "userId": "b02mw541u",
       "habitId": "5",
       "date": "2025-08-27",
-      "completed": true,
+      "completed": false,
       "notes": "",
-      "completedAt": "2025-08-26T15:56:04.645Z"
+      "completedAt": "2025-08-27T03:44:55.745Z"
     },
     {
       "id": "20ee",
@@ -759,7 +759,7 @@
       "date": "2025-08-27",
       "completed": false,
       "notes": "",
-      "completedAt": "2025-08-26T15:45:29.478Z"
+      "completedAt": "2025-08-27T03:44:58.113Z"
     },
     {
       "id": "4295",
@@ -768,16 +768,70 @@
       "date": "2025-08-27",
       "completed": false,
       "notes": "",
-      "completedAt": "2025-08-26T15:45:28.931Z"
+      "completedAt": "2025-08-27T03:44:57.712Z"
     },
     {
       "id": "109e",
       "userId": "b02mw541u",
       "habitId": "8",
       "date": "2025-08-27",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-27T03:45:05.606Z"
+    },
+    {
+      "id": "f730",
+      "userId": "b02mw541u",
+      "habitId": "9",
+      "date": "2025-08-27",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-27T03:45:05.194Z"
+    },
+    {
+      "id": "94fa",
+      "userId": "b02mw541u",
+      "habitId": "10",
+      "date": "2025-08-27",
       "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T15:45:28.382Z"
+      "completedAt": "2025-08-27T03:45:04.322Z"
+    },
+    {
+      "id": "5e6e",
+      "userId": "b02mw541u",
+      "habitId": "9",
+      "date": "2025-08-26",
+      "completed": true,
+      "notes": "",
+      "completedAt": "2025-08-27T02:53:58.572Z"
+    },
+    {
+      "id": "bade",
+      "userId": "b02mw541u",
+      "habitId": "10",
+      "date": "2025-08-26",
+      "completed": true,
+      "notes": "",
+      "completedAt": "2025-08-27T02:53:59.262Z"
+    },
+    {
+      "id": "ffe9",
+      "userId": "b02mw541u",
+      "habitId": "3",
+      "date": "2025-08-19",
+      "completed": true,
+      "notes": "",
+      "completedAt": "2025-08-27T03:37:20.005Z"
+    },
+    {
+      "id": "7041",
+      "userId": "b02mw541u",
+      "habitId": "3",
+      "date": "2025-08-28",
+      "completed": true,
+      "notes": "",
+      "completedAt": "2025-08-27T03:37:31.165Z"
     }
   ],
   "reminders": [
