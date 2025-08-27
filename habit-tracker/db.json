@@ -51,8 +51,8 @@
         "startTime": "10:00:00",
         "endTime": "11:00:00"
       },
-      "startDate": "2024-01-01",
-      "endDate": "2024-12-31",
+      "startDate": "2025-01-01",
+      "endDate": "2025-12-31",
       "priority": "high",
       "isActive": true,
       "createdAt": "2024-01-01T06:00:00.000Z",
@@ -112,16 +112,31 @@
     {
       "id": "5",
       "userId": "b02mw541u",
-      "name": "Morning Coffee & Planning",
-      "description": "Have coffee and plan the day",
-      "type": "daily",
-      "frequency": {
-        "startTime": "08:30:00",
-        "endTime": "09:00:00"
-      },
-      "startDate": "2024-04-01",
-      "endDate": "2024-12-31",
-      "priority": "low",
+
+      "name": "Learn Programming",
+      "description": "Study programming for at least 3 hours",
+      "type": "weekly",
+      "frequency": [
+        {
+          "weekday": 1,
+          "startTime": "18:00:00",
+          "endTime": "21:00:00"
+        },
+        {
+          "weekday": 3,
+          "startTime": "18:00:00",
+          "endTime": "21:00:00"
+        },
+        {
+          "weekday": 5,
+          "startTime": "18:00:00",
+          "endTime": "21:00:00"
+        }
+      ],
+      "startDate": "2025-04-01",
+      "endDate": "2025-12-31",
+      "priority": "high",
+
       "isActive": true,
       "createdAt": "2024-04-01T19:00:00.000Z",
       "updatedAt": "2024-08-12T20:30:00.000Z"
@@ -190,8 +205,8 @@
       "description": "Drink a glass of water",
       "type": "daily",
       "frequency": {
-        "startTime": "11:30:00",
-        "endTime": "11:35:00"
+        "startTime": "08:00:00",
+        "endTime": "08:05:00"
       },
       "startDate": "2024-01-01",
       "endDate": "2024-12-31",
