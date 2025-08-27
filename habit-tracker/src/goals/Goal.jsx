@@ -5,6 +5,7 @@ import { Trash } from "lucide-react";
 import { Undo2 } from "lucide-react";
 
 import {
+  Badge,
   Button,
   Card,
   CardBody,
@@ -541,7 +542,7 @@ export default function Goal() {
           <div key={goal.id} className="col-6">
             <Card key={goal.id} className="shadow-sm h-100 my-4">
               <CardHeader className="d-flex justify-content-between align-items-center">
-                <CardTitle className="text-lg ">{goal.name}</CardTitle>
+                <CardTitle className="text-xl-start">{goal.name}</CardTitle>
                 <div>
                   <span
                     data-bs-toggle="tooltip"
@@ -575,12 +576,17 @@ export default function Goal() {
                   {new Date(goal.deadline).toLocaleDateString()}
                 </p>
                 <p>
-                  <strong>Priority:</strong>{" "}
-                  {goal.priority == "high" ? "HIGH" : "MEDIUM"}
-                </p>
-                <p>
-                  <strong>Status:</strong>{" "}
-                  {goal.status == "completed" ? "COMPLETED" : "IN PROGRESSS"}
+                  {goal.priority == "high" ? (
+                    <Badge bg="danger mx-1">High</Badge>
+                  ) : (
+                    <Badge bg="secondary mx-1">Low</Badge>
+                  )}
+                
+                  {goal.status == "completed" ? (
+                    <Badge bg="success">Completed</Badge>
+                  ) : (
+                    <Badge bg="warning">In progress</Badge>
+                  )}
                 </p>
                 <p>
                   <strong>Progress:</strong>
@@ -654,7 +660,8 @@ export default function Goal() {
                   </button>
                 </div>
 
-                {goal.status === "in_progress" && (
+                {(goal.status === "in_progress" ||
+                  goal.status === "completed") && (
                   <div>
                     <button
                       className="btn btn-warning"
