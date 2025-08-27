@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Home, Target, Calendar, LogOut, ListChecks, User } from "lucide-react";
+import NotificationBell from "./NotificationBell";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function Navbar() {
@@ -60,10 +61,20 @@ export default function Navbar() {
             </li>
           </ul>
 
-          {/* User Info + Logout */}
+          {/* Notification Bell and User Info */}
           <div className="d-flex align-items-center">
-            <User size={18} className="me-1" />
-            <span className="me-3">{user.fullName}</span>
+            {/* Notification Bell */}
+            <div className="me-3">
+              <NotificationBell />
+            </div>
+
+            {/* User Info */}
+            <div className="d-flex align-items-center me-3">
+              <User size={18} className="me-1" />
+              <span>{user.fullName}</span>
+            </div>
+
+            {/* Logout Button */}
             <button
               className="btn btn-outline-danger btn-sm d-flex align-items-center"
               onClick={handleLogout}

@@ -1,4 +1,4 @@
-// checkInService.js - Updated version
+// checkInService.js - Updated version with conflict checking (removed streak calculation)
 import api from "./api"
 
 const BASE_URL = "http://localhost:8080"
@@ -77,34 +77,53 @@ export async function getCheckInsForDate(date) {
         if (!habitsResponse.ok) throw new Error('Failed to fetch habits');
         const habits = await habitsResponse.json();
 
+        // Filter habits that should be active on this date
+        const targetDate = new Date(date);
+        const dayOfWeek = targetDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
+        const dayOfMonth = targetDate.getDate();
+
+        const activeHabitsForDate = habits.filter(habit => {
+            if (habit.type === 'daily') return true;
+            
+            if (habit.type === 'weekly') {
+                return habit.frequency.some(freq => {
+                    const habitDay = freq.weekday === 7 ? 0 : freq.weekday; // Convert Sunday
+                    return habitDay === dayOfWeek;
+                });
+            }
+            
+            if (habit.type === 'monthly') {
+                return habit.frequency.some(freq => freq.day === dayOfMonth);
+            }
+            
+            return false;
+        });
+
         // Get check-ins for the date
         const checkInsResponse = await fetch(`${BASE_URL}/checkins?userId=${userId}&date=${date}`);
         if (!checkInsResponse.ok) throw new Error('Failed to fetch check-ins');
         const dayCheckIns = await checkInsResponse.json();
 
         // Map habits with their check-in status
-        const habitCheckIns = habits.map(habit => {
+        const habitCheckIns = activeHabitsForDate.map(habit => {
             const checkIn = dayCheckIns.find(c => c.habitId.toString() === habit.id.toString());
             return {
                 habitId: habit.id,
                 habitName: habit.name,
-                habitIcon: habit.icon,
-                habitColor: habit.color,
                 completed: checkIn ? checkIn.completed : false,
-                streak: habit.currentStreak || 0,
                 notes: checkIn ? checkIn.notes : ''
             };
         });
 
         // Calculate completion rate
         const completedCount = habitCheckIns.filter(h => h.completed).length;
-        const completionRate = habits.length > 0 ? Math.round((completedCount / habits.length) * 100) : 0;
+        const completionRate = activeHabitsForDate.length > 0 ? Math.round((completedCount / activeHabitsForDate.length) * 100) : 0;
 
         return {
             date,
             habits: habitCheckIns,
             completionRate,
-            totalHabits: habits.length,
+            totalHabits: activeHabitsForDate.length,
             completedHabits: completedCount
         };
     } catch (error) {
@@ -137,76 +156,6 @@ export async function getCheckInHistory(startDate, endDate) {
     }
 }
 
-// Get streak data for a habit
-export async function getStreakData(habitId) {
-    try {
-        const userId = getCurrentUserId();
-        if (!userId) throw new Error('User not authenticated');
-
-        const response = await fetch(`${BASE_URL}/checkins?userId=${userId}&habitId=${habitId}&completed=true`);
-        if (!response.ok) throw new Error('Failed to fetch streak data');
-        
-        const habitCheckIns = await response.json();
-
-        // Sort by date descending
-        habitCheckIns.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-        // Calculate current streak
-        let currentStreak = 0;
-        const today = new Date();
-        const currentDate = new Date(today);
-
-        for (let i = 0; i < 365; i++) { // Check last 365 days max
-            const dateStr = currentDate.toISOString().split('T')[0];
-            const hasCheckIn = habitCheckIns.some(checkIn => checkIn.date === dateStr);
-            
-            if (hasCheckIn) {
-                currentStreak++;
-            } else {
-                // Allow skipping today if it's not completed yet
-                if (i === 0 && dateStr === today.toISOString().split('T')[0]) {
-                    // Skip today, continue checking yesterday
-                } else {
-                    break;
-                }
-            }
-            currentDate.setDate(currentDate.getDate() - 1);
-        }
-
-        // Calculate longest streak
-        let longestStreak = 0;
-        let tempStreak = 0;
-        let previousDate = null;
-
-        for (const checkIn of habitCheckIns.reverse()) { // Process chronologically
-            const currentCheckInDate = new Date(checkIn.date);
-            
-            if (previousDate) {
-                const dayDiff = (currentCheckInDate - previousDate) / (1000 * 60 * 60 * 24);
-                if (dayDiff === 1) {
-                    tempStreak++;
-                } else {
-                    longestStreak = Math.max(longestStreak, tempStreak);
-                    tempStreak = 1;
-                }
-            } else {
-                tempStreak = 1;
-            }
-            
-            previousDate = currentCheckInDate;
-        }
-        longestStreak = Math.max(longestStreak, tempStreak);
-
-        return {
-            currentStreak,
-            longestStreak
-        };
-    } catch (error) {
-        console.error('Error in getStreakData:', error);
-        return { currentStreak: 0, longestStreak: 0 };
-    }
-}
-
 // Get calendar data for month view
 export async function getCalendarData(year, month) {
     try {
@@ -220,7 +169,6 @@ export async function getCalendarData(year, month) {
         const habitsResponse = await fetch(`${BASE_URL}/habits?userId=${userId}&isActive=true`);
         if (!habitsResponse.ok) throw new Error('Failed to fetch habits');
         const habits = await habitsResponse.json();
-        const totalHabits = habits.length;
 
         // Get check-ins for the month
         const checkInsResponse = await fetch(`${BASE_URL}/checkins?userId=${userId}`);
@@ -237,10 +185,33 @@ export async function getCalendarData(year, month) {
         // Calculate completion rate for each day
         for (let date = new Date(startDate); date <= new Date(endDate); date.setDate(date.getDate() + 1)) {
             const dateStr = date.toISOString().split('T')[0];
+            const dayOfWeek = date.getDay();
+            const dayOfMonth = date.getDate();
+
+            // Get habits that should be active on this specific date
+            const activeHabitsForDay = habits.filter(habit => {
+                if (habit.type === 'daily') return true;
+                
+                if (habit.type === 'weekly') {
+                    return habit.frequency.some(freq => {
+                        const habitDay = freq.weekday === 7 ? 0 : freq.weekday;
+                        return habitDay === dayOfWeek;
+                    });
+                }
+                
+                if (habit.type === 'monthly') {
+                    return habit.frequency.some(freq => freq.day === dayOfMonth);
+                }
+                
+                return false;
+            });
+
             const dayCheckIns = monthCheckIns.filter(checkIn => checkIn.date === dateStr);
             const completedCount = dayCheckIns.filter(checkIn => checkIn.completed).length;
             
-            calendarData[dateStr] = totalHabits > 0 ? Math.round((completedCount / totalHabits) * 100) : 0;
+            calendarData[dateStr] = activeHabitsForDay.length > 0 
+                ? Math.round((completedCount / activeHabitsForDay.length) * 100) 
+                : 0;
         }
 
         return calendarData;
@@ -276,6 +247,83 @@ export async function getWeeklySummary(startDate, endDate) {
         return weekData;
     } catch (error) {
         console.error('Error in getWeeklySummary:', error);
+        return [];
+    }
+}
+
+// Check for time conflicts on a specific date
+export async function checkTimeConflicts(date) {
+    try {
+        const userId = getCurrentUserId();
+        if (!userId) throw new Error('User not authenticated');
+
+        // Get user's active habits
+        const habitsResponse = await fetch(`${BASE_URL}/habits?userId=${userId}&isActive=true`);
+        if (!habitsResponse.ok) throw new Error('Failed to fetch habits');
+        const habits = await habitsResponse.json();
+
+        const targetDate = new Date(date);
+        const dayOfWeek = targetDate.getDay();
+        const dayOfMonth = targetDate.getDate();
+
+        // Get habits active on this date
+        const activeHabits = habits.filter(habit => {
+            if (habit.type === 'daily') return true;
+            
+            if (habit.type === 'weekly') {
+                return habit.frequency.some(freq => {
+                    const habitDay = freq.weekday === 7 ? 0 : freq.weekday;
+                    return habitDay === dayOfWeek;
+                });
+            }
+            
+            if (habit.type === 'monthly') {
+                return habit.frequency.some(freq => freq.day === dayOfMonth);
+            }
+            
+            return false;
+        });
+
+        // Group habits by start time
+        const timeGroups = {};
+        activeHabits.forEach(habit => {
+            let startTime = null;
+            
+            if (habit.type === 'daily') {
+                startTime = habit.frequency.startTime;
+            } else if (habit.type === 'weekly') {
+                const matchingFreq = habit.frequency.find(freq => {
+                    const habitDay = freq.weekday === 7 ? 0 : freq.weekday;
+                    return habitDay === dayOfWeek;
+                });
+                startTime = matchingFreq ? matchingFreq.startTime : null;
+            } else if (habit.type === 'monthly') {
+                const matchingFreq = habit.frequency.find(freq => freq.day === dayOfMonth);
+                startTime = matchingFreq ? matchingFreq.startTime : null;
+            }
+
+            if (startTime) {
+                if (!timeGroups[startTime]) {
+                    timeGroups[startTime] = [];
+                }
+                timeGroups[startTime].push(habit);
+            }
+        });
+
+        // Find conflicts (more than one habit at the same time)
+        const conflicts = [];
+        Object.entries(timeGroups).forEach(([time, habitsAtTime]) => {
+            if (habitsAtTime.length > 1) {
+                conflicts.push({
+                    time,
+                    habits: habitsAtTime
+                });
+            }
+        });
+
+        return conflicts;
+    } catch (error) {
+        console.error('Error checking time conflicts:', error);
         return [];
     }
 }
