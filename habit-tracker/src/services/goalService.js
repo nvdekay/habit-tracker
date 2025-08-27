@@ -46,3 +46,48 @@ export async function createGoal(newGoal) {
     throw error;
   }
 }
+
+export function calculateHabitTarget(habit, goalStartDate, goalEndDate) {
+  const start = new Date(goalStartDate);
+  const end = new Date(goalEndDate);
+
+  if (habit.type === "daily") {
+    const habitStart = new Date(habit.startDate);
+    const habitEnd = new Date(habit.endDate);
+    const s = start > habitStart ? start : habitStart;
+    const e = end < habitEnd ? end : habitEnd;
+    const days = Math.ceil((e - s) / (1000 * 60 * 60 * 24)) + 1;
+    return days;
+  }
+
+  if (habit.type === "weekly") {
+    const habitStart = new Date(habit.startDate);
+    const habitEnd = new Date(habit.endDate);
+    const s = start > habitStart ? start : habitStart;
+    const e = end < habitEnd ? end : habitEnd;
+    let count = 0;
+    const weekdays = habit.frequency.map((f) => f.weekday); // [1..7]
+
+    for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+      const dayOfWeek = d.getDay() === 0 ? 7 : d.getDay(); // JS: 0=Sun..6=Sat
+      if (weekdays.includes(dayOfWeek)) count++;
+    }
+    return count;
+  }
+
+  if (habit.type === "monthly") {
+    const habitStart = new Date(habit.startDate);
+    const habitEnd = new Date(habit.endDate);
+    const s = start > habitStart ? start : habitStart;
+    const e = end < habitEnd ? end : habitEnd;
+    let count = 0;
+    const daysOfMonth = habit.frequency.map((f) => f.day); // [1..31]
+
+    for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+      if (daysOfMonth.includes(d.getDate())) count++;
+    }
+    return count;
+  }
+
+  return 0;
+}
