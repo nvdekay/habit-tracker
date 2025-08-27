@@ -50,7 +50,7 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
             <Button variant="success" onClick={() => setShowCreateModal(true)} disabled={loading}>
                 +
             </Button>
-            <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)}>
+            <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)} className='pt-5 mt-5'>
                 <Modal.Header closeButton>
                     <Modal.Title>Create New Habit</Modal.Title>
                 </Modal.Header>
