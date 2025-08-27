@@ -44,29 +44,29 @@
     {
       "id": "1",
       "userId": "b02mw541u",
-      "name": "Morning Exercise",
-      "description": "Do 30 minutes of exercise every morning",
+      "name": "Morning Study Session",
+      "description": "Study programming for 1 hour",
       "type": "daily",
       "frequency": {
-        "startTime": "06:00:00",
-        "endTime": "06:30:00"
+        "startTime": "10:00:00",
+        "endTime": "11:00:00"
       },
       "startDate": "2024-01-01",
       "endDate": "2024-12-31",
       "priority": "high",
-      "isActive": false,
+      "isActive": true,
       "createdAt": "2024-01-01T06:00:00.000Z",
       "updatedAt": "2024-08-14T07:30:00.000Z"
     },
     {
       "id": "2",
       "userId": "b02mw541u",
-      "name": "Read Books",
-      "description": "Read at least 20 pages of a book",
+      "name": "Lunch Break Walk",
+      "description": "Take a 30-minute walk during lunch",
       "type": "daily",
       "frequency": {
-        "startTime": "20:00:00",
-        "endTime": "20:30:00"
+        "startTime": "12:00:00",
+        "endTime": "12:30:00"
       },
       "startDate": "2024-02-01",
       "endDate": "2024-12-31",
@@ -78,12 +78,12 @@
     {
       "id": "3",
       "userId": "b02mw541u",
-      "name": "Meditation",
-      "description": "Practice mindfulness meditation for 15 minutes",
+      "name": "Afternoon Exercise",
+      "description": "Do some light exercise in the afternoon",
       "type": "daily",
       "frequency": {
-        "startTime": "06:30:00",
-        "endTime": "06:45:00"
+        "startTime": "14:00:00",
+        "endTime": "14:30:00"
       },
       "startDate": "2025-03-01",
       "endDate": "2025-12-31",
@@ -95,16 +95,13 @@
     {
       "id": "4",
       "userId": "b02mw541u",
-      "name": "Weekly Grocery Shopping",
-      "description": "Plan and do grocery shopping for the week",
-      "type": "weekly",
-      "frequency": [
-        {
-          "weekday": 7,
-          "startTime": "10:00:00",
-          "endTime": "11:00:00"
-        }
-      ],
+      "name": "Evening Reading",
+      "description": "Read for 45 minutes before bed",
+      "type": "daily",
+      "frequency": {
+        "startTime": "20:30:00",
+        "endTime": "21:15:00"
+      },
       "startDate": "2024-01-07",
       "endDate": "2024-12-31",
       "priority": "medium",
@@ -115,29 +112,16 @@
     {
       "id": "5",
       "userId": "b02mw541u",
-      "name": "Learn Programming",
-      "description": "Study programming for at least 3 hours",
-      "type": "weekly",
-      "frequency": [
-        {
-          "weekday": 1,
-          "startTime": "18:00:00",
-          "endTime": "21:00:00"
-        },
-        {
-          "weekday": 3,
-          "startTime": "18:00:00",
-          "endTime": "21:00:00"
-        },
-        {
-          "weekday": 5,
-          "startTime": "18:00:00",
-          "endTime": "21:00:00"
-        }
-      ],
+      "name": "Morning Coffee & Planning",
+      "description": "Have coffee and plan the day",
+      "type": "daily",
+      "frequency": {
+        "startTime": "08:30:00",
+        "endTime": "09:00:00"
+      },
       "startDate": "2024-04-01",
       "endDate": "2024-12-31",
-      "priority": "high",
+      "priority": "low",
       "isActive": true,
       "createdAt": "2024-04-01T19:00:00.000Z",
       "updatedAt": "2024-08-12T20:30:00.000Z"
@@ -145,14 +129,34 @@
     {
       "id": "6",
       "userId": "b02mw541u",
-      "name": "Monthly Budget Review",
-      "description": "Review and plan monthly budget and expenses",
-      "type": "monthly",
+      "name": "Team Standup Meeting",
+      "description": "Daily standup with development team",
+      "type": "weekly",
       "frequency": [
         {
-          "day": 31,
-          "startTime": "15:00:00",
-          "endTime": "16:00:00"
+          "weekday": 1,
+          "startTime": "09:30:00",
+          "endTime": "10:00:00"
+        },
+        {
+          "weekday": 2,
+          "startTime": "09:30:00",
+          "endTime": "10:00:00"
+        },
+        {
+          "weekday": 3,
+          "startTime": "09:30:00",
+          "endTime": "10:00:00"
+        },
+        {
+          "weekday": 4,
+          "startTime": "09:30:00",
+          "endTime": "10:00:00"
+        },
+        {
+          "weekday": 5,
+          "startTime": "09:30:00",
+          "endTime": "10:00:00"
         }
       ],
       "startDate": "2024-01-31",
@@ -165,44 +169,16 @@
     {
       "id": "7",
       "userId": "b02mw541u",
-      "name": "Morning Run",
-      "description": "Go for a 5km run every morning",
-      "type": "weekly",
-      "frequency": [
-        {
-          "weekday": 1,
-          "startTime": "06:00:00",
-          "endTime": "07:00:00"
-        },
-        {
-          "weekday": 2,
-          "startTime": "06:00:00",
-          "endTime": "07:00:00"
-        },
-        {
-          "weekday": 3,
-          "startTime": "06:00:00",
-          "endTime": "07:00:00"
-        },
-        {
-          "weekday": 4,
-          "startTime": "06:00:00",
-          "endTime": "07:00:00"
-        },
-        {
-          "weekday": 5,
-          "startTime": "06:00:00",
-          "endTime": "07:00:00"
-        },
-        {
-          "weekday": 6,
-          "startTime": "06:00:00",
-          "endTime": "07:00:00"
-        }
-      ],
+      "name": "Quick Workout",
+      "description": "15-minute workout session",
+      "type": "daily",
+      "frequency": {
+        "startTime": "07:00:00",
+        "endTime": "07:15:00"
+      },
       "startDate": "2024-02-15",
       "endDate": "2024-12-31",
-      "priority": "high",
+      "priority": "medium",
       "isActive": true,
       "createdAt": "2024-02-15T06:30:00.000Z",
       "updatedAt": "2024-08-14T06:45:00.000Z"
@@ -210,16 +186,16 @@
     {
       "id": "8",
       "userId": "b02mw541u",
-      "name": "Drink Water",
-      "description": "Drink at least 8 glasses of water",
+      "name": "Hydration Check",
+      "description": "Drink a glass of water",
       "type": "daily",
       "frequency": {
-        "startTime": "08:00:00",
-        "endTime": "20:00:00"
+        "startTime": "11:30:00",
+        "endTime": "11:35:00"
       },
       "startDate": "2024-01-01",
       "endDate": "2024-12-31",
-      "priority": "medium",
+      "priority": "low",
       "isActive": true,
       "createdAt": "2024-01-01T00:00:00.000Z",
       "updatedAt": "2024-08-14T22:00:00.000Z"
@@ -227,29 +203,24 @@
     {
       "id": "9",
       "userId": "b02mw541u",
-      "name": "Yoga Practice",
-      "description": "Practice yoga for 45 minutes",
+      "name": "Code Review Session",
+      "description": "Review team code submissions",
       "type": "weekly",
       "frequency": [
         {
-          "weekday": 1,
-          "startTime": "17:00:00",
-          "endTime": "17:45:00"
+          "weekday": 2,
+          "startTime": "15:00:00",
+          "endTime": "16:00:00"
         },
         {
-          "weekday": 3,
-          "startTime": "17:00:00",
-          "endTime": "17:45:00"
-        },
-        {
-          "weekday": 5,
-          "startTime": "17:00:00",
-          "endTime": "17:45:00"
+          "weekday": 4,
+          "startTime": "15:00:00",
+          "endTime": "16:00:00"
         }
       ],
       "startDate": "2024-03-10",
       "endDate": "2024-12-31",
-      "priority": "medium",
+      "priority": "high",
       "isActive": true,
       "createdAt": "2024-03-10T17:00:00.000Z",
       "updatedAt": "2024-08-13T18:30:00.000Z"
@@ -257,17 +228,20 @@
     {
       "id": "10",
       "userId": "b02mw541u",
-      "name": "Healthy Cooking",
-      "description": "Cook a healthy meal at home",
-      "type": "daily",
-      "frequency": {
-        "startTime": "18:00:00",
-        "endTime": "19:00:00"
-      },
+      "name": "Weekly Report",
+      "description": "Prepare weekly progress report",
+      "type": "weekly",
+      "frequency": [
+        {
+          "weekday": 5,
+          "startTime": "16:00:00",
+          "endTime": "17:00:00"
+        }
+      ],
       "startDate": "2024-04-01",
       "endDate": "2024-12-31",
-      "priority": "low",
-      "isActive": false,
+      "priority": "medium",
+      "isActive": true,
       "createdAt": "2024-04-01T12:00:00.000Z",
       "updatedAt": "2024-08-10T19:45:00.000Z"
     }
@@ -324,527 +298,34 @@
       ],
       "createdAt": "2024-04-01T00:00:00.000Z",
       "updatedAt": "2024-08-14T12:00:00.000Z"
-    },
-    {
-      "id": "4",
-      "userId": "b02mw541u",
-      "name": "Run 1000km This Year",
-      "description": "Complete 1000 kilometers of running in 2024",
-      "targetValue": 1000,
-      "currentValue": 445,
-      "unit": "km",
-      "deadline": "2024-12-31",
-      "priority": "high",
-      "status": "in_progress",
-      "linkedHabits": [
-        7
-      ],
-      "createdAt": "2024-02-15T00:00:00.000Z",
-      "updatedAt": "2024-08-14T07:00:00.000Z"
-    },
-    {
-      "id": "5",
-      "userId": "b02mw541u",
-      "name": "Hydration Challenge",
-      "description": "Drink recommended amount of water daily for 6 months",
-      "targetValue": 180,
-      "currentValue": 158,
-      "unit": "days",
-      "deadline": "2024-09-30",
-      "priority": "medium",
-      "status": "in_progress",
-      "linkedHabits": [
-        8
-      ],
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-08-14T23:00:00.000Z"
-    },
-    {
-      "id": "6",
-      "userId": "3",
-      "name": "Flexibility & Wellness",
-      "description": "Improve flexibility and mental wellness through yoga",
-      "targetValue": 100,
-      "currentValue": 42,
-      "unit": "sessions",
-      "deadline": "2024-11-30",
-      "priority": "medium",
-      "status": "in_progress",
-      "linkedHabits": [
-        9
-      ],
-      "createdAt": "2024-03-10T00:00:00.000Z",
-      "updatedAt": "2024-08-13T19:00:00.000Z"
-    },
-    {
-      "id": "e1ec",
-      "userId": "b02mw541u",
-      "name": "Read 1000 books",
-      "description": "Read 1000 books",
-      "startDate": "2025-08-27",
-      "deadline": "2025-08-29",
-      "priority": "medium",
-      "status": "in_progress",
-      "targetValue": "13",
-      "currentValue": 0,
-      "unit": "books",
-      "linkedHabits": [
-        1,
-        2,
-        3,
-        "2"
-      ]
     }
   ],
   "checkins": [
     {
       "id": "1",
-      "userId": "1",
-      "habitId": "1",
-      "date": "2024-08-14",
+      "userId": "b02mw541u",
+      "habitId": "7",
+      "date": "2025-08-28",
       "completed": true,
-      "notes": "Great morning workout!",
-      "completedAt": "2024-08-14T07:30:00.000Z"
+      "notes": "",
+      "completedAt": "2025-08-27T18:49:20.112Z"
     },
     {
       "id": "2",
-      "userId": "1",
-      "habitId": "1",
-      "date": "2024-08-13",
-      "completed": true,
-      "notes": "Felt energized after exercise",
-      "completedAt": "2024-08-13T07:15:00.000Z"
-    },
-    {
-      "id": "3",
-      "userId": "1",
-      "habitId": "1",
-      "date": "2024-08-12",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2024-08-12T07:45:00.000Z"
-    },
-    {
-      "id": "4",
-      "userId": "1",
-      "habitId": "2",
-      "date": "2024-08-13",
-      "completed": true,
-      "notes": "Finished chapter 5 of 'Clean Code'",
-      "completedAt": "2024-08-13T21:15:00.000Z"
-    },
-    {
-      "id": "5",
-      "userId": "1",
-      "habitId": "2",
-      "date": "2024-08-12",
-      "completed": true,
-      "notes": "Read about design patterns",
-      "completedAt": "2024-08-12T20:30:00.000Z"
-    },
-    {
-      "id": "6",
-      "userId": "1",
-      "habitId": "3",
-      "date": "2024-08-14",
-      "completed": true,
-      "notes": "Very peaceful session",
-      "completedAt": "2024-08-14T08:00:00.000Z"
-    },
-    {
-      "id": "7",
-      "userId": "1",
-      "habitId": "3",
-      "date": "2024-08-13",
-      "completed": true,
-      "notes": "Focused on breathing",
-      "completedAt": "2024-08-13T08:15:00.000Z"
-    },
-    {
-      "id": "8",
-      "userId": "1",
-      "habitId": "4",
-      "date": "2024-08-11",
-      "completed": true,
-      "notes": "Bought groceries for the week",
-      "completedAt": "2024-08-11T16:45:00.000Z"
-    },
-    {
-      "id": "9",
-      "userId": "1",
-      "habitId": "5",
-      "date": "2024-08-12",
-      "completed": true,
-      "notes": "Worked on React components",
-      "completedAt": "2024-08-12T20:30:00.000Z"
-    },
-    {
-      "id": "10",
-      "userId": "1",
-      "habitId": "6",
-      "date": "2024-07-31",
-      "completed": true,
-      "notes": "Reviewed July expenses and planned August budget",
-      "completedAt": "2024-07-31T18:20:00.000Z"
-    },
-    {
-      "id": "11",
-      "userId": "2",
-      "habitId": "7",
-      "date": "2024-08-14",
-      "completed": true,
-      "notes": "5.2km in 28 minutes",
-      "completedAt": "2024-08-14T06:45:00.000Z"
-    },
-    {
-      "id": "12",
-      "userId": "2",
-      "habitId": "7",
-      "date": "2024-08-13",
-      "completed": true,
-      "notes": "Perfect weather for running",
-      "completedAt": "2024-08-13T06:30:00.000Z"
-    },
-    {
-      "id": "13",
-      "userId": "2",
-      "habitId": "8",
-      "date": "2024-08-14",
-      "completed": true,
-      "notes": "Stayed hydrated all day",
-      "completedAt": "2024-08-14T22:00:00.000Z"
-    },
-    {
-      "id": "14",
-      "userId": "2",
-      "habitId": "8",
-      "date": "2024-08-13",
-      "completed": true,
-      "notes": "8 glasses completed",
-      "completedAt": "2024-08-13T21:30:00.000Z"
-    },
-    {
-      "id": "15",
-      "userId": "3",
-      "habitId": "9",
-      "date": "2024-08-13",
-      "completed": true,
-      "notes": "45-minute vinyasa flow",
-      "completedAt": "2024-08-13T18:30:00.000Z"
-    },
-    {
-      "id": "16",
-      "userId": "3",
-      "habitId": "9",
-      "date": "2024-08-11",
-      "completed": true,
-      "notes": "Morning yoga session",
-      "completedAt": "2024-08-11T07:00:00.000Z"
-    },
-    {
-      "id": "17",
-      "userId": "3",
-      "habitId": "1",
-      "date": "2024-08-10",
-      "completed": true,
-      "notes": "Made quinoa salad with vegetables",
-      "completedAt": "2024-08-10T19:45:00.000Z"
-    },
-    {
-      "id": "87f3",
-      "userId": "b02mw541u",
-      "habitId": "1",
-      "date": "2025-08-25",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-25T19:24:46.700Z"
-    },
-    {
-      "id": "6b86",
-      "userId": "b02mw541u",
-      "habitId": "2",
-      "date": "2025-08-25",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-25T19:24:47.536Z"
-    },
-    {
-      "id": "43ca",
-      "userId": "b02mw541u",
-      "habitId": "3",
-      "date": "2025-08-25",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-25T19:24:48.343Z"
-    },
-    {
-      "id": "82c1",
-      "userId": "b02mw541u",
-      "habitId": "4",
-      "date": "2025-08-25",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-25T19:27:39.669Z"
-    },
-    {
-      "id": "c61e",
       "userId": "b02mw541u",
       "habitId": "5",
-      "date": "2025-08-25",
+      "date": "2025-08-28",
       "completed": false,
       "notes": "",
-      "completedAt": "2025-08-25T18:53:32.932Z"
-    },
-    {
-      "id": "e8d6",
-      "userId": "b02mw541u",
-      "habitId": "6",
-      "date": "2025-08-25",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-25T18:53:33.593Z"
-    },
-    {
-      "id": "9a59",
-      "userId": "b02mw541u",
-      "habitId": "7",
-      "date": "2025-08-25",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-25T18:53:34.422Z"
-    },
-    {
-      "id": "769c",
-      "userId": "b02mw541u",
-      "habitId": "8",
-      "date": "2025-08-25",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-25T18:53:35.566Z"
-    },
-    {
-      "id": "84ae",
-      "userId": "b02mw541u",
-      "habitId": "9",
-      "date": "2025-08-25",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-25T18:53:37.101Z"
-    },
-    {
-      "id": "890c",
-      "userId": "b02mw541u",
-      "habitId": "1",
-      "date": "2025-08-13",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-25T19:14:57.696Z"
-    },
-    {
-      "id": "4e7c",
-      "userId": "b02mw541u",
-      "habitId": "2",
-      "date": "2025-08-13",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-25T19:14:48.735Z"
-    },
-    {
-      "id": "0ac6",
-      "userId": "b02mw541u",
-      "habitId": "3",
-      "date": "2025-08-13",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-25T19:14:48.180Z"
-    },
-    {
-      "id": "0895",
-      "userId": "b02mw541u",
-      "habitId": "1",
-      "date": "2025-08-26",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-26T07:23:15.175Z"
-    },
-    {
-      "id": "8f18",
-      "userId": "b02mw541u",
-      "habitId": "2",
-      "date": "2025-08-26",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-26T07:23:15.976Z"
-    },
-    {
-      "id": "95f2",
-      "userId": "b02mw541u",
-      "habitId": "3",
-      "date": "2025-08-26",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-26T16:40:56.570Z"
-    },
-    {
-      "id": "6131",
-      "userId": "b02mw541u",
-      "habitId": "4",
-      "date": "2025-08-26",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-26T06:46:01.563Z"
-    },
-    {
-      "id": "5a3d",
-      "userId": "b02mw541u",
-      "habitId": "5",
-      "date": "2025-08-26",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-26T06:46:02.378Z"
-    },
-    {
-      "id": "69de",
-      "userId": "b02mw541u",
-      "habitId": "6",
-      "date": "2025-08-26",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-26T06:46:03.070Z"
-    },
-    {
-      "id": "e30e",
-      "userId": "b02mw541u",
-      "habitId": "7",
-      "date": "2025-08-26",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-26T06:46:03.825Z"
-    },
-    {
-      "id": "7daa",
-      "userId": "b02mw541u",
-      "habitId": "8",
-      "date": "2025-08-26",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-26T06:46:05.060Z"
-    },
-    {
-      "id": "5dce",
-      "userId": "b02mw541u",
-      "habitId": "2",
-      "date": "2025-08-26",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-26T08:02:18.736Z"
-    },
-    {
-      "id": "3888",
-      "userId": "b02mw541u",
-      "habitId": "1",
-      "date": "2025-08-27",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-26T14:52:20.759Z"
-    },
-    {
-      "id": "f0ea",
-      "userId": "b02mw541u",
-      "habitId": "2",
-      "date": "2025-08-24",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-26T08:02:40.762Z"
-    },
-    {
-      "id": "0579",
-      "userId": "b02mw541u",
-      "habitId": "3",
-      "date": "2025-08-23",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-26T08:02:46.215Z"
-    },
-    {
-      "id": "b0b7",
-      "userId": "b02mw541u",
-      "habitId": "4",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-27T02:07:39.972Z"
-    },
-    {
-      "id": "de9f",
-      "userId": "b02mw541u",
-      "habitId": "3",
-      "date": "2025-08-27",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-26T16:56:01.664Z"
-    },
-    {
-      "id": "6297",
-      "userId": "b02mw541u",
-      "habitId": "4",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-26T15:56:05.071Z"
-    },
-    {
-      "id": "cf37",
-      "userId": "b02mw541u",
-      "habitId": "5",
-      "date": "2025-08-27",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-26T15:56:04.645Z"
-    },
-    {
-      "id": "20ee",
-      "userId": "b02mw541u",
-      "habitId": "6",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-26T15:45:29.478Z"
-    },
-    {
-      "id": "4295",
-      "userId": "b02mw541u",
-      "habitId": "7",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-26T15:45:28.931Z"
-    },
-    {
-      "id": "109e",
-      "userId": "b02mw541u",
-      "habitId": "8",
-      "date": "2025-08-27",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-26T15:45:28.382Z"
-    },
-    {
-      "id": "df1d",
-      "userId": "b02mw541u",
-      "habitId": "2",
-      "date": "2025-08-27",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-27T02:21:49.982Z"
+      "completedAt": "2025-08-27T18:49:18.986Z"
     }
   ],
   "reminders": [
     {
       "id": "1",
-      "userId": "1",
+      "userId": "b02mw541u",
       "habitId": 1,
-      "time": "07:00",
+      "time": "09:45",
       "enabled": true,
       "days": [
         "monday",
@@ -855,14 +336,14 @@
         "saturday",
         "sunday"
       ],
-      "message": "Time for your morning exercise!",
+      "message": "Time for your study session!",
       "createdAt": "2024-01-01T00:00:00.000Z"
     },
     {
       "id": "2",
-      "userId": "1",
+      "userId": "b02mw541u",
       "habitId": 2,
-      "time": "21:00",
+      "time": "11:45",
       "enabled": true,
       "days": [
         "monday",
@@ -873,14 +354,14 @@
         "saturday",
         "sunday"
       ],
-      "message": "Don't forget to read your book!",
+      "message": "Time for your lunch break walk!",
       "createdAt": "2024-02-01T00:00:00.000Z"
     },
     {
       "id": "3",
-      "userId": "1",
+      "userId": "b02mw541u",
       "habitId": 3,
-      "time": "08:00",
+      "time": "13:45",
       "enabled": true,
       "days": [
         "monday",
@@ -891,108 +372,14 @@
         "saturday",
         "sunday"
       ],
-      "message": "Time for meditation 🧘",
+      "message": "Afternoon exercise time!",
       "createdAt": "2024-03-01T00:00:00.000Z"
-    },
-    {
-      "id": "4",
-      "userId": "1",
-      "habitId": 4,
-      "time": "16:00",
-      "enabled": true,
-      "days": [
-        "sunday"
-      ],
-      "message": "Weekly grocery shopping time!",
-      "createdAt": "2024-01-07T00:00:00.000Z"
-    },
-    {
-      "id": "5",
-      "userId": "1",
-      "habitId": 5,
-      "time": "19:00",
-      "enabled": true,
-      "days": [
-        "monday",
-        "wednesday",
-        "friday"
-      ],
-      "message": "Time to code! 💻",
-      "createdAt": "2024-04-01T00:00:00.000Z"
-    },
-    {
-      "id": "6",
-      "userId": "2",
-      "habitId": 7,
-      "time": "06:30",
-      "enabled": true,
-      "days": [
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-        "sunday"
-      ],
-      "message": "Time for your morning run! 🏃",
-      "createdAt": "2024-02-15T00:00:00.000Z"
-    },
-    {
-      "id": "7",
-      "userId": "2",
-      "habitId": 8,
-      "time": "09:00",
-      "enabled": true,
-      "days": [
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-        "sunday"
-      ],
-      "message": "Remember to drink water! 💧",
-      "createdAt": "2024-01-01T00:00:00.000Z"
-    },
-    {
-      "id": "8",
-      "userId": "3",
-      "habitId": 9,
-      "time": "18:00",
-      "enabled": true,
-      "days": [
-        "monday",
-        "wednesday",
-        "friday"
-      ],
-      "message": "Yoga time! Stretch and relax 🧘‍♀️",
-      "createdAt": "2024-03-10T00:00:00.000Z"
-    },
-    {
-      "id": "9",
-      "userId": "3",
-      "habitId": 10,
-      "time": "17:30",
-      "enabled": false,
-      "days": [
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-        "sunday"
-      ],
-      "message": "Time to cook a healthy meal! 🥗",
-      "createdAt": "2024-04-01T00:00:00.000Z"
     }
   ],
   "statistics": [
     {
       "id": "1",
-      "userId": "1",
+      "userId": "b02mw541u",
       "month": "2024-08",
       "totalHabits": 6,
       "activeHabits": 6,
@@ -1000,45 +387,6 @@
       "totalCheckins": 89,
       "longestStreak": 23,
       "averageStreak": 8.5,
-      "habitsCreated": 0,
-      "createdAt": "2024-08-01T00:00:00.000Z"
-    },
-    {
-      "id": "2",
-      "userId": "1",
-      "month": "2024-07",
-      "totalHabits": 6,
-      "activeHabits": 6,
-      "completionRate": 0.85,
-      "totalCheckins": 127,
-      "longestStreak": 23,
-      "averageStreak": 12.3,
-      "habitsCreated": 0,
-      "createdAt": "2024-07-01T00:00:00.000Z"
-    },
-    {
-      "id": "3",
-      "userId": "2",
-      "month": "2024-08",
-      "totalHabits": 2,
-      "activeHabits": 2,
-      "completionRate": 0.92,
-      "totalCheckins": 45,
-      "longestStreak": 18,
-      "averageStreak": 9.5,
-      "habitsCreated": 0,
-      "createdAt": "2024-08-01T00:00:00.000Z"
-    },
-    {
-      "id": "4",
-      "userId": "3",
-      "month": "2024-08",
-      "totalHabits": 2,
-      "activeHabits": 1,
-      "completionRate": 0.67,
-      "totalCheckins": 12,
-      "longestStreak": 9,
-      "averageStreak": 4,
       "habitsCreated": 0,
       "createdAt": "2024-08-01T00:00:00.000Z"
     }
