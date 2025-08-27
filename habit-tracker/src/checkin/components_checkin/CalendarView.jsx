@@ -116,8 +116,8 @@ function CalendarView({ selectedDate, onDateSelect, calendarData, onCalendarData
                     key={dateStr} // key duy nhất
                     className={`calendar-day ${isCurrentSelected ? 'selected' : ''} ${isTodayDate ? 'today' : ''}`}
                     onClick={() => onDateSelect && onDateSelect(dateStr)} // Khi click gọi callback chọn ngày
-                    role="button" // Để hỗ trợ accessibility (screen reader)
-                    tabIndex={0}  // Để có thể focus bằng bàn phím
+                    role="button" 
+                    tabIndex={0} 
                 >
                     <div className="day-number">{day}</div> {/* Hiển thị số ngày */}
                     <div

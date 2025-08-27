@@ -354,6 +354,20 @@
         3,
         "2"
       ]
+    },
+    {
+      "id": "13c6",
+      "userId": "1",
+      "name": "Run 100km",
+      "description": "Run 100km",
+      "startDate": "2025-08-27",
+      "deadline": "2025-08-31",
+      "priority": "medium",
+      "status": "in_progress",
+      "targetValue": "10",
+      "currentValue": 8,
+      "unit": "km",
+      "linkedHabits": []
     }
   ],
   "checkins": [
@@ -887,6 +901,15 @@
       "completed": false,
       "notes": "",
       "completedAt": "2025-08-27T06:28:44.711Z"
+    },
+    {
+      "id": "d5d0",
+      "userId": "1",
+      "habitId": "bac0",
+      "date": "2025-08-28",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-27T06:33:21.491Z"
     }
   ],
   "reminders": [

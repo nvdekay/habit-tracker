@@ -108,7 +108,7 @@ const Register = () => {
                                             name="fullName"
                                             value={formData.fullName}
                                             onChange={handleChange}
-                                            placeholder="John Doe"
+                                            placeholder="Nguyen Van A"
                                             required
                                         />
                                     </Form.Group>
@@ -132,7 +132,7 @@ const Register = () => {
                                             name="email"
                                             value={formData.email}
                                             onChange={handleChange}
-                                            placeholder="email@example.com"
+                                            placeholder="email@gmail.com"
                                             required
                                         />
                                     </Form.Group>
