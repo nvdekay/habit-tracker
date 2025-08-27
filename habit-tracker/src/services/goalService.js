@@ -1,29 +1,48 @@
+import axios from "axios";
+
 const BASE_URL = "http://localhost:8080/goals";
 
-export const getGoals = async () => {
-    const res = await fetch(BASE_URL);
-    if (!res.ok) throw new Error("Failed to fetch goals");
-    return res.json();
-}
+export const getGoalsByUserID = async (userID) => {
+  const res = await fetch(`${BASE_URL}?userId=${userID}`);
+  if (!res.ok) throw new Error("Failed to fetch goals");
+  return res.json();
+};
+export const getHabits = async (userID) => {
+  const res = await fetch("http://localhost:8080/habits?userId=" + userID);
+  if (!res.ok) throw new Error("Failed to fetch goals");
+  return res.json();
+};
 
-export const createGoal = async (goal) => {
-    const res = await fetch(BASE_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(goal)
+export async function updateGoal(goal) {
+  try {
+    const res = await axios.put(`${BASE_URL}/${goal.id}`, goal, {
+      headers: { "Content-Type": "application/json" },
     });
-    if (!res.ok) throw new Error("Failed to create goal");
-    return res.json();
+    return res;
+  } catch (error) {
+    console.error("Error updating goal:", error);
+    throw error; // quăng lỗi ra ngoài cho component xử lý
+  }
 }
 
-export const getGoalById = async (goalId) => {
-    const res = await fetch(`${BASE_URL}/${goalId}`);
-    if (!res.ok) throw new Error("Failed to fetch goal");
-    return res.json();
+export async function deleteGoal(goalID) {
+  try {
+    const res = await axios.delete(`${BASE_URL}/${goalID}`);
+    return res;
+  } catch (error) {
+    console.error("Error deleting goal:", error);
+    throw error;
+  }
 }
 
-export const getGoalByUserId = async (userId) => {
-    const res = await fetch(`${BASE_URL}?userId=${userId}`);
-    if (!res.ok) throw new Error("Failed to fetch goals for user");
-    return res.json();
+export async function createGoal(newGoal) {
+  try {
+    const res = await axios.post(BASE_URL, newGoal, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Error creating goal:", error);
+    throw error;
+  }
 }

@@ -291,7 +291,7 @@
       "name": "Run 1000km This Year",
       "description": "Complete 1000 kilometers of running in 2024",
       "targetValue": 1000,
-      "currentValue": 445,
+      "currentValue": 446,
       "unit": "km",
       "deadline": "2024-12-31",
       "priority": "high",
