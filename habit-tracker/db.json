@@ -70,7 +70,7 @@
       "endDate": "2024-12-31",
       "priority": "medium",
       "color": "#4ecdc4",
-      "isActive": false,
+      "isActive": true,
       "currentStreak": 8,
       "longestStreak": 12,
       "totalCompletions": 34,
@@ -214,7 +214,7 @@
       "endDate": "2024-12-31",
       "priority": "low",
       "color": "#55a3ff",
-      "isActive": true,
+      "isActive": false,
       "currentStreak": 0,
       "longestStreak": 9,
       "totalCompletions": 67,
@@ -298,7 +298,7 @@
       "name": "Hydration Challenge",
       "description": "Drink recommended amount of water daily for 6 months",
       "targetValue": 180,
-      "currentValue": 156,
+      "currentValue": 157,
       "unit": "days",
       "deadline": "2024-09-30",
       "priority": "medium",
@@ -795,43 +795,16 @@
       "date": "2025-08-27",
       "completed": true,
       "notes": "",
-      "completedAt": "2025-08-27T03:45:04.322Z"
+      "completedAt": "2025-08-26T15:45:28.382Z"
     },
     {
-      "id": "5e6e",
+      "id": "df1d",
       "userId": "b02mw541u",
-      "habitId": "9",
-      "date": "2025-08-26",
+      "habitId": "2",
+      "date": "2025-08-27",
       "completed": true,
       "notes": "",
-      "completedAt": "2025-08-27T02:53:58.572Z"
-    },
-    {
-      "id": "bade",
-      "userId": "b02mw541u",
-      "habitId": "10",
-      "date": "2025-08-26",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-27T02:53:59.262Z"
-    },
-    {
-      "id": "ffe9",
-      "userId": "b02mw541u",
-      "habitId": "3",
-      "date": "2025-08-19",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-27T03:37:20.005Z"
-    },
-    {
-      "id": "7041",
-      "userId": "b02mw541u",
-      "habitId": "3",
-      "date": "2025-08-28",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-27T03:37:31.165Z"
+      "completedAt": "2025-08-27T02:21:49.982Z"
     }
   ],
   "reminders": [
