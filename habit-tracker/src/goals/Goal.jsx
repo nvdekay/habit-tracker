@@ -1,5 +1,5 @@
 import React, { use, useEffect, useState } from "react";
-import { Settings } from "lucide-react";
+import { ListRestart, Settings } from "lucide-react";
 import { Check } from "lucide-react";
 import { Trash } from "lucide-react";
 import { Undo2 } from "lucide-react";
@@ -245,6 +245,43 @@ export default function Goal() {
       } catch (err) {
         console.error("Error reversing goal:", err);
       }
+    }
+  };
+
+  const handleReset = async (goalId) => {
+    try {
+      const goal = goals.find((g) => g.id === goalId);
+      if (!goal) return;
+
+      const confirmInput = window.prompt(
+        `Bạn có chắc muốn reset goal "${goal.name}" về 0? Nhập "YES" để xác nhận.`
+      );
+
+      if (confirmInput !== "YES") {
+        alert("Reset bị hủy. Bạn cần nhập chính xác YES.");
+        return;
+      }
+
+      const updatedGoal = {
+        ...goal,
+        currentValue: 0,
+        status: "in_progress", // hoặc giữ nguyên goal.status nếu bạn muốn
+      };
+
+      const res = await axios.put(
+        `http://localhost:8080/goals/${goalId}`,
+        updatedGoal,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      if (res.status === 200) {
+        setGoals((prev) =>
+          prev.map((g) => (g.id === goalId ? updatedGoal : g))
+        );
+        alert("Reset thành công!");
+      }
+    } catch (err) {
+      console.error("Error resetting goal:", err);
     }
   };
 
@@ -599,19 +636,34 @@ export default function Goal() {
                   </ul>
                 </>
                 {goal.status === "in_progress" && (
-                  <button
-                    className="btn btn-success mx-3"
-                    onClick={(e) => handleMark(goal.id)}
-                  >
-                    <Check /> Mark as done 1 {goal.unit}
-                  </button>
+                  <div>
+                    <button
+                      className="btn btn-success"
+                      onClick={(e) => handleMark(goal.id)}
+                    >
+                      <Check /> Mark as done 1 {goal.unit}
+                    </button>
+                  </div>
                 )}
-                <button
-                  className="btn btn-danger"
-                  onClick={(e) => handleReverse(goal.id)}
-                >
-                  <Undo2 /> Return action done 1 {goal.unit}
-                </button>
+                <div>
+                  <button
+                    className="btn btn-danger my-3"
+                    onClick={(e) => handleReverse(goal.id)}
+                  >
+                    <Undo2 /> Return action done 1 {goal.unit}
+                  </button>
+                </div>
+
+                {goal.status === "in_progress" && (
+                  <div>
+                    <button
+                      className="btn btn-warning"
+                      onClick={(e) => handleReset(goal.id)}
+                    >
+                      <ListRestart /> Reset the progress
+                    </button>
+                  </div>
+                )}
               </CardFooter>
             </Card>
           </div>
