@@ -13,11 +13,7 @@ export async function getHabits() {
 
 export async function createHabit(habit) {
     try {
-        const res = await axios.post(`${API_URL}/habits`, habit, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        const res = await axios.post(`${API_URL}/habits`, habit);
         return res.data;
     } catch (error) {
         console.log("Failed to create habits" + error);
@@ -26,11 +22,7 @@ export async function createHabit(habit) {
 
 export async function updateHabit(id, habit) {
     try {
-        const res = await axios.put(`${API_URL}/habits/${id}`, habit, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        const res = await axios.put(`${API_URL}/habits/${id}`, habit);
         return res.data;
     } catch (error) {
         console.log("Failed to update habits" + error);

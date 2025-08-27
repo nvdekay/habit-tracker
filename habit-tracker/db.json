@@ -52,7 +52,7 @@
       "endDate": "2024-12-31",
       "priority": "high",
       "color": "#ff6b6b",
-      "isActive": true,
+      "isActive": false,
       "currentStreak": 15,
       "longestStreak": 23,
       "totalCompletions": 45,
@@ -631,9 +631,9 @@
       "userId": "b02mw541u",
       "habitId": "3",
       "date": "2025-08-26",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T06:46:00.662Z"
+      "completedAt": "2025-08-26T16:40:56.570Z"
     },
     {
       "id": "6131",
@@ -730,9 +730,9 @@
       "userId": "b02mw541u",
       "habitId": "3",
       "date": "2025-08-27",
-      "completed": false,
+      "completed": true,
       "notes": "",
-      "completedAt": "2025-08-26T15:56:05.535Z"
+      "completedAt": "2025-08-26T16:56:01.664Z"
     },
     {
       "id": "6297",
