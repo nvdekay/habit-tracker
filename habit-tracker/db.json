@@ -220,6 +220,16 @@
       "totalCompletions": 67,
       "createdAt": "2024-04-01T12:00:00.000Z",
       "updatedAt": "2024-08-10T19:45:00.000Z"
+    },
+    {
+      "id": "bac0",
+      "name": "Uống nước",
+      "description": "Uống nước",
+      "type": "daily",
+      "frequency": 1,
+      "priority": "medium",
+      "isActive": true,
+      "userId": "1"
     }
   ],
   "goals": [
@@ -868,6 +878,15 @@
       "completed": true,
       "notes": "",
       "completedAt": "2025-08-27T06:11:16.844Z"
+    },
+    {
+      "id": "944c",
+      "userId": "1",
+      "habitId": "bac0",
+      "date": "2025-08-27",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-27T06:28:44.711Z"
     }
   ],
   "reminders": [
