@@ -197,9 +197,6 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
                     ) : (
                         // Nếu không có habits → hiển thị thông báo rỗng
                         <div className="text-center py-5">
-                            <div className="text-muted mb-3">
-                                <div style={{ fontSize: '48px', opacity: 0.3 }}>Icon</div>
-                            </div>
                             <h6 className="text-muted">No habits found</h6>
                             <p className="text-muted small mb-0">
                                 Create some habits to start tracking your progress!
