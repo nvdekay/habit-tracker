@@ -133,6 +133,36 @@ const Habit = () => {
     }
   };
 
+  const formatFrequency = (habit) => {
+    if (habit.type === 'daily') {
+      return <div>Time: {habit.frequency.startTime} - {habit.frequency.endTime}</div>;
+    } else if (habit.type === 'weekly') {
+      const weekdayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      return (
+        <div>
+          Time:
+          {habit.frequency.map((f, index) => (
+            <div key={index} className="ms-2">
+              {weekdayNames[f.weekday - 1]} ({f.startTime} - {f.endTime})
+            </div>
+          ))}
+        </div>
+      );
+    } else if (habit.type === 'monthly') {
+      return (
+        <div>
+          Time:
+          {habit.frequency.map((f, index) => (
+            <div key={index} className="ms-2">
+              Day {f.day} ({f.startTime} - {f.endTime})
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return '';
+  };
+
   return (
     <Container className="py-4" style={{ backgroundColor: "#f9fafb", minHeight: "100vh" }}>
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -153,7 +183,7 @@ const Habit = () => {
         )}
       </div>
 
-      <ToastContainer position="top-end" className="pt-5" style={{ zIndex: 1050 }}>
+      <ToastContainer position="top-end" className="pt-5" style={{ zIndex: 99999 }}>
         {error && (
           <Toast
             onClose={() => setError(null)}
@@ -307,7 +337,8 @@ const Habit = () => {
                       </Card.Header>
                       <Card.Body>
                         <p className="mb-2 text-muted">{habit.description || 'No description provided'}</p>
-                        <p className="mb-1"><strong>Type:</strong> {habit.type} ({habit.frequency})</p>
+                        <p className="mb-1"><strong>Type:</strong> {habit.type.charAt(0).toUpperCase() + habit.type.slice(1)}</p>
+                        <p className="mb-1">{formatFrequency(habit)}</p>
                         <p className="mb-1">
                           <strong>Priority:</strong>{' '}
                           <Badge
