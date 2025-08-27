@@ -153,7 +153,6 @@ const Habit = () => {
         )}
       </div>
 
-      {/* Toast Notifications */}
       <ToastContainer position="top-end" className="pt-5" style={{ zIndex: 1050 }}>
         {error && (
           <Toast
@@ -193,7 +192,6 @@ const Habit = () => {
         </Card>
       ) : (
         <Row>
-          {/* Sidebar Filters */}
           <Col xs={12} md={3} className="mb-4">
             <Card className="p-3 shadow-sm border-0">
               <h5 className="fw-semibold text-primary mb-3">Filters</h5>
@@ -268,7 +266,6 @@ const Habit = () => {
             </Card>
           </Col>
 
-          {/* Habits List */}
           <Col xs={12} md={9}>
             <div className="d-flex justify-content-between align-items-center mb-3">
               <Button variant="outline-primary" onClick={MySort}>
