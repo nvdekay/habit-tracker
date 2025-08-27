@@ -47,12 +47,12 @@
       "name": "Morning Exercise",
       "description": "Do 30 minutes of exercise every morning",
       "type": "daily",
-      "frequency": 3,
+      "frequency": 1,
       "startDate": "2024-01-01",
       "endDate": "2024-12-31",
       "priority": "high",
       "color": "#ff6b6b",
-      "isActive": false,
+      "isActive": true,
       "currentStreak": 15,
       "longestStreak": 23,
       "totalCompletions": 45,
@@ -220,16 +220,6 @@
       "totalCompletions": 67,
       "createdAt": "2024-04-01T12:00:00.000Z",
       "updatedAt": "2024-08-10T19:45:00.000Z"
-    },
-    {
-      "id": "bac0",
-      "name": "Uống nước",
-      "description": "Uống nước",
-      "type": "daily",
-      "frequency": 1,
-      "priority": "medium",
-      "isActive": true,
-      "userId": "1"
     }
   ],
   "goals": [
@@ -245,8 +235,8 @@
       "priority": "high",
       "status": "in_progress",
       "linkedHabits": [
-        1,
-        3
+        "1",
+        "3"
       ],
       "createdAt": "2024-01-01T00:00:00.000Z",
       "updatedAt": "2024-08-14T10:30:00.000Z"
@@ -263,7 +253,7 @@
       "priority": "medium",
       "status": "in_progress",
       "linkedHabits": [
-        2
+        "2"
       ],
       "createdAt": "2024-02-01T00:00:00.000Z",
       "updatedAt": "2024-08-14T11:15:00.000Z"
@@ -280,7 +270,7 @@
       "priority": "high",
       "status": "completed",
       "linkedHabits": [
-        5
+        "5"
       ],
       "createdAt": "2024-04-01T00:00:00.000Z",
       "updatedAt": "2024-08-14T12:00:00.000Z"
@@ -297,7 +287,7 @@
       "priority": "high",
       "status": "in_progress",
       "linkedHabits": [
-        7
+        "7"
       ],
       "createdAt": "2024-02-15T00:00:00.000Z",
       "updatedAt": "2024-08-14T07:00:00.000Z"
@@ -308,13 +298,13 @@
       "name": "Hydration Challenge",
       "description": "Drink recommended amount of water daily for 6 months",
       "targetValue": 180,
-      "currentValue": 157,
+      "currentValue": 156,
       "unit": "days",
       "deadline": "2024-09-30",
       "priority": "medium",
       "status": "in_progress",
       "linkedHabits": [
-        8
+        "8"
       ],
       "createdAt": "2024-01-01T00:00:00.000Z",
       "updatedAt": "2024-08-14T23:00:00.000Z"
@@ -331,50 +321,34 @@
       "priority": "medium",
       "status": "in_progress",
       "linkedHabits": [
-        9
+        "9"
       ],
       "createdAt": "2024-03-10T00:00:00.000Z",
       "updatedAt": "2024-08-13T19:00:00.000Z"
     },
     {
-      "id": "e1ec",
+      "id": "352d",
       "userId": "b02mw541u",
-      "name": "Read 1000 books",
-      "description": "Read 1000 books",
-      "startDate": "2025-08-27",
-      "deadline": "2025-08-29",
-      "priority": "medium",
-      "status": "in_progress",
-      "targetValue": "13",
-      "currentValue": 0,
-      "unit": "books",
-      "linkedHabits": [
-        1,
-        2,
-        3,
-        "2"
-      ]
-    },
-    {
-      "id": "13c6",
-      "userId": "1",
-      "name": "Run 100km",
-      "description": "Run 100km",
-      "startDate": "2025-08-27",
+      "name": "Do homeworks",
+      "description": "Do homeword 30 days",
+      "startDate": "2025-08-28",
       "deadline": "2025-08-31",
       "priority": "medium",
       "status": "in_progress",
-      "targetValue": "10",
-      "currentValue": 8,
-      "unit": "km",
-      "linkedHabits": []
+      "targetValue": "30",
+      "currentValue": 0,
+      "unit": "day",
+      "linkedHabits": [
+        "2",
+        "5"
+      ]
     }
   ],
   "checkins": [
     {
       "id": "1",
       "userId": "1",
-      "habitId": "1",
+      "habitId": 1,
       "date": "2024-08-14",
       "completed": true,
       "notes": "Great morning workout!",
@@ -383,7 +357,7 @@
     {
       "id": "2",
       "userId": "1",
-      "habitId": "1",
+      "habitId": 1,
       "date": "2024-08-13",
       "completed": true,
       "notes": "Felt energized after exercise",
@@ -392,7 +366,7 @@
     {
       "id": "3",
       "userId": "1",
-      "habitId": "1",
+      "habitId": 1,
       "date": "2024-08-12",
       "completed": true,
       "notes": "",
@@ -401,7 +375,7 @@
     {
       "id": "4",
       "userId": "1",
-      "habitId": "2",
+      "habitId": 2,
       "date": "2024-08-13",
       "completed": true,
       "notes": "Finished chapter 5 of 'Clean Code'",
@@ -410,7 +384,7 @@
     {
       "id": "5",
       "userId": "1",
-      "habitId": "2",
+      "habitId": 2,
       "date": "2024-08-12",
       "completed": true,
       "notes": "Read about design patterns",
@@ -419,7 +393,7 @@
     {
       "id": "6",
       "userId": "1",
-      "habitId": "3",
+      "habitId": 3,
       "date": "2024-08-14",
       "completed": true,
       "notes": "Very peaceful session",
@@ -428,7 +402,7 @@
     {
       "id": "7",
       "userId": "1",
-      "habitId": "3",
+      "habitId": 3,
       "date": "2024-08-13",
       "completed": true,
       "notes": "Focused on breathing",
@@ -437,7 +411,7 @@
     {
       "id": "8",
       "userId": "1",
-      "habitId": "4",
+      "habitId": 4,
       "date": "2024-08-11",
       "completed": true,
       "notes": "Bought groceries for the week",
@@ -446,7 +420,7 @@
     {
       "id": "9",
       "userId": "1",
-      "habitId": "5",
+      "habitId": 5,
       "date": "2024-08-12",
       "completed": true,
       "notes": "Worked on React components",
@@ -455,7 +429,7 @@
     {
       "id": "10",
       "userId": "1",
-      "habitId": "6",
+      "habitId": 6,
       "date": "2024-07-31",
       "completed": true,
       "notes": "Reviewed July expenses and planned August budget",
@@ -464,7 +438,7 @@
     {
       "id": "11",
       "userId": "2",
-      "habitId": "7",
+      "habitId": 7,
       "date": "2024-08-14",
       "completed": true,
       "notes": "5.2km in 28 minutes",
@@ -473,7 +447,7 @@
     {
       "id": "12",
       "userId": "2",
-      "habitId": "7",
+      "habitId": 7,
       "date": "2024-08-13",
       "completed": true,
       "notes": "Perfect weather for running",
@@ -482,7 +456,7 @@
     {
       "id": "13",
       "userId": "2",
-      "habitId": "8",
+      "habitId": 8,
       "date": "2024-08-14",
       "completed": true,
       "notes": "Stayed hydrated all day",
@@ -491,7 +465,7 @@
     {
       "id": "14",
       "userId": "2",
-      "habitId": "8",
+      "habitId": 8,
       "date": "2024-08-13",
       "completed": true,
       "notes": "8 glasses completed",
@@ -500,7 +474,7 @@
     {
       "id": "15",
       "userId": "3",
-      "habitId": "9",
+      "habitId": 9,
       "date": "2024-08-13",
       "completed": true,
       "notes": "45-minute vinyasa flow",
@@ -509,7 +483,7 @@
     {
       "id": "16",
       "userId": "3",
-      "habitId": "9",
+      "habitId": 9,
       "date": "2024-08-11",
       "completed": true,
       "notes": "Morning yoga session",
@@ -518,7 +492,7 @@
     {
       "id": "17",
       "userId": "3",
-      "habitId": "1",
+      "habitId": 10,
       "date": "2024-08-10",
       "completed": true,
       "notes": "Made quinoa salad with vegetables",
@@ -527,7 +501,7 @@
     {
       "id": "87f3",
       "userId": "b02mw541u",
-      "habitId": "1",
+      "habitId": 1,
       "date": "2025-08-25",
       "completed": true,
       "notes": "",
@@ -536,7 +510,7 @@
     {
       "id": "6b86",
       "userId": "b02mw541u",
-      "habitId": "2",
+      "habitId": 2,
       "date": "2025-08-25",
       "completed": true,
       "notes": "",
@@ -545,7 +519,7 @@
     {
       "id": "43ca",
       "userId": "b02mw541u",
-      "habitId": "3",
+      "habitId": 3,
       "date": "2025-08-25",
       "completed": true,
       "notes": "",
@@ -554,7 +528,7 @@
     {
       "id": "82c1",
       "userId": "b02mw541u",
-      "habitId": "4",
+      "habitId": 4,
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
@@ -563,7 +537,7 @@
     {
       "id": "c61e",
       "userId": "b02mw541u",
-      "habitId": "5",
+      "habitId": 5,
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
@@ -572,7 +546,7 @@
     {
       "id": "e8d6",
       "userId": "b02mw541u",
-      "habitId": "6",
+      "habitId": 6,
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
@@ -581,7 +555,7 @@
     {
       "id": "9a59",
       "userId": "b02mw541u",
-      "habitId": "7",
+      "habitId": 7,
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
@@ -590,7 +564,7 @@
     {
       "id": "769c",
       "userId": "b02mw541u",
-      "habitId": "8",
+      "habitId": 8,
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
@@ -599,7 +573,7 @@
     {
       "id": "84ae",
       "userId": "b02mw541u",
-      "habitId": "9",
+      "habitId": 9,
       "date": "2025-08-25",
       "completed": false,
       "notes": "",
@@ -608,7 +582,7 @@
     {
       "id": "890c",
       "userId": "b02mw541u",
-      "habitId": "1",
+      "habitId": 1,
       "date": "2025-08-13",
       "completed": true,
       "notes": "",
@@ -617,7 +591,7 @@
     {
       "id": "4e7c",
       "userId": "b02mw541u",
-      "habitId": "2",
+      "habitId": 2,
       "date": "2025-08-13",
       "completed": false,
       "notes": "",
@@ -626,7 +600,7 @@
     {
       "id": "0ac6",
       "userId": "b02mw541u",
-      "habitId": "3",
+      "habitId": 3,
       "date": "2025-08-13",
       "completed": false,
       "notes": "",
@@ -655,59 +629,59 @@
       "userId": "b02mw541u",
       "habitId": "3",
       "date": "2025-08-26",
-      "completed": true,
+      "completed": false,
       "notes": "",
-      "completedAt": "2025-08-26T16:40:56.570Z"
+      "completedAt": "2025-08-26T06:46:00.662Z"
     },
     {
       "id": "6131",
       "userId": "b02mw541u",
       "habitId": "4",
       "date": "2025-08-26",
-      "completed": true,
+      "completed": false,
       "notes": "",
-      "completedAt": "2025-08-27T02:53:55.706Z"
+      "completedAt": "2025-08-26T06:46:01.563Z"
     },
     {
       "id": "5a3d",
       "userId": "b02mw541u",
       "habitId": "5",
       "date": "2025-08-26",
-      "completed": true,
+      "completed": false,
       "notes": "",
-      "completedAt": "2025-08-27T02:53:56.211Z"
+      "completedAt": "2025-08-26T06:46:02.378Z"
     },
     {
       "id": "69de",
       "userId": "b02mw541u",
       "habitId": "6",
       "date": "2025-08-26",
-      "completed": true,
+      "completed": false,
       "notes": "",
-      "completedAt": "2025-08-27T02:53:56.783Z"
+      "completedAt": "2025-08-26T06:46:03.070Z"
     },
     {
       "id": "e30e",
       "userId": "b02mw541u",
       "habitId": "7",
       "date": "2025-08-26",
-      "completed": true,
+      "completed": false,
       "notes": "",
-      "completedAt": "2025-08-27T02:53:57.778Z"
+      "completedAt": "2025-08-26T06:46:03.825Z"
     },
     {
       "id": "7daa",
       "userId": "b02mw541u",
       "habitId": "8",
       "date": "2025-08-26",
-      "completed": true,
+      "completed": false,
       "notes": "",
-      "completedAt": "2025-08-27T02:53:58.192Z"
+      "completedAt": "2025-08-26T06:46:05.060Z"
     },
     {
       "id": "5dce",
       "userId": "b02mw541u",
-      "habitId": "2",
+      "habitId": null,
       "date": "2025-08-26",
       "completed": true,
       "notes": "",
@@ -718,14 +692,14 @@
       "userId": "b02mw541u",
       "habitId": "1",
       "date": "2025-08-27",
-      "completed": true,
+      "completed": false,
       "notes": "",
-      "completedAt": "2025-08-26T14:52:20.759Z"
+      "completedAt": "2025-08-26T08:02:34.935Z"
     },
     {
       "id": "f0ea",
       "userId": "b02mw541u",
-      "habitId": "2",
+      "habitId": null,
       "date": "2025-08-24",
       "completed": true,
       "notes": "",
@@ -734,182 +708,11 @@
     {
       "id": "0579",
       "userId": "b02mw541u",
-      "habitId": "3",
+      "habitId": null,
       "date": "2025-08-23",
       "completed": true,
       "notes": "",
       "completedAt": "2025-08-26T08:02:46.215Z"
-    },
-    {
-      "id": "b0b7",
-      "userId": "b02mw541u",
-      "habitId": "4",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-27T03:44:54.927Z"
-    },
-    {
-      "id": "de9f",
-      "userId": "b02mw541u",
-      "habitId": "3",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-27T03:44:54.410Z"
-    },
-    {
-      "id": "6297",
-      "userId": "b02mw541u",
-      "habitId": "4",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-26T15:56:05.071Z"
-    },
-    {
-      "id": "cf37",
-      "userId": "b02mw541u",
-      "habitId": "5",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-27T03:44:55.745Z"
-    },
-    {
-      "id": "20ee",
-      "userId": "b02mw541u",
-      "habitId": "6",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-27T03:44:58.113Z"
-    },
-    {
-      "id": "4295",
-      "userId": "b02mw541u",
-      "habitId": "7",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-27T03:44:57.712Z"
-    },
-    {
-      "id": "109e",
-      "userId": "b02mw541u",
-      "habitId": "8",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-27T03:45:05.606Z"
-    },
-    {
-      "id": "f730",
-      "userId": "b02mw541u",
-      "habitId": "9",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-27T03:45:05.194Z"
-    },
-    {
-      "id": "94fa",
-      "userId": "b02mw541u",
-      "habitId": "10",
-      "date": "2025-08-27",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-26T15:45:28.382Z"
-    },
-    {
-      "id": "df1d",
-      "userId": "b02mw541u",
-      "habitId": "2",
-      "date": "2025-08-27",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-27T02:21:49.982Z"
-    },
-    {
-      "id": "8f89",
-      "userId": "b02mw541u",
-      "habitId": "2",
-      "date": "2025-08-28",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-27T06:11:13.390Z"
-    },
-    {
-      "id": "9ef8",
-      "userId": "b02mw541u",
-      "habitId": "3",
-      "date": "2025-08-28",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-27T06:11:14.292Z"
-    },
-    {
-      "id": "2535",
-      "userId": "b02mw541u",
-      "habitId": "4",
-      "date": "2025-08-28",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-27T06:11:14.941Z"
-    },
-    {
-      "id": "b73e",
-      "userId": "b02mw541u",
-      "habitId": "5",
-      "date": "2025-08-28",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-27T06:11:15.488Z"
-    },
-    {
-      "id": "a733",
-      "userId": "b02mw541u",
-      "habitId": "6",
-      "date": "2025-08-28",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-27T06:11:15.958Z"
-    },
-    {
-      "id": "bcb7",
-      "userId": "b02mw541u",
-      "habitId": "7",
-      "date": "2025-08-28",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-27T06:11:16.406Z"
-    },
-    {
-      "id": "3271",
-      "userId": "b02mw541u",
-      "habitId": "8",
-      "date": "2025-08-28",
-      "completed": true,
-      "notes": "",
-      "completedAt": "2025-08-27T06:11:16.844Z"
-    },
-    {
-      "id": "944c",
-      "userId": "1",
-      "habitId": "bac0",
-      "date": "2025-08-27",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-27T06:28:44.711Z"
-    },
-    {
-      "id": "d5d0",
-      "userId": "1",
-      "habitId": "bac0",
-      "date": "2025-08-28",
-      "completed": false,
-      "notes": "",
-      "completedAt": "2025-08-27T06:33:21.491Z"
     }
   ],
   "reminders": [

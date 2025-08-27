@@ -281,7 +281,7 @@ export default function Goal() {
         alert("Reset thành công!");
       }
     } catch (err) {
-      console.error("Error resetting goal:", err);
+      console.error(err);
     }
   };
 
