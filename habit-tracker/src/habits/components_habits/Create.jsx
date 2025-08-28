@@ -19,12 +19,12 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
     const [monthlyDays, setMonthlyDays] = useState([]);
     const [timeFrame, setTimeFrame] = useState({ startTime: '00:00:00', endTime: '00:30:00' });
 
-    console.log('Habits prop in Create:', habits);
+    const today = new Date().toISOString().split('T')[0];
 
     const getMaxDayInRange = (startDate, endDate) => {
-        if (!startDate || !endDate) return 31;
+        if (!startDate) return 31;
         const start = new Date(startDate);
-        const end = new Date(endDate);
+        const end = endDate ? new Date(endDate) : new Date('9999-12-31');
         let maxDay = 31;
         let current = new Date(start);
         while (current <= end) {
@@ -37,10 +37,9 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
         return maxDay;
     };
 
-    const checkTimeConflict = (newHabit, habits) => {
-        console.log('Checking time conflict with habits:', habits);
-        if (!Array.isArray(habits) || habits.length === 0) {
-            console.warn('No valid habits to check for conflicts');
+    const checkTimeConflict = (newHabitData, existingHabits) => {
+        if (!Array.isArray(existingHabits) || existingHabits.length === 0) {
+            console.log('No existing habits to check for conflicts.');
             return null;
         }
 
@@ -49,122 +48,123 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
             return hours * 60 + minutes;
         };
 
-        const newStartMinutes = timeToMinutes(newHabit.type === 'daily' ? newHabit.frequency.startTime : timeFrame.startTime);
-        const newEndMinutes = timeToMinutes(newHabit.type === 'daily' ? newHabit.frequency.endTime : timeFrame.endTime);
+        const hasTimeOverlap = (start1, end1, start2, end2) => {
+            const overlap = start1 < end2 && end1 > start2;
+            console.log(`Time overlap check: ${start1}-${end1} vs ${start2}-${end2} -> ${overlap}`);
+            return overlap;
+        };
 
-        const newStartDt = new Date(newHabit.startDate).getTime();
-        const newEndDt = new Date(newHabit.endDate).getTime();
+        let newStartMinutes, newEndMinutes;
+        if (newHabitData.type === 'daily') {
+            newStartMinutes = timeToMinutes(newHabitData.frequency.startTime);
+            newEndMinutes = timeToMinutes(newHabitData.frequency.endTime);
+        } else {
+            newStartMinutes = timeToMinutes(timeFrame.startTime);
+            newEndMinutes = timeToMinutes(timeFrame.endTime);
+        }
+        console.log(`New habit time: ${newStartMinutes}-${newEndMinutes} (${newHabitData.frequency.startTime}-${newHabitData.frequency.endTime})`);
 
-        for (const habit of habits) {
-            if (habit.userId !== newHabit.userId) {
-                console.log('Skipping habit with different userId:', habit.name);
+        const newStartDate = new Date(newHabitData.startDate);
+        const newEndDate = newHabitData.endDate ? new Date(newHabitData.endDate) : new Date('9999-12-31');
+
+        for (const habit of existingHabits) {
+            if (habit.userId !== newHabitData.userId) {
+                console.log(`Skipping habit ${habit.name}: different userId`);
                 continue;
             }
 
-            const habitStartDt = new Date(habit.startDate).getTime();
-            const habitEndDt = new Date(habit.endDate).getTime();
+            const habitStartDate = new Date(habit.startDate);
+            const habitEndDate = habit.endDate ? new Date(habit.endDate) : new Date('9999-12-31');
 
-            console.log('Comparing with habit:', { name: habit.name, startDate: habit.startDate, endDate: habit.endDate, type: habit.type });
+            const hasDateOverlap = newStartDate <= habitEndDate && newEndDate >= habitStartDate;
+            console.log(`Checking ${habit.name} (ID: ${habit.id}): Date overlap = ${hasDateOverlap} (new: ${newHabitData.startDate}-${newHabitData.endDate || 'infinity'}, habit: ${habit.startDate}-${habit.endDate || 'infinity'})`);
 
-            if (newStartDt > habitEndDt || newEndDt < habitStartDt) {
-                console.log('No date overlap with:', habit.name);
+            if (!hasDateOverlap) {
+                console.log(`No date overlap with ${habit.name}, skipping time check.`);
                 continue;
             }
 
             if (habit.type === 'daily') {
-                if (newHabit.type === 'daily') {
-                    const habitStartMinutes = timeToMinutes(habit.frequency.startTime);
-                    const habitEndMinutes = timeToMinutes(habit.frequency.endTime);
-                    if (newStartMinutes < habitEndMinutes && newEndMinutes > habitStartMinutes) {
-                        console.log('Time conflict detected with:', habit.name);
-                        return `Time conflict with "${habit.name}" on daily schedule (${habit.frequency.startTime} - ${habit.frequency.endTime})`;
-                    } else {
-                        console.log('No time overlap with:', habit.name, { newStart: newStartMinutes, newEnd: newEndMinutes, habitStart: habitStartMinutes, habitEnd: habitEndMinutes });
+                const habitStartMinutes = timeToMinutes(habit.frequency.startTime);
+                const habitEndMinutes = timeToMinutes(habit.frequency.endTime);
+
+                if (newHabitData.type === 'daily') {
+                    if (hasTimeOverlap(newStartMinutes, newEndMinutes, habitStartMinutes, habitEndMinutes)) {
+                        console.log(`Conflict detected with daily habit ${habit.name}`);
+                        return `Time conflict with "${habit.name}" (${habit.frequency.startTime.slice(0, 5)} - ${habit.frequency.endTime.slice(0, 5)})`;
                     }
-                } else if (newHabit.type === 'weekly') {
-                    for (const day of weeklyDays) {
-                        const habitStartMinutes = timeToMinutes(habit.frequency.startTime);
-                        const habitEndMinutes = timeToMinutes(habit.frequency.endTime);
-                        if (newStartMinutes < habitEndMinutes && newEndMinutes > habitStartMinutes) {
-                            console.log('Time conflict detected with:', habit.name);
-                            return `Time conflict with "${habit.name}" on daily schedule (${habit.frequency.startTime} - ${habit.frequency.endTime}) for weekday ${day}`;
-                        }
+                } else if (newHabitData.type === 'weekly' && weeklyDays.length > 0) {
+                    if (hasTimeOverlap(newStartMinutes, newEndMinutes, habitStartMinutes, habitEndMinutes)) {
+                        console.log(`Conflict detected with daily habit ${habit.name} for weekly habit`);
+                        return `Time conflict with daily habit "${habit.name}" (${habit.frequency.startTime.slice(0, 5)} - ${habit.frequency.endTime.slice(0, 5)})`;
                     }
-                } else if (newHabit.type === 'monthly') {
-                    for (const day of monthlyDays) {
-                        const habitStartMinutes = timeToMinutes(habit.frequency.startTime);
-                        const habitEndMinutes = timeToMinutes(habit.frequency.endTime);
-                        if (newStartMinutes < habitEndMinutes && newEndMinutes > habitStartMinutes) {
-                            console.log('Time conflict detected with:', habit.name);
-                            return `Time conflict with "${habit.name}" on daily schedule (${habit.frequency.startTime} - ${habit.frequency.endTime}) for day ${day}`;
-                        }
+                } else if (newHabitData.type === 'monthly' && monthlyDays.length > 0) {
+                    if (hasTimeOverlap(newStartMinutes, newEndMinutes, habitStartMinutes, habitEndMinutes)) {
+                        console.log(`Conflict detected with daily habit ${habit.name} for monthly habit`);
+                        return `Time conflict with daily habit "${habit.name}" (${habit.frequency.startTime.slice(0, 5)} - ${habit.frequency.endTime.slice(0, 5)})`;
                     }
                 }
             } else if (habit.type === 'weekly') {
-                if (newHabit.type === 'daily') {
-                    for (const f of habit.frequency) {
-                        const habitStartMinutes = timeToMinutes(f.startTime);
-                        const habitEndMinutes = timeToMinutes(f.endTime);
-                        if (newStartMinutes < habitEndMinutes && newEndMinutes > habitStartMinutes) {
-                            console.log('Time conflict detected with:', habit.name);
-                            return `Time conflict with "${habit.name}" on weekday ${f.weekday} (${f.startTime} - ${f.endTime})`;
+                if (newHabitData.type === 'daily') {
+                    for (const freq of habit.frequency) {
+                        const habitStartMinutes = timeToMinutes(freq.startTime);
+                        const habitEndMinutes = timeToMinutes(freq.endTime);
+                        if (hasTimeOverlap(newStartMinutes, newEndMinutes, habitStartMinutes, habitEndMinutes)) {
+                            console.log(`Conflict detected with weekly habit ${habit.name} on ${getDayName(freq.weekday)}`);
+                            return `Time conflict with weekly habit "${habit.name}" on ${getDayName(freq.weekday)} (${freq.startTime.slice(0, 5)} - ${freq.endTime.slice(0, 5)})`;
                         }
                     }
-                } else if (newHabit.type === 'weekly') {
-                    for (const day of weeklyDays) {
-                        for (const f of habit.frequency) {
-                            if (day === f.weekday) {
-                                const habitStartMinutes = timeToMinutes(f.startTime);
-                                const habitEndMinutes = timeToMinutes(f.endTime);
-                                if (newStartMinutes < habitEndMinutes && newEndMinutes > habitStartMinutes) {
-                                    console.log('Time conflict detected with:', habit.name);
-                                    return `Time conflict with "${habit.name}" on weekday ${f.weekday} (${f.startTime} - ${f.endTime})`;
+                } else if (newHabitData.type === 'weekly') {
+                    for (const newDay of weeklyDays) {
+                        for (const freq of habit.frequency) {
+                            if (newDay === freq.weekday) {
+                                const habitStartMinutes = timeToMinutes(freq.startTime);
+                                const habitEndMinutes = timeToMinutes(freq.endTime);
+                                if (hasTimeOverlap(newStartMinutes, newEndMinutes, habitStartMinutes, habitEndMinutes)) {
+                                    console.log(`Conflict detected with weekly habit ${habit.name} on ${getDayName(freq.weekday)}`);
+                                    return `Time conflict with "${habit.name}" on ${getDayName(freq.weekday)} (${freq.startTime.slice(0, 5)} - ${freq.endTime.slice(0, 5)})`;
                                 }
                             }
                         }
                     }
-                } else if (newHabit.type === 'monthly') {
-                    for (const day of monthlyDays) {
-                        for (const f of habit.frequency) {
-                            const habitStartMinutes = timeToMinutes(f.startTime);
-                            const habitEndMinutes = timeToMinutes(f.endTime);
-                            if (newStartMinutes < habitEndMinutes && newEndMinutes > habitStartMinutes) {
-                                console.log('Time conflict detected with:', habit.name);
-                                return `Time conflict with "${habit.name}" on weekday ${f.weekday} (${f.startTime} - ${f.endTime}) for day ${day}`;
-                            }
+                } else if (newHabitData.type === 'monthly') {
+                    for (const freq of habit.frequency) {
+                        const habitStartMinutes = timeToMinutes(freq.startTime);
+                        const habitEndMinutes = timeToMinutes(freq.endTime);
+                        if (hasTimeOverlap(newStartMinutes, newEndMinutes, habitStartMinutes, habitEndMinutes)) {
+                            console.log(`Potential conflict detected with weekly habit ${habit.name} on ${getDayName(freq.weekday)}`);
+                            return `Potential time conflict with weekly habit "${habit.name}" on ${getDayName(freq.weekday)} (${freq.startTime.slice(0, 5)} - ${freq.endTime.slice(0, 5)})`;
                         }
                     }
                 }
             } else if (habit.type === 'monthly') {
-                if (newHabit.type === 'daily') {
-                    for (const f of habit.frequency) {
-                        const habitStartMinutes = timeToMinutes(f.startTime);
-                        const habitEndMinutes = timeToMinutes(f.endTime);
-                        if (newStartMinutes < habitEndMinutes && newEndMinutes > habitStartMinutes) {
-                            console.log('Time conflict detected with:', habit.name);
-                            return `Time conflict with "${habit.name}" on day ${f.day} (${f.startTime} - ${f.endTime})`;
+                if (newHabitData.type === 'daily') {
+                    for (const freq of habit.frequency) {
+                        const habitStartMinutes = timeToMinutes(freq.startTime);
+                        const habitEndMinutes = timeToMinutes(freq.endTime);
+                        if (hasTimeOverlap(newStartMinutes, newEndMinutes, habitStartMinutes, habitEndMinutes)) {
+                            console.log(`Conflict detected with monthly habit ${habit.name} on day ${freq.day}`);
+                            return `Time conflict with monthly habit "${habit.name}" on day ${freq.day} (${freq.startTime.slice(0, 5)} - ${freq.endTime.slice(0, 5)})`;
                         }
                     }
-                } else if (newHabit.type === 'weekly') {
-                    for (const day of weeklyDays) {
-                        for (const f of habit.frequency) {
-                            const habitStartMinutes = timeToMinutes(f.startTime);
-                            const habitEndMinutes = timeToMinutes(f.endTime);
-                            if (newStartMinutes < habitEndMinutes && newEndMinutes > habitStartMinutes) {
-                                console.log('Time conflict detected with:', habit.name);
-                                return `Time conflict with "${habit.name}" on day ${f.day} (${f.startTime} - ${f.endTime}) for weekday ${day}`;
-                            }
+                } else if (newHabitData.type === 'weekly') {
+                    for (const freq of habit.frequency) {
+                        const habitStartMinutes = timeToMinutes(freq.startTime);
+                        const habitEndMinutes = timeToMinutes(freq.endTime);
+                        if (hasTimeOverlap(newStartMinutes, newEndMinutes, habitStartMinutes, habitEndMinutes)) {
+                            console.log(`Potential conflict detected with monthly habit ${habit.name} on day ${freq.day}`);
+                            return `Potential time conflict with monthly habit "${habit.name}" on day ${freq.day} (${freq.startTime.slice(0, 5)} - ${freq.endTime.slice(0, 5)})`;
                         }
                     }
-                } else if (newHabit.type === 'monthly') {
-                    for (const day of monthlyDays) {
-                        for (const f of habit.frequency) {
-                            if (day === f.day) {
-                                const habitStartMinutes = timeToMinutes(f.startTime);
-                                const habitEndMinutes = timeToMinutes(f.endTime);
-                                if (newStartMinutes < habitEndMinutes && newEndMinutes > habitStartMinutes) {
-                                    console.log('Time conflict detected with:', habit.name);
-                                    return `Time conflict with "${habit.name}" on day ${f.day} (${f.startTime} - ${f.endTime})`;
+                } else if (newHabitData.type === 'monthly') {
+                    for (const newDay of monthlyDays) {
+                        for (const freq of habit.frequency) {
+                            if (newDay === freq.day) {
+                                const habitStartMinutes = timeToMinutes(freq.startTime);
+                                const habitEndMinutes = timeToMinutes(freq.endTime);
+                                if (hasTimeOverlap(newStartMinutes, newEndMinutes, habitStartMinutes, habitEndMinutes)) {
+                                    console.log(`Conflict detected with monthly habit ${habit.name} on day ${freq.day}`);
+                                    return `Time conflict with "${habit.name}" on day ${freq.day} (${freq.startTime.slice(0, 5)} - ${freq.endTime.slice(0, 5)})`;
                                 }
                             }
                         }
@@ -172,27 +172,40 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
                 }
             }
         }
-        console.log('No time conflict detected');
+
+        console.log('No conflicts found after checking all habits.');
         return null;
+    };
+
+    const getDayName = (dayNumber) => {
+        const days = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        return days[dayNumber] || `Day ${dayNumber}`;
     };
 
     const handleCreateHabit = async (e) => {
         e.preventDefault();
-        if (!user) {
+        if (!user || !user.id) {
             setError('Please log in to create a habit');
-            console.error('No user logged in');
             return;
         }
 
         if (!newHabit.name.trim()) {
             setError('Habit name is required');
-            console.error('Validation failed: Habit name is empty');
             return;
         }
 
         if (newHabit.startDate && newHabit.endDate && newHabit.startDate > newHabit.endDate) {
             setError('Start date must be before or equal to end date');
-            console.error('Validation failed: startDate > endDate', { startDate: newHabit.startDate, endDate: newHabit.endDate });
+            return;
+        }
+
+        if (newHabit.startDate && newHabit.startDate < today) {
+            setError('Start date must be today or later');
+            return;
+        }
+
+        if (newHabit.endDate && newHabit.endDate < today) {
+            setError('End date must be today or later');
             return;
         }
 
@@ -204,28 +217,21 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
         const newEndMinutes = timeToMinutes(newHabit.type === 'daily' ? newHabit.frequency.endTime : timeFrame.endTime);
         if (newStartMinutes >= newEndMinutes) {
             setError('Start time must be before end time');
-            console.error('Validation failed: startTime >= endTime', {
-                startTime: newHabit.type === 'daily' ? newHabit.frequency.startTime : timeFrame.startTime,
-                endTime: newHabit.type === 'daily' ? newHabit.frequency.endTime : timeFrame.endTime
-            });
+            return;
+        }
+
+        if (newHabit.type === 'weekly' && weeklyDays.length === 0) {
+            setError('Please select at least one day for weekly habit');
+            return;
+        }
+        if (newHabit.type === 'monthly' && monthlyDays.length === 0) {
+            setError('Please select at least one day for monthly habit');
             return;
         }
 
         const conflictError = checkTimeConflict(newHabit, habits);
         if (conflictError) {
             setError(conflictError);
-            console.error('Validation failed: Time conflict', conflictError);
-            return;
-        }
-
-        if (newHabit.type === 'weekly' && weeklyDays.length === 0) {
-            setError('Please select at least one day for weekly habit');
-            console.error('Validation failed: No weekdays selected');
-            return;
-        }
-        if (newHabit.type === 'monthly' && monthlyDays.length === 0) {
-            setError('Please select at least one day for monthly habit');
-            console.error('Validation failed: No monthly days selected');
             return;
         }
 
@@ -245,9 +251,7 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
                     endTime: timeFrame.endTime
                 }));
             }
-            console.log('Sending habit to API:', formattedHabit);
             const createdHabit = await createHabit(formattedHabit);
-            console.log('Habit created successfully:', createdHabit);
             setHabits(prev => [...prev, createdHabit]);
             setFilteredHabits(prev => [...prev, createdHabit]);
             setNewHabit({
@@ -269,9 +273,8 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
             setTimeout(() => setSuccess(null), 3000);
             setError(null);
         } catch (err) {
-            const errorMessage = err.response?.data?.message || err.message || 'Failed to create habit';
+            const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || 'Failed to create habit';
             setError(errorMessage);
-            console.error('Error creating habit:', errorMessage, err);
         } finally {
             setLoading(false);
         }
@@ -302,7 +305,6 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
             );
         } else {
             setError(`Day must be between 1 and ${maxDay} based on the selected date range`);
-            console.error('Validation failed: Invalid monthly day', { day, maxDay });
         }
     };
 
@@ -311,7 +313,7 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
             <Button variant="success" onClick={() => setShowCreateModal(true)} disabled={loading}>
                 +
             </Button>
-            <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)} className="pt-5 mt-5">
+            <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Create New Habit</Modal.Title>
                 </Modal.Header>
@@ -384,11 +386,11 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
                             <>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Days of Week</Form.Label>
-                                    {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, index) => (
+                                    {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((dayName, index) => (
                                         <Form.Check
                                             key={index + 1}
                                             type="checkbox"
-                                            label={day}
+                                            label={dayName}
                                             checked={weeklyDays.includes(index + 1)}
                                             onChange={() => toggleWeeklyDay(index + 1)}
                                             disabled={loading}
@@ -459,6 +461,7 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
                                 onChange={(e) => setNewHabit({ ...newHabit, startDate: e.target.value })}
                                 required
                                 disabled={loading}
+                                min={today}
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
@@ -468,6 +471,7 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
                                 value={newHabit.endDate}
                                 onChange={(e) => setNewHabit({ ...newHabit, endDate: e.target.value })}
                                 disabled={loading}
+                                min={newHabit.startDate || today}
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
@@ -483,7 +487,7 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
                             </Form.Select>
                         </Form.Group>
                         <Button type="submit" variant="success" disabled={loading}>
-                            {loading ? <Spinner animation="border" size="sm" /> : 'C reate Habit'}
+                            {loading ? <Spinner animation="border" size="sm" /> : 'Create Habit'}
                         </Button>
                     </Form>
                 </Modal.Body>
