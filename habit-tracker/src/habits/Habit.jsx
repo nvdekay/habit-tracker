@@ -29,10 +29,10 @@ const Habit = () => {
       }
       try {
         setLoading(true);
-        const habitData = await getHabits();
-        const userHabits = Array.isArray(habitData) ? habitData.filter(habit => habit.userId === user.id) : [];
-        setHabits(userHabits);
-        setFilteredHabits(userHabits);
+        const habitData = await getHabits(user.id);
+        console.log('Fetched habits:', habitData);
+        setHabits(habitData || []);
+        setFilteredHabits(habitData || []);
         setError(null);
       } catch (error) {
         console.error("Error fetching habits:", error);
@@ -179,6 +179,7 @@ const Habit = () => {
             setError={setError}
             loading={loading}
             setLoading={setLoading}
+            habits={habits || []}
           />
         )}
       </div>
@@ -323,6 +324,7 @@ const Habit = () => {
                             setError={setError}
                             loading={loading}
                             setLoading={setLoading}
+                            habits={habits || []}
                           />
                           <Button
                             variant="outline-danger"
