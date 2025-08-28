@@ -60,7 +60,7 @@ export default function Goal() {
     deadline: "",
     priority: "medium",
     status: "in_progress",
-    mode: "manual", // "manual" hoặc "auto"
+    type: "manual", // "manual" hoặc "auto"
     targetValue: 1, // chỉ cần khi manual
     currentValue: 0, // manual: người dùng điều chỉnh
     unit: "", // chỉ cần khi manual
@@ -349,6 +349,20 @@ export default function Goal() {
 
     try {
       const data = await createGoal(newGoal);
+      newGoal.linkedHabits.forEach(async (habitId) => {
+        try {
+          await fetch(`http://localhost:8080/habits/${habitId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ isInGoals: true }),
+          });
+          console.log(`Habit ${habitId} updated with isInGoals:true`);
+        } catch (error) {
+          console.error(`Failed to update habit ${habitId}:`, error);
+        }
+      });
       alert("Thêm mục tiêu thành công!");
       handleClose();
       setGoals((prev) => [...prev, newGoal]);

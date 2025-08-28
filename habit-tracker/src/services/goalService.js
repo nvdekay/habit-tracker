@@ -91,3 +91,55 @@ export function calculateHabitTarget(habit, goalStartDate, goalEndDate) {
 
   return 0;
 }
+
+export const getGoalsForDate = async (userId, date) => {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/goals?userId=${userId}&date=${date}`
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const goals = await response.json();
+
+    // Bạn có thể thêm logic lọc bổ sung nếu cần, ví dụ:
+    // Lọc những goals có type là "auto" và status không phải là "completed"
+    const filteredGoals = goals.filter(
+      (goal) => goal.type === "auto" && goal.status !== "completed"
+    );
+
+    return filteredGoals;
+  } catch (error) {
+    console.error("Failed to fetch goals:", error);
+    // Trả về mảng rỗng nếu có lỗi
+    return [];
+  }
+};
+
+export const updateGoalStatus = async (goalId, newStatus) => {
+  try {
+    const response = await fetch(`http://localhost:8080/goals/${goalId}`, {
+      method: "PATCH", // Sử dụng PATCH để cập nhật một phần dữ liệu
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: newStatus,
+        // Có thể thêm các trường khác cần cập nhật nếu có
+        updatedAt: new Date().toISOString(),
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const updatedGoal = await response.json();
+    return updatedGoal;
+  } catch (error) {
+    console.error("Failed to update goal status:", error);
+    throw error; // Ném lỗi để component gọi có thể xử lý
+  }
+};

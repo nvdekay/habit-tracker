@@ -106,7 +106,7 @@ export const GoalCard = ({
           ) : (
             <Badge bg="warning mx-1">In progress</Badge>
           )}
-          {goal.mode == "auto" ? (
+          {goal.type == "auto" ? (
             <Badge bg="success">Auto</Badge>
           ) : (
             <Badge bg="danger">Manual</Badge>

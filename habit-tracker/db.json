@@ -257,6 +257,25 @@
       "isActive": true,
       "createdAt": "2024-04-01T12:00:00.000Z",
       "updatedAt": "2024-08-10T19:45:00.000Z"
+    },
+    {
+      "id": "a6fe",
+      "name": "Cường test",
+      "description": "Test",
+      "type": "weekly",
+      "frequency": [
+        {
+          "weekday": 4,
+          "startTime": "00:00:00",
+          "endTime": "00:30:00"
+        }
+      ],
+      "startDate": "2025-08-28",
+      "endDate": "2025-10-12",
+      "priority": "medium",
+      "isActive": true,
+      "userId": "b02mw541u",
+      "isInGoals": true
     }
   ],
   "goals": [
@@ -331,11 +350,11 @@
       "name": "Hydration Challenge",
       "description": "Drink recommended amount of water daily for 6 months",
       "targetValue": 180,
-      "currentValue": 180,
+      "currentValue": 168,
       "unit": "days",
       "deadline": "2024-09-30",
       "priority": "medium",
-      "status": "completed",
+      "status": "in_progress",
       "linkedHabits": [],
       "type": "manual",
       "createdAt": "2024-01-01T00:00:00.000Z",
@@ -377,38 +396,20 @@
       "type": "auto"
     },
     {
-      "id": "4b73",
+      "id": "946e",
       "userId": "b02mw541u",
-      "name": "123",
-      "description": "12",
+      "name": "Test",
+      "description": "Test",
       "startDate": "2025-08-28",
-      "deadline": "2025-09-07",
+      "deadline": "2025-09-28",
       "priority": "medium",
       "status": "in_progress",
-      "targetValue": 15,
+      "mode": "manual",
+      "targetValue": 5,
       "currentValue": 0,
       "unit": "",
       "linkedHabits": [
-        "3",
-        "5"
-      ],
-      "type": "auto"
-    },
-    {
-      "id": "46ed",
-      "userId": "b02mw541u",
-      "name": "33",
-      "description": "44",
-      "startDate": "2025-08-28",
-      "deadline": "2025-09-07",
-      "priority": "medium",
-      "status": "in_progress",
-      "targetValue": 15,
-      "currentValue": 0,
-      "unit": "",
-      "linkedHabits": [
-        "3",
-        "5"
+        "a6fe"
       ],
       "type": "auto"
     }
@@ -854,6 +855,42 @@
       "completed": true,
       "notes": "",
       "completedAt": "2025-08-27T02:21:49.982Z"
+    },
+    {
+      "id": "584c",
+      "userId": "b02mw541u",
+      "habitId": "a6fe",
+      "date": "2025-08-28",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-28T06:18:49.838Z"
+    },
+    {
+      "id": "bb96",
+      "userId": "b02mw541u",
+      "habitId": "1",
+      "date": "2025-08-28",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-28T06:24:05.754Z"
+    },
+    {
+      "id": "290f",
+      "userId": "b02mw541u",
+      "habitId": "2",
+      "date": "2025-08-28",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-28T06:24:05.106Z"
+    },
+    {
+      "id": "3d8d",
+      "userId": "b02mw541u",
+      "habitId": "3",
+      "date": "2025-08-28",
+      "completed": false,
+      "notes": "",
+      "completedAt": "2025-08-28T06:24:04.452Z"
     }
   ],
   "reminders": [
