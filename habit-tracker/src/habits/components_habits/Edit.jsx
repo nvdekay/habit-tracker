@@ -40,7 +40,7 @@ export default function Edit({ habit, setHabits, setFilteredHabits, setSuccess, 
                     ? { startTime: habit.frequency[0].startTime, endTime: habit.frequency[0].endTime }
                     : { startTime: '00:00:00', endTime: '00:30:00' }
         );
-    }, [habit]);
+    }, [habit, habits]);
 
     const getMaxDayInRange = (startDate, endDate) => {
         if (!startDate) return 31;

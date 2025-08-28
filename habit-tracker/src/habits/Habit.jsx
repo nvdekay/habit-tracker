@@ -184,7 +184,7 @@ const Habit = () => {
         )}
       </div>
 
-      <ToastContainer position="top-end" className="pt-5" style={{ zIndex: 99999 }}>
+      <ToastContainer position="top-end" className="pt-5" style={{ zIndex: 99999, position: "fixed" }}>
         {error && (
           <Toast
             onClose={() => setError(null)}
