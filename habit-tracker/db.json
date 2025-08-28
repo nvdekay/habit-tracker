@@ -257,21 +257,6 @@
       "isActive": true,
       "createdAt": "2024-04-01T12:00:00.000Z",
       "updatedAt": "2024-08-10T19:45:00.000Z"
-    },
-    {
-      "id": "03fb",
-      "name": "hi",
-      "description": "hi",
-      "type": "daily",
-      "frequency": {
-        "startTime": "11:01:00",
-        "endTime": "11:30:00"
-      },
-      "startDate": "2025-08-28",
-      "endDate": "2025-08-30",
-      "priority": "medium",
-      "isActive": true,
-      "userId": "b02mw541u"
     }
   ],
   "goals": [
@@ -853,12 +838,15 @@
       "completedAt": "2025-08-27T02:21:49.982Z"
     },
     {
+
       "id": "6ce1",
+
       "userId": "b02mw541u",
       "habitId": "3",
       "date": "2025-08-28",
       "completed": false,
       "notes": "",
+
       "completedAt": "2025-08-28T06:10:32.579Z"
     },
     {
@@ -896,6 +884,7 @@
       "completed": true,
       "notes": "",
       "completedAt": "2025-08-28T06:10:39.750Z"
+
     }
   ],
   "reminders": [
