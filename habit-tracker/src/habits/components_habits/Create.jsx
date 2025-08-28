@@ -37,6 +37,25 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
         return maxDay;
     };
 
+    const getAvailableWeekdays = (startDate, endDate) => {
+        if (!startDate) return [1, 2, 3, 4, 5, 6, 7];
+        const start = new Date(startDate);
+        const end = endDate ? new Date(endDate) : new Date('9999-12-31');
+        const weekdays = new Set();
+        let current = new Date(start);
+        while (current <= end) {
+            const dayOfWeek = current.getDay() || 7;
+            weekdays.add(dayOfWeek);
+            current.setDate(current.getDate() + 1);
+        }
+        return Array.from(weekdays).sort((a, b) => a - b);
+    };
+
+    const getAvailableMonthlyDays = (startDate, endDate) => {
+        const maxDay = getMaxDayInRange(startDate, endDate);
+        return Array.from({ length: maxDay }, (_, i) => i + 1);
+    };
+
     const checkTimeConflict = (newHabitData, existingHabits) => {
         if (!Array.isArray(existingHabits) || existingHabits.length === 0) {
             console.log('No existing habits to check for conflicts.');
@@ -229,6 +248,22 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
             return;
         }
 
+        if (newHabit.type === 'weekly') {
+            const availableWeekdays = getAvailableWeekdays(newHabit.startDate, newHabit.endDate);
+            if (weeklyDays.some(day => !availableWeekdays.includes(day))) {
+                setError('Selected days of week are not within the date range');
+                return;
+            }
+        }
+
+        if (newHabit.type === 'monthly') {
+            const availableMonthlyDays = getAvailableMonthlyDays(newHabit.startDate, newHabit.endDate);
+            if (monthlyDays.some(day => !availableMonthlyDays.includes(day))) {
+                setError('Selected days of month are not within the date range');
+                return;
+            }
+        }
+
         const conflictError = checkTimeConflict(newHabit, habits);
         if (conflictError) {
             setError(conflictError);
@@ -291,20 +326,36 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
     };
 
     const toggleWeeklyDay = (day) => {
+        const availableWeekdays = getAvailableWeekdays(newHabit.startDate, newHabit.endDate);
+        if (!availableWeekdays.includes(day)) {
+            setError(`Day ${getDayName(day)} is not available in the selected date range`);
+            return;
+        }
         setWeeklyDays(prev =>
+            prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
+        );
+    };
+
+    const toggleMonthlyDay = (day) => {
+        const availableMonthlyDays = getAvailableMonthlyDays(newHabit.startDate, newHabit.endDate);
+        if (!availableMonthlyDays.includes(day)) {
+            setError(`Day ${day} is not available in the selected date range`);
+            return;
+        }
+        setMonthlyDays(prev =>
             prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
         );
     };
 
     const handleMonthlyDayChange = (e) => {
         const day = parseInt(e.target.value);
-        const maxDay = getMaxDayInRange(newHabit.startDate, newHabit.endDate);
-        if (day >= 1 && day <= maxDay) {
+        const availableMonthlyDays = getAvailableMonthlyDays(newHabit.startDate, newHabit.endDate);
+        if (day >= 1 && day <= availableMonthlyDays.length) {
             setMonthlyDays(prev =>
                 prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
             );
         } else {
-            setError(`Day must be between 1 and ${maxDay} based on the selected date range`);
+            setError(`Day must be between 1 and ${availableMonthlyDays.length} based on the selected date range`);
         }
     };
 
@@ -350,6 +401,82 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
                                 <option value="monthly">Monthly</option>
                             </Form.Select>
                         </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Start Date</Form.Label>
+                            <Form.Control
+                                type="date"
+                                value={newHabit.startDate}
+                                onChange={(e) => {
+                                    setNewHabit({ ...newHabit, startDate: e.target.value });
+                                    setWeeklyDays([]);
+                                    setMonthlyDays([]);
+                                }}
+                                required
+                                disabled={loading}
+                                min={today}
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>End Date</Form.Label>
+                            <Form.Control
+                                type="date"
+                                value={newHabit.endDate}
+                                onChange={(e) => {
+                                    setNewHabit({ ...newHabit, endDate: e.target.value });
+                                    setWeeklyDays([]);
+                                    setMonthlyDays([]);
+                                }}
+                                disabled={loading}
+                                min={newHabit.startDate || today}
+                            />
+                        </Form.Group>
+                        {newHabit.type === 'weekly' && (
+                            <Form.Group className="mb-3">
+                                <Form.Label>Days of Week</Form.Label>
+                                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((dayName, index) => {
+                                    const dayIndex = index + 1;
+                                    const availableWeekdays = getAvailableWeekdays(newHabit.startDate, newHabit.endDate);
+                                    return (
+                                        <Form.Check
+                                            key={dayIndex}
+                                            type="checkbox"
+                                            label={dayName}
+                                            checked={weeklyDays.includes(dayIndex)}
+                                            onChange={() => toggleWeeklyDay(dayIndex)}
+                                            disabled={loading || !availableWeekdays.includes(dayIndex)}
+                                        />
+                                    );
+                                })}
+                            </Form.Group>
+                        )}
+                        {newHabit.type === 'monthly' && (
+                            <Form.Group className="mb-3">
+                                <Form.Label>Days of Month (1-{getMaxDayInRange(newHabit.startDate, newHabit.endDate)})</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    min="1"
+                                    max={getMaxDayInRange(newHabit.startDate, newHabit.endDate)}
+                                    onChange={handleMonthlyDayChange}
+                                    disabled={loading}
+                                    placeholder={`Enter day (1-${getMaxDayInRange(newHabit.startDate, newHabit.endDate)})`}
+                                />
+                                <Form.Label className="mt-2">Selected Days</Form.Label>
+                                <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '5px' }}>
+                                    {getAvailableMonthlyDays(newHabit.startDate, newHabit.endDate).map((day) => (
+                                        <Form.Check
+                                            key={day}
+                                            type="checkbox"
+                                            label={day}
+                                            checked={monthlyDays.includes(day)}
+                                            onChange={() => toggleMonthlyDay(day)}
+                                            disabled={loading}
+                                            style={{ margin: '0' }}
+                                        />
+                                    ))}
+                                </div>
+                                {monthlyDays.length === 0 && <div className="mt-2">No days selected</div>}
+                            </Form.Group>
+                        )}
                         {newHabit.type === 'daily' && (
                             <>
                                 <Form.Group className="mb-3">
@@ -382,21 +509,8 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
                                 </Form.Group>
                             </>
                         )}
-                        {newHabit.type === 'weekly' && (
+                        {(newHabit.type === 'weekly' || newHabit.type === 'monthly') && (
                             <>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Days of Week</Form.Label>
-                                    {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((dayName, index) => (
-                                        <Form.Check
-                                            key={index + 1}
-                                            type="checkbox"
-                                            label={dayName}
-                                            checked={weeklyDays.includes(index + 1)}
-                                            onChange={() => toggleWeeklyDay(index + 1)}
-                                            disabled={loading}
-                                        />
-                                    ))}
-                                </Form.Group>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Start Time</Form.Label>
                                     <Form.Control
@@ -417,63 +531,6 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
                                 </Form.Group>
                             </>
                         )}
-                        {newHabit.type === 'monthly' && (
-                            <>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Days of Month (1-{getMaxDayInRange(newHabit.startDate, newHabit.endDate)})</Form.Label>
-                                    <Form.Control
-                                        type="number"
-                                        min="1"
-                                        max={getMaxDayInRange(newHabit.startDate, newHabit.endDate)}
-                                        onChange={handleMonthlyDayChange}
-                                        disabled={loading}
-                                        placeholder={`Enter day (1-${getMaxDayInRange(newHabit.startDate, newHabit.endDate)})`}
-                                    />
-                                    <div className="mt-2">
-                                        Selected days: {monthlyDays.join(', ') || 'None'}
-                                    </div>
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Start Time</Form.Label>
-                                    <Form.Control
-                                        type="time"
-                                        value={timeFrame.startTime.slice(0, 5)}
-                                        onChange={(e) => setTimeFrame({ ...timeFrame, startTime: `${e.target.value}:00` })}
-                                        disabled={loading}
-                                    />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>End Time</Form.Label>
-                                    <Form.Control
-                                        type="time"
-                                        value={timeFrame.endTime.slice(0, 5)}
-                                        onChange={(e) => setTimeFrame({ ...timeFrame, endTime: `${e.target.value}:00` })}
-                                        disabled={loading}
-                                    />
-                                </Form.Group>
-                            </>
-                        )}
-                        <Form.Group className="mb-3">
-                            <Form.Label>Start Date</Form.Label>
-                            <Form.Control
-                                type="date"
-                                value={newHabit.startDate}
-                                onChange={(e) => setNewHabit({ ...newHabit, startDate: e.target.value })}
-                                required
-                                disabled={loading}
-                                min={today}
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>End Date</Form.Label>
-                            <Form.Control
-                                type="date"
-                                value={newHabit.endDate}
-                                onChange={(e) => setNewHabit({ ...newHabit, endDate: e.target.value })}
-                                disabled={loading}
-                                min={newHabit.startDate || today}
-                            />
-                        </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Priority</Form.Label>
                             <Form.Select
