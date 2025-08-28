@@ -392,38 +392,20 @@
       "type": "auto"
     },
     {
-      "id": "4b73",
+      "id": "946e",
       "userId": "b02mw541u",
-      "name": "123",
-      "description": "12",
+      "name": "Test",
+      "description": "Test",
       "startDate": "2025-08-28",
-      "deadline": "2025-09-07",
+      "deadline": "2025-09-28",
       "priority": "medium",
       "status": "in_progress",
-      "targetValue": 15,
+      "mode": "manual",
+      "targetValue": 5,
       "currentValue": 0,
       "unit": "",
       "linkedHabits": [
-        "3",
-        "5"
-      ],
-      "type": "auto"
-    },
-    {
-      "id": "46ed",
-      "userId": "b02mw541u",
-      "name": "33",
-      "description": "44",
-      "startDate": "2025-08-28",
-      "deadline": "2025-09-07",
-      "priority": "medium",
-      "status": "in_progress",
-      "targetValue": 15,
-      "currentValue": 0,
-      "unit": "",
-      "linkedHabits": [
-        "3",
-        "5"
+        "a6fe"
       ],
       "type": "auto"
     }
