@@ -1,5 +1,5 @@
 // 2. GoalCard.jsx - Component cho từng goal card
-import React from "react";
+import React, { useState } from "react";
 import { Settings, Check, Trash, Undo2, ListRestart } from "lucide-react";
 import {
   Badge,
@@ -20,6 +20,34 @@ export const GoalCard = ({
   onReverse,
   onReset,
 }) => {
+  const [showInput, setShowInput] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+
+  const [showReverseInput, setShowReverseInput] = useState(false);
+  const [reverseValue, setReverseValue] = useState("");
+
+  const handleSubmitMark = () => {
+    const numberOfUnits = parseInt(inputValue);
+    if (isNaN(numberOfUnits) || numberOfUnits <= 0) {
+      alert("Please enter a valid number greater than 0");
+      return;
+    }
+    onMark(goal.id, numberOfUnits);
+    setInputValue("");
+    setShowInput(false);
+  };
+
+  const handleSubmitReverse = () => {
+    const numberOfUnits = parseInt(reverseValue);
+    if (isNaN(numberOfUnits) || numberOfUnits <= 0) {
+      alert("Please enter a valid number greater than 0");
+      return;
+    }
+    onReverse(goal.id, numberOfUnits);
+    setReverseValue("");
+    setShowReverseInput(false);
+  };
+
   const getProgressVariant = (progress) => {
     if (progress < 50) return "danger";
     if (progress < 80) return "warning";
@@ -114,24 +142,82 @@ export const GoalCard = ({
         {goal.type != "auto" && (
           <div>
             {goal.status === "in_progress" && (
-              <div>
-                <button
-                  className="btn btn-success"
-                  onClick={() => onMark(goal.id)}
-                >
-                  <Check /> Mark as done 1 {goal.unit}
-                </button>
+              <div className="mt-3">
+                {!showInput ? (
+                  <button
+                    className="btn btn-success"
+                    onClick={() => setShowInput(true)}
+                  >
+                    <Check /> Mark as done
+                  </button>
+                ) : (
+                  <div className="d-flex gap-2">
+                    <input
+                      type="number"
+                      min={1}
+                      max={goal.targetValue - goal.currentValue}
+                      className="form-control"
+                      placeholder={`Max: ${
+                        goal.targetValue - goal.currentValue
+                      }`}
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                    />
+                    <button
+                      className="btn btn-primary"
+                      onClick={handleSubmitMark}
+                    >
+                      Confirm
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        setShowInput(false);
+                        setInputValue("");
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
-            <div>
+            {!showReverseInput ? (
               <button
-                className="btn btn-danger my-3"
-                onClick={() => onReverse(goal.id)}
+                className="btn btn-danger my-2"
+                onClick={() => setShowReverseInput(true)}
               >
-                <Undo2 /> Return action done 1 {goal.unit}
+                <Undo2 /> Reverse action
               </button>
-            </div>
+            ) : (
+              <div className="d-flex gap-2 my-2">
+                <input
+                  type="number"
+                  min={1}
+                  max={goal.currentValue}
+                  className="form-control"
+                  placeholder={`Max: ${goal.currentValue}`}
+                  value={reverseValue}
+                  onChange={(e) => setReverseValue(e.target.value)}
+                />
+                <button
+                  className="btn btn-primary"
+                  onClick={handleSubmitReverse}
+                >
+                  Confirm
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setShowReverseInput(false);
+                    setReverseValue("");
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
 
             {(goal.status === "in_progress" || goal.status === "completed") && (
               <div>

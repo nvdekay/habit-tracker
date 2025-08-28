@@ -185,12 +185,12 @@ export default function Goal() {
     }
   }, [filters, user]);
 
-  const handleMark = async (goalId) => {
+  const handleMark = async (goalId, numberOfUnits = 1) => {
     try {
       const goal = goals.find((g) => g.id === goalId);
       if (!goal) return;
 
-      let updatedValue = goal.currentValue + 1;
+      let updatedValue = goal.currentValue + numberOfUnits;
 
       if (updatedValue > goal.targetValue) {
         updatedValue = goal.targetValue;
@@ -218,39 +218,36 @@ export default function Goal() {
     }
   };
 
-  const handleReverse = async (goalId) => {
-    if (window.confirm("Are you sure you want to reverse the mark action?")) {
-      try {
-        const goal = goals.find((g) => g.id === goalId);
-        if (!goal) return;
+  const handleReverse = async (goalId, numberOfUnits = 1) => {
+    if (!window.confirm("Are you sure you want to reverse the mark action?"))
+      return;
 
-        let updatedValue = goal.currentValue - 1;
+    try {
+      const goal = goals.find((g) => g.id === goalId);
+      if (!goal) return;
 
-        if (updatedValue < 0) {
-          updatedValue = 0;
-        }
+      let updatedValue = goal.currentValue - numberOfUnits;
+      if (updatedValue < 0) updatedValue = 0;
 
-        const updatedGoal = {
-          ...goal,
-          currentValue: updatedValue,
-          status:
-            updatedValue >= goal.targetValue ? "completed" : "in_progress",
-        };
+      const updatedGoal = {
+        ...goal,
+        currentValue: updatedValue,
+        status: updatedValue >= goal.targetValue ? "completed" : "in_progress",
+      };
 
-        const res = await axios.put(
-          `http://localhost:8080/goals/${goalId}`,
-          updatedGoal,
-          { headers: { "Content-Type": "application/json" } }
+      const res = await axios.put(
+        `http://localhost:8080/goals/${goalId}`,
+        updatedGoal,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      if (res.status === 200) {
+        setGoals((prev) =>
+          prev.map((g) => (g.id === goalId ? updatedGoal : g))
         );
-
-        if (res.status === 200) {
-          setGoals((prev) =>
-            prev.map((g) => (g.id === goalId ? updatedGoal : g))
-          );
-        }
-      } catch (err) {
-        console.error("Error reversing goal:", err);
       }
+    } catch (err) {
+      console.error("Error reversing goal:", err);
     }
   };
 
@@ -443,7 +440,7 @@ export default function Goal() {
       }
     });
 
-    console.log("Total target: "+totalTarget);
+    console.log("Total target: " + totalTarget);
 
     setNewGoal({
       ...newGoal,
@@ -496,7 +493,6 @@ export default function Goal() {
           </div>
         ))}
       </div>
-
       {/* Add Button */}
       <button
         className="btn btn-primary rounded-circle"
