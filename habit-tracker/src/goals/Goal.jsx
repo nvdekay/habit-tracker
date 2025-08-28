@@ -28,10 +28,10 @@ import {
   getHabits,
   updateGoal,
 } from "../services/goalService";
-import { CreateGoalModal } from "./components/CreateGoalModal";
-import { EditGoalModal } from "./components/EditGoalModal";
-import { FilterSection } from "./components/FilterSection";
-import { GoalCard } from "./components/GoalCard";
+import { CreateGoalModal } from "./components_goal/CreateGoalModal";
+import { EditGoalModal } from "./components_goal/EditGoalModal";
+import { FilterSection } from "./components_goal/FilterSection";
+import { GoalCard } from "./components_goal/GoalCard";
 
 export default function Goal() {
   const { user } = useAuth();
