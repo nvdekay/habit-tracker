@@ -29,10 +29,10 @@ const Habit = () => {
       }
       try {
         setLoading(true);
-        const habitData = await getHabits();
-        const userHabits = Array.isArray(habitData) ? habitData.filter(habit => habit.userId === user.id) : [];
-        setHabits(userHabits);
-        setFilteredHabits(userHabits);
+        const habitData = await getHabits(user.id);
+        console.log('Fetched habits:', habitData);
+        setHabits(habitData || []);
+        setFilteredHabits(habitData || []);
         setError(null);
       } catch (error) {
         console.error("Error fetching habits:", error);
@@ -179,11 +179,12 @@ const Habit = () => {
             setError={setError}
             loading={loading}
             setLoading={setLoading}
+            habits={habits || []}
           />
         )}
       </div>
 
-      <ToastContainer position="top-end" className="pt-5" style={{ zIndex: 99999 }}>
+      <ToastContainer position="top-end" className="pt-5" style={{ zIndex: 99999, position: "fixed" }}>
         {error && (
           <Toast
             onClose={() => setError(null)}
@@ -323,6 +324,7 @@ const Habit = () => {
                             setError={setError}
                             loading={loading}
                             setLoading={setLoading}
+                            habits={habits || []}
                           />
                           <Button
                             variant="outline-danger"
