@@ -1,21 +1,13 @@
 import React, { use, useEffect, useState } from "react";
-import { ListRestart, Settings } from "lucide-react";
-import { Check } from "lucide-react";
-import { Trash } from "lucide-react";
-import { Undo2 } from "lucide-react";
-
+import { Plus, Target, TrendingUp, Award } from "lucide-react";
 import {
-  Badge,
   Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Modal,
-  ProgressBar,
+  Container,
+  Row,
+  Col,
+  Alert,
+  Spinner
 } from "react-bootstrap";
-import Form from "react-bootstrap/Form";
 import "../index.css";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -46,6 +38,7 @@ export default function Goal() {
 
   const [goals, setGoals] = useState([]);
   const [habits, setHabits] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Modal states
   const [show, setShow] = useState(false);
@@ -90,13 +83,24 @@ export default function Goal() {
 
   // Data fetching
   const fetchGoals = async () => {
-    const data = await getGoalsByUserID(user.id);
-    setGoals(data);
+    setLoading(true);
+    try {
+      const data = await getGoalsByUserID(user.id);
+      setGoals(data);
+    } catch (error) {
+      console.error("Error fetching goals:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchHabits = async () => {
-    const data = await getHabits(user.id);
-    setHabits(data);
+    try {
+      const data = await getHabits(user.id);
+      setHabits(data);
+    } catch (error) {
+      console.error("Error fetching habits:", error);
+    }
   };
 
   // Effects
@@ -464,52 +468,117 @@ export default function Goal() {
     }
   };
 
+  // Calculate stats
+  const stats = {
+    total: goals.length,
+    completed: goals.filter(g => g.status === "completed").length,
+    inProgress: goals.filter(g => g.status === "in_progress").length,
+    averageProgress: goals.length > 0
+      ? (goals.reduce((sum, g) => sum + (g.currentValue / g.targetValue) * 100, 0) / goals.length).toFixed(1)
+      : 0
+  };
+
   return (
-    <div className="container py-4">
-      {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="fw-bold">My Goals</h2>
-          <p className="text-muted">Set and achieve your personal goals</p>
-        </div>
+    <Container className="py-4">
+      {/* Header Section */}
+      <div className="mb-5">
+        <Row className="align-items-center">
+          <Col>
+            <div className="d-flex align-items-center gap-3 mb-3">
+              <div>
+                <h2 className="fw-bold">My Goals</h2>
+                <p className="text-muted">Set and achieve your personal goals</p>
+              </div>
+            </div>
+          </Col>
+        </Row>
+
+        {/* Stats Cards */}
+        <Row className="g-4 mb-4">
+          <Col md={3}>
+            <div className="bg-primary text-white rounded-3 p-4 text-center">
+              <Target size={24} className="mb-2" />
+              <h3 className="fw-bold mb-1">{stats.total}</h3>
+              <small>Total Goals</small>
+            </div>
+          </Col>
+          <Col md={3}>
+            <div className="bg-success text-white rounded-3 p-4 text-center">
+              <Award size={24} className="mb-2" />
+              <h3 className="fw-bold mb-1">{stats.completed}</h3>
+              <small>Completed</small>
+            </div>
+          </Col>
+          <Col md={3}>
+            <div className="bg-warning text-white rounded-3 p-4 text-center">
+              <TrendingUp size={24} className="mb-2" />
+              <h3 className="fw-bold mb-1">{stats.inProgress}</h3>
+              <small>In Progress</small>
+            </div>
+          </Col>
+          <Col md={3}>
+            <div className="bg-info text-white rounded-3 p-4 text-center">
+              <TrendingUp size={24} className="mb-2" />
+              <h3 className="fw-bold mb-1">{stats.averageProgress}%</h3>
+              <small>Avg Progress</small>
+            </div>
+          </Col>
+        </Row>
       </div>
 
       {/* Filter Section */}
       <FilterSection filters={filters} setFilters={setFilters} />
 
       {/* Goals List */}
-      <div className="container row g-4 mb-4">
-        {goals?.map((goal) => (
-          <div key={goal.id} className="col-6">
-            <GoalCard
-              goal={goal}
-              habits={habits}
-              onEdit={handleEditShow}
-              onDelete={handleDelete}
-              onMark={handleMark}
-              onReverse={handleReverse}
-              onReset={handleReset}
-            />
-          </div>
-        ))}
-      </div>
-      {/* Add Button */}
-      <button
-        className="btn btn-primary rounded-circle"
+      {loading ? (
+        <div className="text-center py-5">
+          <Spinner animation="border" variant="primary" />
+          <p className="text-muted mt-3">Loading your goals...</p>
+        </div>
+      ) : goals.length === 0 ? (
+        <Alert variant="info" className="text-center py-5">
+          <Target size={48} className="text-muted mb-3" />
+          <h4>No goals found</h4>
+          <p className="mb-4">Start your journey by creating your first goal!</p>
+          <Button variant="primary" size="lg" onClick={handleShow}>
+            <Plus size={20} className="me-2" />
+            Create Your First Goal
+          </Button>
+        </Alert>
+      ) : (
+        <Row className="g-4 mb-5">
+          {goals.map((goal) => (
+            <Col key={goal.id} lg={6} xl={4}>
+              <GoalCard
+                goal={goal}
+                habits={habits}
+                onEdit={handleEditShow}
+                onDelete={handleDelete}
+                onMark={handleMark}
+                onReverse={handleReverse}
+                onReset={handleReset}
+              />
+            </Col>
+          ))}
+        </Row>
+      )}
+
+      {/* Floating Add Button */}
+      <Button
+        variant="primary"
+        className="rounded-circle position-fixed shadow-lg"
         style={{
-          bottom: "20px",
-          right: "20px",
-          width: "60px",
-          height: "60px",
-          fontSize: "30px",
-          margin: "15px",
-          textAlign: "center",
-          position: "fixed",
+          bottom: "30px",
+          right: "30px",
+          width: "65px",
+          height: "65px",
+          zIndex: 1050,
+          border: "3px solid white"
         }}
         onClick={handleShow}
       >
-        +
-      </button>
+        <Plus size={28} />
+      </Button>
 
       {/* Modals */}
       <CreateGoalModal
@@ -535,6 +604,6 @@ export default function Goal() {
         onUpdate={handleUpdate}
         handleCheckLinkedHabitUpdate={handleCheckLinkedHabitUpdate}
       />
-    </div>
+    </Container>
   );
 }

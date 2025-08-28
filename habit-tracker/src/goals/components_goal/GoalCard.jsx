@@ -1,14 +1,22 @@
-// 2. GoalCard.jsx - Component cho từng goal card
+// GoalCard.jsx - Component cho từng goal card
 import React, { useState } from "react";
-import { Settings, Check, Trash, Undo2, ListRestart } from "lucide-react";
+import {
+  Settings,
+  Check,
+  Trash,
+  Undo2,
+  ListRestart,
+  Calendar,
+  Target,
+  TrendingUp,
+  Link
+} from "lucide-react";
 import {
   Badge,
   Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+  Button,
   ProgressBar,
+  ButtonGroup
 } from "react-bootstrap";
 
 export const GoalCard = ({
@@ -22,7 +30,6 @@ export const GoalCard = ({
 }) => {
   const [showInput, setShowInput] = useState(false);
   const [inputValue, setInputValue] = useState("");
-
   const [showReverseInput, setShowReverseInput] = useState(false);
   const [reverseValue, setReverseValue] = useState("");
 
@@ -60,96 +67,155 @@ export const GoalCard = ({
     100
   ).toFixed(2);
 
+  const getPriorityBadge = () => {
+    return goal.priority === "high"
+      ? <Badge bg="danger" className="me-2">High Priority</Badge>
+      : <Badge bg="secondary" className="me-2">Medium Priority</Badge>;
+  };
+
+  const getStatusBadge = () => {
+    return goal.status === "completed"
+      ? <Badge bg="success" className="me-2">Completed</Badge>
+      : <Badge bg="primary" className="me-2">In Progress</Badge>;
+  };
+
+  const getModeBadge = () => {
+    return goal.mode === "auto"
+      ? <Badge bg="info" className="me-2">Auto</Badge>
+      : <Badge bg="warning" className="me-2">Manual</Badge>;
+  };
+
   return (
-    <Card className="shadow-sm h-100 my-4">
-      <CardHeader className="d-flex justify-content-between align-items-center">
-        <CardTitle className="text-xl-start">{goal.name}</CardTitle>
-        <div>
-          <span
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            title="Cannot edit a goal that is in progress or completed"
-          >
-            <button
-              className="btn btn-warning mx-1"
-              disabled={goal.currentValue !== 0}
-              title={goal.currentValue == 0 ? "Edit GOAL" : "Cannot edit"}
-              onClick={() => onEdit(goal)}
-            >
-              <Settings />
-            </button>
-          </span>
-          <button
-            className="btn btn-danger"
-            title="Delete GOAL"
-            onClick={() => onDelete(goal.id)}
-          >
-            <Trash />
-          </button>
-        </div>
-      </CardHeader>
-
-      <CardBody>
-        <p>{goal.description}</p>
-        <p className="mt-2">
-          <strong>Deadline:</strong>{" "}
-          {new Date(goal.deadline).toLocaleDateString()}
-        </p>
-        <p>
-          {goal.priority == "high" ? (
-            <Badge bg="danger mx-1">High</Badge>
-          ) : (
-            <Badge bg="secondary mx-1">Low</Badge>
-          )}
-          {goal.status == "completed" ? (
-            <Badge bg="success mx-1">Completed</Badge>
-          ) : (
-            <Badge bg="warning mx-1">In progress</Badge>
-          )}
-          {goal.mode == "auto" ? (
-            <Badge bg="success">Auto</Badge>
-          ) : (
-            <Badge bg="danger">Manual</Badge>
-          )}
-        </p>
-
-        <p>
-          <strong>Progress:</strong>
-        </p>
-        <div>
-          <ProgressBar
-            now={progressPercent}
-            label={progressPercent == 100 ? "DONE" : `${progressPercent}%`}
-            animated
-            variant={getProgressVariant(parseFloat(progressPercent))}
-          />
-          <div>
-            {goal.currentValue} / {goal.targetValue} {goal.unit}
+    <Card 
+      className="shadow-sm border rounded-3 h-100 goal-card"
+      style={{ transition: "all 0.2s ease-in-out" }}
+    >
+      {/* Header */}
+      <Card.Header className="bg-light border-bottom d-flex justify-content-between align-items-start p-4 rounded-top-3">
+        <div className="flex-grow-1">
+          <Card.Title className="h5 mb-2 text-dark fw-bold">
+            {goal.name}
+          </Card.Title>
+          <div className="d-flex flex-wrap gap-1 mb-2">
+            {getPriorityBadge()}
+            {getStatusBadge()}
+            {getModeBadge()}
           </div>
         </div>
-      </CardBody>
 
-      <CardFooter>
-        <CardTitle className="flex items-center text-lg">
-          {goal.type == "auto" ? "Linked Habit" : "Action"}
-        </CardTitle>
-        <ul>
-          {goal.linkedHabits?.map((habit, i) => (
-            <li key={i}>{habits.find((h) => h.id == habit)?.name}</li>
-          ))}
-        </ul>
+        {/* Action Buttons */}
+        <ButtonGroup size="sm">
+          <Button
+            variant="outline-warning"
+            disabled={goal.currentValue !== 0}
+            title={goal.currentValue === 0 ? "Edit Goal" : "Cannot edit goal in progress"}
+            onClick={() => onEdit(goal)}
+            className="border-2"
+          >
+            <Settings size={16} />
+          </Button>
+          <Button
+            variant="outline-danger"
+            title="Delete Goal"
+            onClick={() => onDelete(goal.id)}
+            className="border-2"
+          >
+            <Trash size={16} />
+          </Button>
+        </ButtonGroup>
+      </Card.Header>
 
-        {goal.type != "auto" && (
-          <div>
+      {/* Body */}
+      <Card.Body className="p-4">
+        {/* Description */}
+        <p className="text-muted mb-3 small">{goal.description}</p>
+
+        {/* Deadline */}
+        <div className="d-flex align-items-center gap-2 mb-3">
+          <Calendar size={16} className="text-info" />
+          <span className="fw-semibold">Deadline:</span>
+          <span className="text-muted">
+            {new Date(goal.deadline).toLocaleDateString()}
+          </span>
+        </div>
+
+        {/* Progress Section */}
+        <div className="mb-4">
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <div className="d-flex align-items-center gap-2">
+              <TrendingUp size={16} className="text-success" />
+              <span className="fw-semibold">Progress</span>
+            </div>
+            <span className="fw-bold text-primary">
+              {progressPercent}%
+            </span>
+          </div>
+
+          <ProgressBar
+            now={progressPercent}
+            variant={getProgressVariant(parseFloat(progressPercent))}
+            className="mb-2"
+            style={{ height: "10px" }}
+            striped
+            animated={goal.status === "in_progress"}
+          />
+
+          <div className="d-flex justify-content-between small text-muted">
+            <span>{goal.currentValue} / {goal.targetValue} {goal.unit}</span>
+            <span>
+              {progressPercent >= 100 ? "COMPLETED!" : `${goal.targetValue - goal.currentValue} remaining`}
+            </span>
+          </div>
+        </div>
+      </Card.Body>
+
+      {/* Footer */}
+      <Card.Footer className="bg-white border-top p-4 rounded-bottom-3">
+        {/* Linked Habits or Actions */}
+        <div className="mb-3">
+          <div className="d-flex align-items-center gap-2 mb-2">
+            {goal.type === "auto" ? (
+              <>
+                <Link size={16} className="text-success" />
+                <span className="fw-semibold text-success">Linked Habits</span>
+              </>
+            ) : (
+              <>
+                <Target size={16} className="text-primary" />
+                <span className="fw-semibold text-primary">Actions</span>
+              </>
+            )}
+          </div>
+
+          {goal.linkedHabits?.length > 0 && (
+            <div className="ps-3">
+              {goal.linkedHabits.map((habitId, i) => {
+                const habit = habits.find((h) => h.id === habitId);
+                return habit ? (
+                  <div key={i} className="small text-muted mb-1">
+                    • {habit.name}
+                  </div>
+                ) : null;
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Manual Goal Actions */}
+        {goal.type !== "auto" && (
+          <div className="d-grid gap-2">
+            {/* Mark as Done Section */}
             {goal.status === "in_progress" && (
-              <div className="mt-3">
+              <div>
                 {!showInput ? (
-                  <button
-                    className="btn btn-success"
+                  <Button
+                    variant="success"
                     onClick={() => setShowInput(true)}
+                    className="w-100 d-flex align-items-center justify-content-center gap-2"
                   >
-                    <Check /> Mark as done
-                  </button>
+                    <Check size={16} />
+                    Mark Progress
+                  </Button>
                 ) : (
                   <div className="d-flex gap-2">
                     <input
@@ -157,81 +223,91 @@ export const GoalCard = ({
                       min={1}
                       max={goal.targetValue - goal.currentValue}
                       className="form-control"
-                      placeholder={`Max: ${
-                        goal.targetValue - goal.currentValue
-                      }`}
+                      placeholder={`Max: ${goal.targetValue - goal.currentValue}`}
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                     />
-                    <button
-                      className="btn btn-primary"
+                    <Button
+                      variant="primary"
                       onClick={handleSubmitMark}
+                      size="sm"
                     >
                       Confirm
-                    </button>
-                    <button
-                      className="btn btn-secondary"
+                    </Button>
+                    <Button
+                      variant="outline-secondary"
                       onClick={() => {
                         setShowInput(false);
                         setInputValue("");
                       }}
+                      size="sm"
                     >
                       Cancel
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>
             )}
 
-            {!showReverseInput ? (
-              <button
-                className="btn btn-danger my-2"
-                onClick={() => setShowReverseInput(true)}
-              >
-                <Undo2 /> Reverse action
-              </button>
-            ) : (
-              <div className="d-flex gap-2 my-2">
-                <input
-                  type="number"
-                  min={1}
-                  max={goal.currentValue}
-                  className="form-control"
-                  placeholder={`Max: ${goal.currentValue}`}
-                  value={reverseValue}
-                  onChange={(e) => setReverseValue(e.target.value)}
-                />
-                <button
-                  className="btn btn-primary"
-                  onClick={handleSubmitReverse}
+            {/* Reverse Action Section */}
+            <div>
+              {!showReverseInput ? (
+                <Button
+                  variant="outline-danger"
+                  onClick={() => setShowReverseInput(true)}
+                  className="w-100 d-flex align-items-center justify-content-center gap-2"
+                  size="sm"
                 >
-                  Confirm
-                </button>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    setShowReverseInput(false);
-                    setReverseValue("");
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            )}
+                  <Undo2 size={16} />
+                  Reverse Progress
+                </Button>
+              ) : (
+                <div className="d-flex gap-2">
+                  <input
+                    type="number"
+                    min={1}
+                    max={goal.currentValue}
+                    className="form-control form-control-sm"
+                    placeholder={`Max: ${goal.currentValue}`}
+                    value={reverseValue}
+                    onChange={(e) => setReverseValue(e.target.value)}
+                  />
+                  <Button
+                    variant="primary"
+                    onClick={handleSubmitReverse}
+                    size="sm"
+                  >
+                    Confirm
+                  </Button>
+                  <Button
+                    variant="outline-secondary"
+                    onClick={() => {
+                      setShowReverseInput(false);
+                      setReverseValue("");
+                    }}
+                    size="sm"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              )}
+            </div>
 
+            {/* Reset Progress */}
             {(goal.status === "in_progress" || goal.status === "completed") && (
-              <div>
-                <button
-                  className="btn btn-warning"
-                  onClick={() => onReset(goal.id)}
-                >
-                  <ListRestart /> Reset the progress
-                </button>
-              </div>
+              <Button
+                variant="outline-warning"
+                onClick={() => onReset(goal.id)}
+                className="d-flex align-items-center justify-content-center gap-2"
+                size="sm"
+              >
+                <ListRestart size={16} />
+                Reset Progress
+              </Button>
             )}
           </div>
         )}
-      </CardFooter>
+      </Card.Footer>
     </Card>
   );
 };
