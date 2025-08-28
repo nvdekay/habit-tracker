@@ -46,7 +46,6 @@ const TimeConflictModal = ({ show, onHide, conflictingHabits, selectedDate, onRe
 
             await updateHabit(habitToUpdate.id, updatedHabit);
             
-            // Call onResolve callback
             if (onResolve) {
                 onResolve();
             }

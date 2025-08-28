@@ -22,11 +22,6 @@ export const minutesToTime = (minutes) => {
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
 };
 
-/**
- * Format time string for display (12-hour format)
- * @param {string} timeString - Time in format "HH:MM" or "HH:MM:SS"
- * @returns {string} Formatted time like "2:30 PM"
- */
 export const formatTimeForDisplay = (timeString) => {
     if (!timeString) return '';
     const [hours, minutes] = timeString.split(':').map(Number);
@@ -35,12 +30,7 @@ export const formatTimeForDisplay = (timeString) => {
     return `${displayHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
 };
 
-/**
- * Check if current time is within specified minutes of target time
- * @param {string} targetTime - Target time in "HH:MM" format
- * @param {number} withinMinutes - Minutes threshold
- * @returns {boolean} True if within threshold
- */
+
 export const isTimeWithinRange = (targetTime, withinMinutes = 120) => {
     if (!targetTime) return false;
 
@@ -52,11 +42,7 @@ export const isTimeWithinRange = (targetTime, withinMinutes = 120) => {
     return diff > 0 && diff <= withinMinutes;
 };
 
-/**
- * Get time difference in human readable format
- * @param {string} targetTime - Target time in "HH:MM" format
- * @returns {string} Human readable time difference
- */
+
 export const getTimeDifference = (targetTime) => {
     if (!targetTime) return '';
 
@@ -76,14 +62,7 @@ export const getTimeDifference = (targetTime) => {
     return `${hours}h ${minutes}m`;
 };
 
-/**
- * Check if two time ranges overlap
- * @param {string} start1 - Start time of first range
- * @param {string} end1 - End time of first range  
- * @param {string} start2 - Start time of second range
- * @param {string} end2 - End time of second range
- * @returns {boolean} True if ranges overlap
- */
+
 export const doTimeRangesOverlap = (start1, end1, start2, end2) => {
     const start1Minutes = timeToMinutes(start1);
     const end1Minutes = timeToMinutes(end1);
@@ -93,12 +72,7 @@ export const doTimeRangesOverlap = (start1, end1, start2, end2) => {
     return start1Minutes < end2Minutes && start2Minutes < end1Minutes;
 };
 
-/**
- * Get next occurrence of a weekly habit
- * @param {Array} frequencies - Array of frequency objects with weekday
- * @param {Date} fromDate - Date to calculate from (default: today)
- * @returns {Date|null} Next occurrence date
- */
+
 export const getNextWeeklyOccurrence = (frequencies, fromDate = new Date()) => {
     if (!frequencies || frequencies.length === 0) return null;
 
@@ -124,12 +98,6 @@ export const getNextWeeklyOccurrence = (frequencies, fromDate = new Date()) => {
     return nextOccurrence;
 };
 
-/**
- * Get next occurrence of a monthly habit
- * @param {Array} frequencies - Array of frequency objects with day
- * @param {Date} fromDate - Date to calculate from (default: today)
- * @returns {Date|null} Next occurrence date
- */
 export const getNextMonthlyOccurrence = (frequencies, fromDate = new Date()) => {
     if (!frequencies || frequencies.length === 0) return null;
 
@@ -162,12 +130,7 @@ export const getNextMonthlyOccurrence = (frequencies, fromDate = new Date()) => 
     return nextOccurrence;
 };
 
-/**
- * Check if a habit should be active on a specific date
- * @param {Object} habit - Habit object
- * @param {Date} date - Target date
- * @returns {boolean} True if habit should be active
- */
+
 export const isHabitActiveOnDate = (habit, date) => {
     if (!habit || !date) return false;
 
@@ -193,12 +156,7 @@ export const isHabitActiveOnDate = (habit, date) => {
     }
 };
 
-/**
- * Get the scheduled time for a habit on a specific date
- * @param {Object} habit - Habit object
- * @param {Date} date - Target date
- * @returns {Object|null} Object with startTime and endTime, or null
- */
+
 export const getHabitTimeForDate = (habit, date) => {
     if (!habit || !date) return null;
 
@@ -235,12 +193,7 @@ export const getHabitTimeForDate = (habit, date) => {
     }
 };
 
-/**
- * Sort habits by their scheduled time
- * @param {Array} habits - Array of habit objects
- * @param {Date} date - Target date
- * @returns {Array} Sorted habits array
- */
+
 export const sortHabitsByTime = (habits, date) => {
     if (!habits || habits.length === 0) return [];
 
@@ -261,12 +214,6 @@ export const sortHabitsByTime = (habits, date) => {
     });
 };
 
-/**
- * Generate time options for select dropdown (15-minute intervals)
- * @param {string} startTime - Start time in "HH:MM" format (default: "00:00")
- * @param {string} endTime - End time in "HH:MM" format (default: "23:45")
- * @returns {Array} Array of time options with label and value
- */
 export const generateTimeOptions = (startTime = "00:00", endTime = "23:45") => {
     const options = [];
     const startMinutes = timeToMinutes(startTime);
@@ -283,22 +230,13 @@ export const generateTimeOptions = (startTime = "00:00", endTime = "23:45") => {
     return options;
 };
 
-/**
- * Validate time string format
- * @param {string} timeString - Time string to validate
- * @returns {boolean} True if valid time format
- */
+
 export const isValidTimeFormat = (timeString) => {
     if (!timeString || typeof timeString !== 'string') return false;
 
     const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/;
     return timeRegex.test(timeString);
 };
-
-/**
- * Get current time in "HH:MM" format
- * @returns {string} Current time
- */
 export const getCurrentTime = () => {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, '0');
