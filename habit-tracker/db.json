@@ -315,10 +315,7 @@
       "targetValue": 5,
       "currentValue": 5,
       "unit": "projects",
-
-      "startDate": "2025-08-20",
-      "deadline": "2025-10-31",
-
+      "deadline": "2024-10-31",
       "priority": "high",
       "status": "completed",
       "linkedHabits": [],
@@ -348,13 +345,11 @@
       "name": "Hydration Challenge",
       "description": "Drink recommended amount of water daily for 6 months",
       "targetValue": 180,
-
-      "currentValue": 180,
+      "currentValue": 158,
       "unit": "days",
       "deadline": "2024-09-30",
       "priority": "medium",
-      "status": "completed",
-
+      "status": "in_progress",
       "linkedHabits": [],
       "type": "manual",
       "createdAt": "2024-01-01T00:00:00.000Z",
