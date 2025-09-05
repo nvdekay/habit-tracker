@@ -1,12 +1,11 @@
-const BASE_URL = "http://localhost:8080";
+// services/notificationService.js
+import { supabase } from './supabaseConfig';
 
-// Get current user ID from localStorage token
-const getCurrentUserId = () => {
+// Get current user ID
+const getCurrentUserId = async () => {
     try {
-        const token = localStorage.getItem('token');
-        if (!token) return null;
-        const decoded = JSON.parse(atob(token));
-        return decoded.userId;
+        const { data: { user } } = await supabase.auth.getUser();
+        return user ? user.id : null;
     } catch (error) {
         console.error('Error getting current user ID:', error);
         return null;
@@ -82,20 +81,28 @@ const getHabitTime = (habit) => {
 // Get habits that should trigger notifications
 export const getUpcomingHabits = async () => {
     try {
-        const userId = getCurrentUserId();
+        const userId = await getCurrentUserId();
         if (!userId) throw new Error('User not authenticated');
 
         const today = new Date().toISOString().split('T')[0];
 
         // Get user's active habits
-        const habitsResponse = await fetch(`${BASE_URL}/habits?userId=${userId}&isActive=true`);
-        if (!habitsResponse.ok) throw new Error('Failed to fetch habits');
-        const habits = await habitsResponse.json();
+        const { data: habits, error: habitsError } = await supabase
+            .from('habits')
+            .select('*')
+            .eq('user_id', userId)
+            .eq('is_active', true);
+
+        if (habitsError) throw habitsError;
 
         // Get today's check-ins
-        const checkInsResponse = await fetch(`${BASE_URL}/checkins?userId=${userId}&date=${today}`);
-        if (!checkInsResponse.ok) throw new Error('Failed to fetch check-ins');
-        const checkIns = await checkInsResponse.json();
+        const { data: checkIns, error: checkInsError } = await supabase
+            .from('checkins')
+            .select('*')
+            .eq('user_id', userId)
+            .eq('date', today);
+
+        if (checkInsError) throw checkInsError;
 
         // Filter habits that should be notified
         const upcomingHabits = habits
@@ -104,8 +111,8 @@ export const getUpcomingHabits = async () => {
                 if (!shouldNotifyHabit(habit)) return false;
                 
                 // Check if habit is already completed today
-                const existingCheckIn = checkIns.find(ci => 
-                    ci.habitId.toString() === habit.id.toString() && ci.completed
+                const existingCheckIn = checkIns?.find(ci => 
+                    ci.habit_id === habit.id && ci.completed
                 );
                 
                 return !existingCheckIn; // Only notify if not completed
@@ -138,21 +145,33 @@ export const getUpcomingHabits = async () => {
 // Check for time conflicts between habits
 export const checkTimeConflicts = async (date = null) => {
     try {
-        const userId = getCurrentUserId();
+        const userId = await getCurrentUserId();
         if (!userId) throw new Error('User not authenticated');
 
         const targetDate = date || new Date().toISOString().split('T')[0];
         
         // Get user's active habits
-        const habitsResponse = await fetch(`${BASE_URL}/habits?userId=${userId}&isActive=true`);
-        if (!habitsResponse.ok) throw new Error('Failed to fetch habits');
-        const habits = await habitsResponse.json();
+        const { data: habits, error } = await supabase
+            .from('habits')
+            .select('*')
+            .eq('user_id', userId)
+            .eq('is_active', true);
+
+        if (error) throw error;
 
         // Get habits that are active on the target date
         const dayOfWeek = new Date(targetDate).getDay();
         const dayOfMonth = new Date(targetDate).getDate();
         
         const activeHabits = habits.filter(habit => {
+            const habitStartDate = new Date(habit.start_date);
+            const habitEndDate = habit.end_date ? new Date(habit.end_date) : null;
+            const checkDate = new Date(targetDate);
+            
+            // Check if date is within habit's date range
+            if (checkDate < habitStartDate) return false;
+            if (habitEndDate && checkDate > habitEndDate) return false;
+
             if (habit.type === 'daily') return true;
             if (habit.type === 'weekly') {
                 return habit.frequency.some(freq => {
@@ -201,5 +220,93 @@ export const getNotificationCount = async () => {
     } catch (error) {
         console.error('Error getting notification count:', error);
         return 0;
+    }
+};
+
+// Create/Update reminder for a habit
+export const createReminder = async (habitId, reminderData) => {
+    try {
+        const userId = await getCurrentUserId();
+        if (!userId) throw new Error('User not authenticated');
+
+        const { data, error } = await supabase
+            .from('reminders')
+            .insert([{
+                user_id: userId,
+                habit_id: habitId,
+                time: reminderData.time,
+                enabled: reminderData.enabled !== false,
+                days: reminderData.days || ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+                message: reminderData.message || 'Time for your habit!'
+            }])
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error('Error creating reminder:', error);
+        throw error;
+    }
+};
+
+// Get reminders for a user
+export const getReminders = async (userId = null) => {
+    try {
+        const targetUserId = userId || await getCurrentUserId();
+        if (!targetUserId) throw new Error('User not authenticated');
+
+        const { data, error } = await supabase
+            .from('reminders')
+            .select(`
+                *,
+                habits (
+                    id,
+                    name,
+                    description
+                )
+            `)
+            .eq('user_id', targetUserId)
+            .eq('enabled', true);
+
+        if (error) throw error;
+        return data || [];
+    } catch (error) {
+        console.error('Error getting reminders:', error);
+        return [];
+    }
+};
+
+// Update reminder
+export const updateReminder = async (reminderId, updates) => {
+    try {
+        const { data, error } = await supabase
+            .from('reminders')
+            .update(updates)
+            .eq('id', reminderId)
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error('Error updating reminder:', error);
+        throw error;
+    }
+};
+
+// Delete reminder
+export const deleteReminder = async (reminderId) => {
+    try {
+        const { error } = await supabase
+            .from('reminders')
+            .delete()
+            .eq('id', reminderId);
+
+        if (error) throw error;
+        return true;
+    } catch (error) {
+        console.error('Error deleting reminder:', error);
+        throw error;
     }
 };

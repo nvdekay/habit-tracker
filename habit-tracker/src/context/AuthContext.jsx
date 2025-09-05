@@ -1,223 +1,374 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { authAPI } from '../services/api';
+// context/AuthContext.jsx - Simplified with fallback for user profile issues
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
+import { supabase, signInWithGoogle, signOut } from '../services/supabaseConfig';
 
-// Tạo Context cho Authentication
 const AuthContext = createContext();
 
-// REDUCER - Quản lý state mutations theo Redux pattern
 const authReducer = (state, action) => {
-    switch (action.type) {
-        // Set trạng thái loading (khi đang xử lý API calls)
-        case 'SET_LOADING':
-            return { ...state, loading: action.payload };
-
-        // Xử lý đăng nhập thành công
-        case 'LOGIN_SUCCESS':
-            return {
-                ...state,
-                isAuthenticated: true,    // Đánh dấu đã đăng nhập
-                user: action.payload.user, // Lưu thông tin user
-                token: action.payload.token, // Lưu JWT token
-                loading: false,           // Tắt loading
-                error: null              // Clear errors
-            };
-
-        // Xử lý đăng xuất
-        case 'LOGOUT':
-            return {
-                ...state,
-                isAuthenticated: false,  // Đánh dấu chưa đăng nhập
-                user: null,             // Clear user data
-                token: null,            // Clear token
-                loading: false,
-                error: null
-            };
-
-        // Set error message
-        case 'SET_ERROR':
-            return {
-                ...state,
-                error: action.payload,
-                loading: false          // Tắt loading khi có lỗi
-            };
-
-        // Clear error message
-        case 'CLEAR_ERROR':
-            return {
-                ...state,
-                error: null
-            };
-
-        // Update thông tin user (không cần re-authenticate)
-        case 'UPDATE_USER':
-            return {
-                ...state,
-                user: { ...state.user, ...action.payload }
-            };
-
-        default:
-            return state; // Return unchanged state for unknown actions
-    }
+  switch (action.type) {
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload };
+    case 'SET_AUTH_STATE':
+      return {
+        ...state,
+        isAuthenticated: action.payload.isAuthenticated,
+        user: action.payload.user,
+        session: action.payload.session,
+        loading: false,
+        error: null,
+      };
+    case 'SET_ERROR':
+      return { ...state, error: action.payload, loading: false };
+    case 'CLEAR_ERROR':
+      return { ...state, error: null };
+    case 'LOGOUT':
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+        session: null,
+        loading: false,
+        error: null,
+      };
+    default:
+      return state;
+  }
 };
 
-// INITIAL STATE - Trạng thái ban đầu
 const initialState = {
-    isAuthenticated: false, // Chưa đăng nhập
-    user: null,            // Không có thông tin user  
-    token: null,           // Không có token
-    loading: true,         // Loading = true để check existing token
-    error: null            // Không có lỗi
+  isAuthenticated: false,
+  user: null,
+  session: null,
+  loading: true,
+  error: null,
 };
 
-// PROVIDER COMPONENT - Wrap toàn bộ app
 export const AuthProvider = ({ children }) => {
-    // sử dụng useReducer để quản lý complex state
-    const [state, dispatch] = useReducer(authReducer, initialState);
+  const [state, dispatch] = useReducer(authReducer, initialState);
 
-    // EFFECT - Chạy khi component mount để check existing authentication
-    useEffect(() => {
-        // Lấy token từ localStorage (persistent storage)
-        const token = localStorage.getItem('token');
+  // Simplified user profile creation with timeout and fallback
+  const getOrCreateUserProfile = useCallback(async (authUser) => {
+    return new Promise(async (resolve, reject) => {
+      // Timeout after 5 seconds
+      const timeout = setTimeout(() => {
+        console.warn('User profile creation timeout - using fallback');
+        resolve({
+          id: authUser.id,
+          username: authUser.email.split('@')[0],
+          email: authUser.email,
+          fullName: authUser.user_metadata?.full_name || authUser.email.split('@')[0],
+          avatar: authUser.user_metadata?.avatar_url || null,
+          preferences: { darkMode: false, notifications: true, language: 'en' },
+        });
+      }, 5000);
 
-        if (token) {
-            // Nếu có token, verify với server
-            verifyToken(token);
-        } else {
-            // Nếu không có token, tắt loading
-            dispatch({ type: 'SET_LOADING', payload: false });
+      try {
+        console.log('Getting/creating user profile for:', authUser.id);
+        
+        // Try to get existing user first
+        const { data: existingUser, error: fetchError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', authUser.id)
+          .maybeSingle();
+
+        // Clear timeout if we got a response
+        clearTimeout(timeout);
+
+        if (fetchError && fetchError.code !== 'PGRST116') {
+          console.error('Error fetching user:', fetchError);
+          // Use fallback instead of failing
+          console.log('Using fallback user data due to fetch error');
+          resolve({
+            id: authUser.id,
+            username: authUser.email.split('@')[0],
+            email: authUser.email,
+            fullName: authUser.user_metadata?.full_name || authUser.email.split('@')[0],
+            avatar: authUser.user_metadata?.avatar_url || null,
+            preferences: { darkMode: false, notifications: true, language: 'en' },
+          });
+          return;
         }
-    }, []); // Empty dependency array = chạy 1 lần khi mount
 
-    // FUNCTION - Verify token với server
-    const verifyToken = async (token) => {
-        dispatch({ type: 'SET_LOADING', payload: true });
+        if (existingUser) {
+          console.log('Found existing user:', existingUser.email);
+          resolve({
+            id: existingUser.id,
+            username: existingUser.username,
+            email: existingUser.email,
+            fullName: existingUser.full_name,
+            avatar: existingUser.avatar,
+            preferences: existingUser.preferences || {},
+          });
+          return;
+        }
+
+        console.log('Creating new user profile...');
+        // Create new user
+        const baseUsername = authUser.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+        const newUser = {
+          id: authUser.id,
+          username: baseUsername,
+          email: authUser.email,
+          full_name: authUser.user_metadata?.full_name || authUser.email.split('@')[0],
+          avatar: authUser.user_metadata?.avatar_url || null,
+          preferences: { darkMode: false, notifications: true, language: 'en' },
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+
+        const { data: createdUser, error: createError } = await supabase
+          .from('users')
+          .insert([newUser])
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Error creating user:', createError);
+          // Use fallback instead of failing
+          console.log('Using fallback user data due to creation error');
+          resolve({
+            id: authUser.id,
+            username: baseUsername,
+            email: authUser.email,
+            fullName: authUser.user_metadata?.full_name || authUser.email.split('@')[0],
+            avatar: authUser.user_metadata?.avatar_url || null,
+            preferences: { darkMode: false, notifications: true, language: 'en' },
+          });
+          return;
+        }
+
+        console.log('Created new user:', createdUser.email);
+        resolve({
+          id: createdUser.id,
+          username: createdUser.username,
+          email: createdUser.email,
+          fullName: createdUser.full_name,
+          avatar: createdUser.avatar,
+          preferences: createdUser.preferences || {},
+        });
+
+      } catch (error) {
+        clearTimeout(timeout);
+        console.error('Unexpected error in getOrCreateUserProfile:', error);
+        // Use fallback for any unexpected error
+        console.log('Using fallback user data due to unexpected error');
+        resolve({
+          id: authUser.id,
+          username: authUser.email.split('@')[0],
+          email: authUser.email,
+          fullName: authUser.user_metadata?.full_name || authUser.email.split('@')[0],
+          avatar: authUser.user_metadata?.avatar_url || null,
+          preferences: { darkMode: false, notifications: true, language: 'en' },
+        });
+      }
+    });
+  }, []);
+
+  // Handle authentication session
+  const handleAuthSession = useCallback(
+    async (session) => {
+      console.log('Handling auth session:', !!session, session?.user?.email);
+      
+      try {
+        if (!session?.user) {
+          console.log('No session or user, setting unauthenticated state');
+          dispatch({
+            type: 'SET_AUTH_STATE',
+            payload: { isAuthenticated: false, user: null, session: null },
+          });
+          return;
+        }
+
+        console.log('Processing user data...');
+        const userData = await getOrCreateUserProfile(session.user);
+        console.log('Successfully processed user data:', userData.email);
+        
+        dispatch({
+          type: 'SET_AUTH_STATE',
+          payload: {
+            isAuthenticated: true,
+            user: userData,
+            session,
+          },
+        });
+        
+        // Clean up URL parameters
+        if (window.location.search.includes('code=') || window.location.search.includes('access_token=')) {
+          console.log('Cleaning up OAuth URL parameters');
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        
+      } catch (error) {
+        console.error('Error handling auth session:', error);
+        dispatch({ 
+          type: 'SET_ERROR', 
+          payload: 'Failed to process authentication. Please try again.' 
+        });
+      }
+    },
+    [getOrCreateUserProfile]
+  );
+
+  // Initialize authentication
+  useEffect(() => {
+    let isMounted = true;
+    let initTimeout;
+
+    const initAuth = async () => {
+      try {
+        console.log('Initializing auth...');
+        
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error getting session:', error);
+          if (isMounted) {
+            dispatch({ 
+              type: 'SET_ERROR', 
+              payload: 'Failed to check authentication status.' 
+            });
+          }
+          return;
+        }
+
+        console.log('Initial session check:', !!session?.user);
+        if (isMounted) {
+          await handleAuthSession(session);
+        }
+
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+        if (isMounted) {
+          dispatch({ 
+            type: 'SET_ERROR', 
+            payload: 'Failed to initialize authentication.' 
+          });
+        }
+      }
+    };
+
+    // Timeout fallback
+    initTimeout = setTimeout(() => {
+      if (isMounted && state.loading) {
+        console.warn('Auth initialization timeout - setting unauthenticated');
+        dispatch({
+          type: 'SET_AUTH_STATE',
+          payload: { isAuthenticated: false, user: null, session: null },
+        });
+      }
+    }, 15000); // 15 second timeout
+
+    initAuth();
+
+    // Auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, !!session?.user);
+        
+        if (!isMounted) return;
+
+        // Clear timeout on any auth event
+        if (initTimeout) {
+          clearTimeout(initTimeout);
+          initTimeout = null;
+        }
 
         try {
-            // Gọi API verify token
-            const result = await authAPI.verifyToken(token);
-
-            if (result.success) {
-                // Token hợp lệ, login user
-                dispatch({
-                    type: 'LOGIN_SUCCESS',
-                    payload: { user: result.user, token }
-                });
-            } else {
-                // Token không hợp lệ, logout và xóa khỏi storage
-                localStorage.removeItem('token');
-                dispatch({ type: 'LOGOUT' });
-            }
+          switch (event) {
+            case 'SIGNED_IN':
+            case 'TOKEN_REFRESHED':
+            case 'USER_UPDATED':
+              console.log('User authenticated, processing session...');
+              await handleAuthSession(session);
+              break;
+            case 'SIGNED_OUT':
+              console.log('User signed out');
+              dispatch({ type: 'LOGOUT' });
+              break;
+            default:
+              console.log('Other auth event, handling session...');
+              await handleAuthSession(session);
+              break;
+          }
         } catch (error) {
-            // Network error hoặc server error
-            // Xóa token và logout để safety
-            localStorage.removeItem('token');
-            dispatch({ type: 'LOGOUT' });
-        }
-    };
-
-    // FUNCTION - Xử lý đăng nhập
-    const login = async (username, password) => {
-        dispatch({ type: 'SET_LOADING', payload: true });
-        dispatch({ type: 'CLEAR_ERROR' }); // Clear previous errors
-
-        // Gọi API login
-        const result = await authAPI.login(username, password);
-
-        if (result.success) {
-            // Lưu token vào localStorage để persist qua browser sessions
-            localStorage.setItem('token', result.token);
-
-            // Update state với user info và token
-            dispatch({
-                type: 'LOGIN_SUCCESS',
-                payload: { user: result.user, token: result.token }
+          console.error('Error in auth state change:', error);
+          if (isMounted) {
+            dispatch({ 
+              type: 'SET_ERROR', 
+              payload: 'Authentication error occurred.' 
             });
-
-            // Return success để component có thể handle
-            return { success: true, message: result.message };
-        } else {
-            // Set error message từ server
-            dispatch({ type: 'SET_ERROR', payload: result.message });
-            return { success: false, message: result.message };
+          }
         }
-    };
-
-    // FUNCTION - Xử lý đăng ký
-    const register = async (userData) => {
-        dispatch({ type: 'SET_LOADING', payload: true });
-        dispatch({ type: 'CLEAR_ERROR' });
-
-        // Gọi API register
-        const result = await authAPI.register(userData);
-
-        // Tắt loading
-        dispatch({ type: 'SET_LOADING', payload: false });
-
-        if (!result.success) {
-            // Set error nếu đăng ký thất bại
-            dispatch({ type: 'SET_ERROR', payload: result.message });
-        }
-
-        // Return result để component xử lý (redirect, etc.)
-        return result;
-    };
-
-    // FUNCTION - Xử lý đăng xuất
-    const logout = async () => {
-        // Xóa token khỏi localStorage
-        localStorage.removeItem('token');
-
-        // Update state thành logged out
-        dispatch({ type: 'LOGOUT' });
-
-        // Có thể thêm API call để invalidate token trên server (optional)
-    };
-
-    // FUNCTION - Update thông tin user
-    const updateUser = (userData) => {
-        dispatch({ type: 'UPDATE_USER', payload: userData });
-    };
-
-    // VALUE - Tất cả data và functions được expose ra ngoài
-    const value = {
-        // State values
-        ...state, // isAuthenticated, user, token, loading, error
-
-        // Action functions  
-        login,
-        register,
-        logout,
-        updateUser,
-        clearError: () => dispatch({ type: 'CLEAR_ERROR' })
-    };
-
-    // Provider component cung cấp context cho toàn bộ app
-    return (
-        <AuthContext.Provider value={value}>
-            {children}
-        </AuthContext.Provider>
+      }
     );
-};
 
-// CUSTOM HOOK - Để sử dụng AuthContext dễ dàng hơn
-export const useAuth = () => {
-    const context = useContext(AuthContext);
+    return () => {
+      isMounted = false;
+      if (initTimeout) {
+        clearTimeout(initTimeout);
+      }
+      subscription.unsubscribe();
+    };
+  }, [handleAuthSession]);
 
-    // Kiểm tra hook được sử dụng trong Provider chưa
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
+  // Login with Google
+  const loginWithGoogle = useCallback(async () => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'CLEAR_ERROR' });
+    
+    try {
+      console.log('Starting Google login...');
+      const result = await signInWithGoogle();
+      
+      if (!result.success) {
+        dispatch({ type: 'SET_ERROR', payload: result.message });
+        return { success: false, message: result.message };
+      }
+      
+      return { success: true, message: 'Redirecting to Google...' };
+    } catch (error) {
+      console.error('Google login error:', error);
+      const errorMessage = error.message || 'Google sign-in failed';
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      return { success: false, message: errorMessage };
     }
+  }, []);
 
-    return context;
+  // Logout
+  const logout = useCallback(async () => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    
+    try {
+      console.log('Logging out...');
+      const result = await signOut();
+      dispatch({ type: 'LOGOUT' });
+    } catch (error) {
+      console.error('Logout error:', error);
+      dispatch({ type: 'LOGOUT' });
+    }
+  }, []);
+
+  // Clear error
+  const clearError = useCallback(() => {
+    dispatch({ type: 'CLEAR_ERROR' });
+  }, []);
+
+  const value = {
+    ...state,
+    loginWithGoogle,
+    logout,
+    clearError,
+    supabase,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-/*
-FLOW AUTHENTICATION:
-
-1. App khởi động → AuthProvider check localStorage token
-2. Nếu có token → verify với server → set authenticated state
-3. User access protected route → ProtectedRoute check isAuthenticated
-4. User login → save token → update state → redirect
-5. User logout → clear token → update state → redirect to login
-
-*/
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

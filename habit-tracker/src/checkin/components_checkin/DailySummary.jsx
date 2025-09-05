@@ -11,19 +11,19 @@ const DailySummary = ({ selectedDate, refreshTrigger }) => {
         total: 0
     });
     const [loading, setLoading] = useState(false);
-    const { user } = useAuth();
+    const { user, isAuthenticated } = useAuth();
 
     useEffect(() => {
-        if (selectedDate && user) {
+        if (selectedDate && isAuthenticated && user) {
             loadSummaryData(selectedDate);
         }
-    }, [selectedDate, user, refreshTrigger]);
+    }, [selectedDate, user, isAuthenticated, refreshTrigger]);
 
     const loadSummaryData = async (date) => {
         try {
             setLoading(true);
             const data = await getCheckInsForDate(date);
-            
+
             const completed = data.completedHabits || 0;
             const total = data.totalHabits || 0;
             const remaining = total - completed;
@@ -50,8 +50,8 @@ const DailySummary = ({ selectedDate, refreshTrigger }) => {
 
     const formatDate = (dateStr) => {
         const date = new Date(dateStr);
-        return date.toLocaleDateString('en-US', { 
-            month: 'numeric', 
+        return date.toLocaleDateString('en-US', {
+            month: 'numeric',
             day: 'numeric',
             year: 'numeric'
         });
@@ -60,7 +60,7 @@ const DailySummary = ({ selectedDate, refreshTrigger }) => {
     const StatCard = ({ value, label, color }) => (
         <Card className="text-center border-0 shadow-sm h-100">
             <Card.Body className="py-4">
-                <div 
+                <div
                     className="display-6 fw-bold mb-2"
                     style={{ color: color, fontSize: '2.5rem' }}
                 >
@@ -93,21 +93,21 @@ const DailySummary = ({ selectedDate, refreshTrigger }) => {
                 {/* Stats Grid */}
                 <Row className="g-3">
                     <Col xs={12} md={4}>
-                        <StatCard 
+                        <StatCard
                             value={summaryData.completed}
                             label="Completed"
                             color="#28a745"
                         />
                     </Col>
                     <Col xs={12} md={4}>
-                        <StatCard 
+                        <StatCard
                             value={summaryData.remaining}
                             label="Remaining"
                             color="#343a40"
                         />
                     </Col>
                     <Col xs={12} md={4}>
-                        <StatCard 
+                        <StatCard
                             value={`${summaryData.completionRate}%`}
                             label="Completion Rate"
                             color="#007bff"

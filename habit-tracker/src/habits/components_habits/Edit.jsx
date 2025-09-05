@@ -25,6 +25,36 @@ export default function Edit({ habit, setHabits, setFilteredHabits, setSuccess, 
 
     const today = new Date().toISOString().split('T')[0];
 
+    // Helper function to transform component data to Supabase format
+    const transformToSupabaseFormat = (habitData) => ({
+        name: habitData.name,
+        description: habitData.description,
+        type: habitData.type,
+        frequency: habitData.frequency,
+        startDate: habitData.startDate, // Will be converted to start_date in service
+        endDate: habitData.endDate, // Will be converted to end_date in service
+        priority: habitData.priority,
+        isActive: habitData.isActive, // Will be converted to is_active in service
+        isInGoals: habitData.isInGoals || false
+    });
+
+    // Helper function to transform Supabase data to component format
+    const transformFromSupabaseFormat = (supabaseData) => ({
+        id: supabaseData.id,
+        name: supabaseData.name,
+        description: supabaseData.description,
+        type: supabaseData.type,
+        frequency: supabaseData.frequency,
+        startDate: supabaseData.start_date,
+        endDate: supabaseData.end_date,
+        priority: supabaseData.priority,
+        isActive: supabaseData.is_active,
+        isInGoals: supabaseData.is_in_goals,
+        userId: supabaseData.user_id,
+        createdAt: supabaseData.created_at,
+        updatedAt: supabaseData.updated_at
+    });
+
     useEffect(() => {
         console.log('Habits received in Edit:', habits);
         setCurrentHabit({
@@ -290,16 +320,25 @@ export default function Edit({ habit, setHabits, setFilteredHabits, setSuccess, 
                     endTime: timeFrame.endTime
                 }));
             }
-            const updatedHabit = await updateHabit(currentHabit.id, formattedHabit);
-            setHabits(prev => prev.map(h => (h.id === currentHabit.id ? updatedHabit : h)));
-            setFilteredHabits(prev => prev.map(h => (h.id === currentHabit.id ? updatedHabit : h)));
-            setShowEditModal(false);
-            setSuccess('Habit updated successfully');
-            setTimeout(() => setSuccess(null), 3000);
-            setError(null);
+
+            // Transform to Supabase format
+            const supabaseFormatHabit = transformToSupabaseFormat(formattedHabit);
+            const response = await updateHabit(currentHabit.id, supabaseFormatHabit);
+            
+            if (response.success) {
+                const updatedHabit = transformFromSupabaseFormat(response.data);
+                setHabits(prev => prev.map(h => (h.id === currentHabit.id ? updatedHabit : h)));
+                setFilteredHabits(prev => prev.map(h => (h.id === currentHabit.id ? updatedHabit : h)));
+                setShowEditModal(false);
+                setSuccess(response.message || 'Habit updated successfully');
+                setTimeout(() => setSuccess(null), 3000);
+                setError(null);
+            } else {
+                throw new Error(response.message || 'Failed to update habit');
+            }
         } catch (err) {
-            const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || 'Failed to update habit';
-            setError(errorMessage);
+            console.error("Update habit error:", err);
+            setError(err.message || 'Failed to update habit');
             setTimeout(() => setError(null), 3000);
         } finally {
             setLoading(false);
@@ -346,7 +385,7 @@ export default function Edit({ habit, setHabits, setFilteredHabits, setSuccess, 
             >
                 <Pencil size={20} />
             </Button>
-            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+            <Modal show={showEditModal} onHide={() => setShowEditModal(false)} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>Edit Habit</Modal.Title>
                 </Modal.Header>

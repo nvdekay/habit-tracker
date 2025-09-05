@@ -8,23 +8,23 @@ function CalendarView({ selectedDate, onDateSelect, calendarData, onCalendarData
     const [currentMonth, setCurrentMonth] = useState(new Date())
     const [internalCalendarData, setInternalCalendarData] = useState({})
     const [loading, setLoading] = useState(false)
-    const { user } = useAuth()
+    const { user, isAuthenticated } = useAuth()
 
     useEffect(() => {
-        if (user) {
+        if (isAuthenticated && user) {
             loadCalendarData()
         }
-    }, [currentMonth, user])
+    }, [currentMonth, user, isAuthenticated])
 
     const loadCalendarData = async () => {
         try {
             setLoading(true)
             const year = currentMonth.getFullYear()
             const month = currentMonth.getMonth()
-            // Gọi API lấy completion rate cho tất cả ngày trong tháng
+            // Call API to get completion rate for all days in the month
             const data = await getCalendarData(year, month)
             setInternalCalendarData(data)
-            // Truyền data lên parent component
+            // Pass data to parent component
             if (onCalendarDataUpdate) {
                 onCalendarDataUpdate(data)
             }
@@ -50,87 +50,79 @@ function CalendarView({ selectedDate, onDateSelect, calendarData, onCalendarData
         })
     }
 
-    // Hàm lấy số ngày trong một tháng cụ thể
+    // Get number of days in a specific month
     const getDaysInMonth = (year, month) => {
-        // new Date(year, month + 1, 0): tạo ra ngày cuối cùng của tháng (0 nghĩa là ngày trước ngày 1 của tháng tiếp theo)
-        // getDate() sẽ trả về số ngày trong tháng đó
         return new Date(year, month + 1, 0).getDate()
     }
 
-    // Hàm lấy ngày trong tuần của ngày đầu tiên trong tháng
+    // Get the day of week for first day of month
     const getFirstDayOfMonth = (year, month) => {
-        // new Date(year, month, 1): tạo ra ngày đầu tiên trong tháng
-        // getDay() trả về số nguyên 0–6 (0 = Chủ Nhật, 1 = Thứ Hai, ...)
         return new Date(year, month, 1).getDay()
     }
 
-    // Hàm kiểm tra xem một date có phải là hôm nay hay không
+    // Check if a date is today
     const isToday = (date) => {
-        const today = new Date() // Lấy ngày hiện tại
-        // So sánh chuỗi ngày (yyyy-mm-dd) của date với today
+        const today = new Date()
         return date.toDateString() === today.toDateString()
     }
 
-    // Hàm kiểm tra xem ngày hiện tại có phải là ngày được chọn không
+    // Check if current date is selected
     const isSelected = (dateStr) => {
-        // so sánh string của ngày (ISO format: yyyy-mm-dd) với selectedDate trong state
         return selectedDate === dateStr
     }
 
-    // Hàm xác định màu dot theo tỷ lệ hoàn thành
+    // Determine dot color based on completion rate
     const getCompletionDotColor = (rate) => {
-        if (!rate || rate === 0) return "#e9ecef"  // Chưa có dữ liệu → màu xám
-        if (rate >= 80) return "#28a745"           // >=80% → xanh lá
-        if (rate >= 60) return "#ffc107"           // >=60% → vàng
-        if (rate >= 40) return "#fd7e14"           // >=40% → cam
-        return "#dc3545"                           // <40% → đỏ
+        if (!rate || rate === 0) return "#e9ecef"  // No data → gray
+        if (rate >= 80) return "#28a745"           // >=80% → green
+        if (rate >= 60) return "#ffc107"           // >=60% → yellow
+        if (rate >= 40) return "#fd7e14"           // >=40% → orange
+        return "#dc3545"                           // <40% → red
     }
 
-    // Hàm render tất cả các ngày trong tháng ra calendar
+    // Render all days in the calendar month
     const renderCalendarDays = () => {
-        const year = currentMonth.getFullYear() // Lấy năm hiện tại từ currentMonth
-        const month = currentMonth.getMonth()   // Lấy tháng hiện tại (0-11)
+        const year = currentMonth.getFullYear()
+        const month = currentMonth.getMonth()
 
-        const daysInMonth = getDaysInMonth(year, month) // Số ngày trong tháng
-        const firstDay = getFirstDayOfMonth(year, month) // Ngày bắt đầu của tháng (0–6)
-        const days = [] // Mảng chứa các element ngày để render
+        const daysInMonth = getDaysInMonth(year, month)
+        const firstDay = getFirstDayOfMonth(year, month)
+        const days = []
 
-        // Thêm các ô trống trước ngày đầu tiên trong tháng (để căn đúng thứ trong tuần)
+        // Add empty cells before first day of month (for proper week alignment)
         for (let i = 0; i < firstDay; i++) {
             days.push(
                 <div key={`empty-${i}`} className="calendar-day empty"></div>
             )
         }
 
-        // Thêm từng ngày trong tháng
+        // Add each day in the month
         for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(year, month, day)              // Tạo object Date cho ngày hiện tại
-            const dateStr = date.toISOString().split('T')[0]    // Lấy chuỗi yyyy-mm-dd
-            const completionRate = finalCalendarData[dateStr] || 0 // Lấy tỷ lệ hoàn thành từ dữ liệu, mặc định = 0
-            const isCurrentSelected = isSelected(dateStr)       // Kiểm tra có được chọn không
-            const isTodayDate = isToday(date)                   // Kiểm tra có phải hôm nay không
+            const date = new Date(year, month, day)
+            const dateStr = date.toISOString().split('T')[0]
+            const completionRate = finalCalendarData[dateStr] || 0
+            const isCurrentSelected = isSelected(dateStr)
+            const isTodayDate = isToday(date)
 
-            // Push một ô ngày vào mảng days
             days.push(
                 <div
-                    key={dateStr} // key duy nhất
+                    key={dateStr}
                     className={`calendar-day ${isCurrentSelected ? 'selected' : ''} ${isTodayDate ? 'today' : ''}`}
-                    onClick={() => onDateSelect && onDateSelect(dateStr)} // Khi click gọi callback chọn ngày
-                    role="button" 
-                    tabIndex={0} 
+                    onClick={() => onDateSelect && onDateSelect(dateStr)}
+                    role="button"
+                    tabIndex={0}
                 >
-                    <div className="day-number">{day}</div> {/* Hiển thị số ngày */}
+                    <div className="day-number">{day}</div>
                     <div
                         className="completion-dot"
-                        style={{ backgroundColor: getCompletionDotColor(completionRate) }} // Màu dot theo tỷ lệ hoàn thành
+                        style={{ backgroundColor: getCompletionDotColor(completionRate) }}
                     ></div>
                 </div>
             )
         }
 
-        return days // Trả về mảng các element ngày để render
+        return days
     }
-
 
     return (
         <Card className="shadow-sm border-0">

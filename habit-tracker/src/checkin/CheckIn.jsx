@@ -18,14 +18,14 @@ export default function CheckIn() {
   const [showConflictModal, setShowConflictModal] = useState(false);
   const [conflictingHabits, setConflictingHabits] = useState([]);
   const [conflictAlert, setConflictAlert] = useState(null);
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   // Check for time conflicts when date changes
   useEffect(() => {
-    if (selectedDate && user) {
+    if (selectedDate && isAuthenticated && user) {
       checkForTimeConflicts(selectedDate);
     }
-  }, [selectedDate, user, refreshTrigger]);
+  }, [selectedDate, user, isAuthenticated, refreshTrigger]);
 
   // Check for time conflicts on the selected date
   const checkForTimeConflicts = async (date) => {
@@ -94,7 +94,7 @@ export default function CheckIn() {
     }, 1000);
   };
 
-  if (!user) {
+  if (!isAuthenticated || !user) {
     return (
       <div
         className="min-vh-100 d-flex align-items-center justify-content-center"

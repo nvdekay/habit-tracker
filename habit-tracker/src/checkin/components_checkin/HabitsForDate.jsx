@@ -5,46 +5,43 @@ import {
   getCheckInsForDate,
   checkInHabit,
 } from "../../services/checkInService";
-import { getHabits } from "../../services/habitService";
+import { getHabitsByUserId } from "../../services/habitService";
 import { useAuth } from "../../context/AuthContext";
 
-// Hiển thị danh sách thói quen của một ngày
+// Display list of habits for a specific date
 const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
-  // State chứa dữ liệu của ngày được chọn (habits, completionRate,...)
+  // State containing data for the selected date (habits, completionRate,...)
   const [dayData, setDayData] = useState(null);
 
-  // State để hiển thị loading khi fetch data
+  // State to show loading when fetching data
   const [loading, setLoading] = useState(false);
 
-  // State để lưu các habit đang được update (Set để dễ quản lý)
+  // State to store habits being updated (Set for easy management)
   const [updatingHabits, setUpdatingHabits] = useState(new Set());
 
-  // Lấy user từ AuthContext
-  const { user } = useAuth();
+  // Get user from AuthContext
+  const { user, isAuthenticated } = useAuth();
 
-  // useEffect chạy lại khi selectedDate, user hoặc refreshTrigger thay đổi
+  // useEffect runs again when selectedDate, user or refreshTrigger changes
   useEffect(() => {
-    if (selectedDate && user) {
-      // Nếu có ngày được chọn và user đã login
-      loadDayData(selectedDate); // Gọi API load data cho ngày đó
+    if (selectedDate && isAuthenticated && user) {
+      // If there's a selected date and user is logged in
+      loadDayData(selectedDate); // Call API to load data for that date
     }
-  }, [selectedDate, user, refreshTrigger]);
+  }, [selectedDate, user, isAuthenticated, refreshTrigger]);
 
-  // Hàm gọi API để lấy dữ liệu habits của một ngày
+  // Function to call API to get habits data for a specific date
   const loadDayData = async (date) => {
     try {
-      setLoading(true); // Bật trạng thái loading
+      setLoading(true); // Turn on loading state
 
       // Get check-ins for the day
       const checkInData = await getCheckInsForDate(date);
 
       // Get all habits to get time information
-      const habitsResponse = await fetch(
-        `http://localhost:8080/habits?userId=${user.id}&isActive=true`
-      );
-      const allHabits = await habitsResponse.json();
+      const allHabits = await getHabitsByUserId(user.id);
 
-      // Lọc habit có isInGoals khác true và enrich thông tin thời gian
+      // Filter habits with isInGoals not true and enrich with time information
       const enrichedHabits = checkInData.habits
         .map((habit) => {
           const fullHabit = allHabits.find(
@@ -58,17 +55,15 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
             const dayOfMonth = targetDate.getDate();
 
             if (fullHabit.type === "daily") {
-              startTime = fullHabit.frequency.startTime;
+              startTime = fullHabit.frequency?.startTime;
             } else if (fullHabit.type === "weekly") {
-              const todayFreq = fullHabit.frequency.find((freq) => {
+              const todayFreq = fullHabit.frequency?.find?.((freq) => {
                 const habitDay = freq.weekday === 7 ? 0 : freq.weekday;
                 return habitDay === dayOfWeek;
               });
               startTime = todayFreq ? todayFreq.startTime : null;
             } else if (fullHabit.type === "monthly") {
-              const todayFreq = fullHabit.frequency.find(
-                (freq) => freq.day === dayOfMonth
-              );
+              const todayFreq = fullHabit.frequency?.find?.((freq) => freq.day === dayOfMonth);
               startTime = todayFreq ? todayFreq.startTime : null;
             }
           }
@@ -79,8 +74,8 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
             endTime: fullHabit?.frequency?.endTime || null,
             priority: fullHabit?.priority || "medium",
             type: fullHabit?.type,
-            isInGoals: fullHabit?.isInGoals ?? false, 
-            habitName: fullHabit?.habitName || habit.habitName, 
+            isInGoals: fullHabit?.is_in_goals ?? false, 
+            habitName: fullHabit?.name || habit.habitName, 
           };
         })
         .filter((habit) => habit.isInGoals !== true) 
@@ -99,45 +94,45 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
       });
     } catch (error) {
       console.error("Failed to load day data:", error);
-      // Nếu lỗi thì set state mặc định (không có habits)
+      // If error, set default state (no habits)
       setDayData({ habits: [], completionRate: 0 });
     } finally {
-      setLoading(false); // Tắt loading
+      setLoading(false); // Turn off loading
     }
   };
 
-  // Hàm toggle trạng thái hoàn thành của một habit
+  // Function to toggle completion status of a habit
   const handleToggleComplete = async (habitId, completed) => {
-    if (updatingHabits.has(habitId)) return; // Nếu habit này đang được update thì bỏ qua
+    if (updatingHabits.has(habitId)) return; // If this habit is being updated, skip
 
     try {
-      // Thêm habitId vào Set updatingHabits để disable nút khi đang update
+      // Add habitId to Set updatingHabits to disable button during update
       setUpdatingHabits((prev) => new Set([...prev, habitId]));
 
-      // Gọi API update trạng thái habit
+      // Call API to update habit status
       await checkInHabit(habitId, selectedDate, completed, "");
 
-      // Cập nhật state dayData ngay trên UI
+      // Update dayData state immediately on UI
       setDayData((prev) => {
         if (!prev) return prev;
 
-        // Map lại habits → cập nhật habit vừa toggle
+        // Map habits again → update the toggled habit
         const updatedHabits = prev.habits.map((habit) =>
           habit.habitId.toString() === habitId.toString()
             ? { ...habit, completed }
             : habit
         );
 
-        // Tính số habits đã hoàn thành
+        // Count completed habits
         const completedCount = updatedHabits.filter((h) => h.completed).length;
 
-        // Tính % hoàn thành
+        // Calculate completion percentage
         const completionRate =
           updatedHabits.length > 0
             ? Math.round((completedCount / updatedHabits.length) * 100)
             : 0;
 
-        // Trả về object mới để cập nhật state
+        // Return new object to update state
         return {
           ...prev,
           habits: updatedHabits,
@@ -146,14 +141,14 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
         };
       });
 
-      // Nếu component cha truyền callback, gọi để báo có thay đổi
+      // If parent component passes callback, call it to notify of changes
       if (onStatusChange) {
         onStatusChange(selectedDate);
       }
     } catch (error) {
       console.error("Failed to update habit status:", error);
     } finally {
-      // Xóa habitId khỏi set updatingHabits sau khi xong
+      // Remove habitId from updatingHabits set after completion
       setUpdatingHabits((prev) => {
         const newSet = new Set(prev);
         newSet.delete(habitId);
@@ -162,7 +157,7 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
     }
   };
 
-  // Hàm format ngày sang định dạng mm/dd/yyyy
+  // Function to format date to mm/dd/yyyy format
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString("en-US", {
@@ -172,7 +167,7 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
     });
   };
 
-  // Hàm format thời gian
+  // Function to format time
   const formatTime = (timeString) => {
     if (!timeString) return "";
     const [hours, minutes] = timeString.split(":");
@@ -214,19 +209,16 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
     return timeDiff > 0 && timeDiff <= 30 * 60 * 1000; // 30 minutes
   };
 
-  // JSX để render UI
+  // JSX to render UI
   return (
     <Card className="shadow-sm border-0">
-      {" "}
-      {/* Thẻ Card từ bootstrap */}
       <Card.Body className="p-4">
         {/* Header */}
         <div className="d-flex align-items-center justify-content-between mb-3">
           <h5 className="mb-0 fw-semibold">
-            Habits for {formatDate(selectedDate)} {/* Hiển thị ngày */}
+            Habits for {formatDate(selectedDate)}
           </h5>
           <Badge
-            // Badge màu theo % hoàn thành
             bg={
               dayData?.completionRate === 0
                 ? "danger"
@@ -236,7 +228,7 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
             }
             className="rounded-pill px-3"
           >
-            {dayData?.completionRate || 0}% Complete {/* Hiển thị % */}
+            {dayData?.completionRate || 0}% Complete
           </Badge>
         </div>
 
@@ -244,10 +236,10 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
           Habits are sorted by scheduled time (earliest first)
         </p>
 
-        {/* Danh sách habits */}
+        {/* Habits list */}
         <div className="habits-list">
           {dayData?.habits && dayData.habits.length > 0 ? (
-            // Nếu có habits → map ra danh sách
+            // If there are habits → map to list
             dayData.habits.map((habit) => (
               <div
                 key={habit.habitId}
@@ -270,7 +262,7 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
                   }}
                 />
 
-                {/* Thông tin Habit */}
+                {/* Habit information */}
                 <div className="flex-grow-1">
                   <div className="d-flex align-items-center mb-1">
                     <h6
@@ -301,18 +293,18 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
                   )}
                 </div>
 
-                {/* Nút mark complete */}
+                {/* Mark complete button */}
                 <Button
-                  variant={habit.completed ? "success" : "outline-secondary"} // Màu theo trạng thái
+                  variant={habit.completed ? "success" : "outline-secondary"}
                   size="sm"
                   onClick={() =>
                     handleToggleComplete(habit.habitId, !habit.completed)
-                  } // Toggle complete
-                  disabled={updatingHabits.has(habit.habitId)} // Disable khi đang update
+                  }
+                  disabled={updatingHabits.has(habit.habitId)}
                   className="rounded-pill px-3"
                 >
                   {updatingHabits.has(habit.habitId) ? (
-                    // Nếu đang update → hiển thị spinner
+                    // If updating → show spinner
                     <>
                       <div
                         className="spinner-border spinner-border-sm me-1"
@@ -323,15 +315,15 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
                       Updating...
                     </>
                   ) : habit.completed ? (
-                    "✓ Completed" // Nếu completed
+                    "✓ Completed"
                   ) : (
-                    "Mark Complete" // Nếu chưa completed
+                    "Mark Complete"
                   )}
                 </Button>
               </div>
             ))
           ) : (
-            // Nếu không có habits → hiển thị thông báo rỗng
+            // If no habits → show empty message
             <div className="text-center py-5">
               <h6 className="text-muted">No habits found</h6>
               <p className="text-muted small mb-0">
@@ -341,7 +333,7 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
           )}
         </div>
       </Card.Body>
-      {/* CSS inline cho component */}
+      {/* Inline CSS for component */}
       <style jsx>{`
         .habit-item:last-child {
           border-bottom: none !important;
@@ -402,5 +394,4 @@ const HabitsForDate = ({ selectedDate, onStatusChange, refreshTrigger }) => {
   );
 };
 
-// Export component ra ngoài
 export default HabitsForDate;

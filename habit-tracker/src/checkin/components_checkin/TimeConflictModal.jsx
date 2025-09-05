@@ -27,11 +27,19 @@ const TimeConflictModal = ({ show, onHide, conflictingHabits, selectedDate, onRe
 
             // Find the selected habit
             const habitToUpdate = conflictingHabits.find(h => h.id === selectedHabitId);
-            
-            // Update the habit's time
+
+            // Update the habit's time - handle both camelCase and snake_case
             const updatedHabit = {
                 ...habitToUpdate,
-                frequency: habitToUpdate.type === 'daily' 
+                name: habitToUpdate.name,
+                description: habitToUpdate.description,
+                type: habitToUpdate.type,
+                startDate: habitToUpdate.start_date || habitToUpdate.startDate,
+                endDate: habitToUpdate.end_date || habitToUpdate.endDate,
+                priority: habitToUpdate.priority,
+                isActive: habitToUpdate.is_active !== undefined ? habitToUpdate.is_active : habitToUpdate.isActive,
+                isInGoals: habitToUpdate.is_in_goals !== undefined ? habitToUpdate.is_in_goals : habitToUpdate.isInGoals,
+                frequency: habitToUpdate.type === 'daily'
                     ? {
                         ...habitToUpdate.frequency,
                         startTime: newStartTime + ':00',
@@ -44,16 +52,19 @@ const TimeConflictModal = ({ show, onHide, conflictingHabits, selectedDate, onRe
                     }))
             };
 
-            await updateHabit(habitToUpdate.id, updatedHabit);
-            
-            if (onResolve) {
-                onResolve();
+            const result = await updateHabit(habitToUpdate.id, updatedHabit);
+
+            if (result.success) {
+                if (onResolve) {
+                    onResolve();
+                }
+                onHide();
+            } else {
+                setError(result.message || 'Failed to update habit time');
             }
-            
-            onHide();
         } catch (error) {
             console.error('Failed to update habit time:', error);
-            setError('Failed to update habit time. Please try again.');
+            setError(error.message || 'Failed to update habit time. Please try again.');
         } finally {
             setUpdating(false);
         }
@@ -66,9 +77,13 @@ const TimeConflictModal = ({ show, onHide, conflictingHabits, selectedDate, onRe
 
     const getHabitTime = (habit) => {
         if (habit.type === 'daily') {
-            return `${formatTime(habit.frequency.startTime)} - ${formatTime(habit.frequency.endTime)}`;
-        } else if (habit.type === 'weekly' && habit.frequency.length > 0) {
-            return `${formatTime(habit.frequency[0].startTime)} - ${formatTime(habit.frequency[0].endTime)}`;
+            const startTime = habit.frequency?.startTime;
+            const endTime = habit.frequency?.endTime;
+            return `${formatTime(startTime)} - ${formatTime(endTime)}`;
+        } else if (habit.type === 'weekly' && habit.frequency?.length > 0) {
+            const startTime = habit.frequency[0]?.startTime;
+            const endTime = habit.frequency[0]?.endTime;
+            return `${formatTime(startTime)} - ${formatTime(endTime)}`;
         }
         return 'No time set';
     };
@@ -81,7 +96,7 @@ const TimeConflictModal = ({ show, onHide, conflictingHabits, selectedDate, onRe
                     Time Conflict Detected
                 </Modal.Title>
             </Modal.Header>
-            
+
             <Modal.Body>
                 <Alert variant="warning" className="mb-4">
                     <strong>Multiple habits are scheduled at the same time!</strong>
@@ -92,13 +107,13 @@ const TimeConflictModal = ({ show, onHide, conflictingHabits, selectedDate, onRe
                 <div className="mb-4">
                     <h6 className="mb-3">Conflicting Habits:</h6>
                     {conflictingHabits.map(habit => (
-                        <div 
-                            key={habit.id} 
+                        <div
+                            key={habit.id}
                             className="d-flex justify-content-between align-items-center p-3 border rounded mb-2"
                             style={{ backgroundColor: '#f8f9fa' }}
                         >
                             <div className="d-flex align-items-center">
-                                <div 
+                                <div
                                     className="conflict-indicator me-3"
                                     style={{
                                         width: '10px',
@@ -124,8 +139,8 @@ const TimeConflictModal = ({ show, onHide, conflictingHabits, selectedDate, onRe
                 <Form>
                     <Form.Group className="mb-3">
                         <Form.Label>Select habit to modify:</Form.Label>
-                        <Form.Select 
-                            value={selectedHabitId} 
+                        <Form.Select
+                            value={selectedHabitId}
                             onChange={(e) => setSelectedHabitId(e.target.value)}
                         >
                             <option value="">Choose a habit...</option>
@@ -167,13 +182,13 @@ const TimeConflictModal = ({ show, onHide, conflictingHabits, selectedDate, onRe
                     )}
                 </Form>
             </Modal.Body>
-            
+
             <Modal.Footer>
                 <Button variant="secondary" onClick={onHide} disabled={updating}>
                     Cancel
                 </Button>
-                <Button 
-                    variant="primary" 
+                <Button
+                    variant="primary"
                     onClick={handleResolve}
                     disabled={updating || !selectedHabitId}
                 >

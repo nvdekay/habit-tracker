@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Plus, Target, TrendingUp, Award } from "lucide-react";
 import {
   Button,
@@ -11,7 +11,6 @@ import {
 import "../index.css";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import {
   calculateHabitTarget,
   createGoal,
@@ -19,14 +18,16 @@ import {
   getGoalsByUserID,
   getHabits,
   updateGoal,
+  getGoalsWithFilters
 } from "../services/goalService";
+import { updateHabit } from "../services/habitService";
 import { CreateGoalModal } from "./components_goal/CreateGoalModal";
 import { EditGoalModal } from "./components_goal/EditGoalModal";
 import { FilterSection } from "./components_goal/FilterSection";
 import { GoalCard } from "./components_goal/GoalCard";
 
 export default function Goal() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const nav = useNavigate();
 
   const [filters, setFilters] = useState({
@@ -53,11 +54,11 @@ export default function Goal() {
     deadline: "",
     priority: "medium",
     status: "in_progress",
-    type: "manual", // "manual" hoặc "auto"
-    targetValue: 1, // chỉ cần khi manual
-    currentValue: 0, // manual: người dùng điều chỉnh
-    unit: "", // chỉ cần khi manual
-    linkedHabits: [], // chỉ cần khi auto
+    type: "manual", // "manual" or "auto"
+    targetValue: 1, // only needed for manual
+    currentValue: 0, // manual: user adjusts
+    unit: "", // only needed for manual
+    linkedHabits: [], // only needed for auto
   });
 
   const [error, setError] = useState({
@@ -73,7 +74,16 @@ export default function Goal() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const handleEditShow = (goal) => {
-    setEditGoal(goal);
+    // Handle both field formats when setting edit goal
+    const formattedGoal = {
+      ...goal,
+      startDate: goal.start_date || goal.startDate,
+      deadline: goal.deadline,
+      targetValue: goal.target_value || goal.targetValue,
+      currentValue: goal.current_value || goal.currentValue,
+      linkedHabits: goal.linked_habits || goal.linkedHabits || []
+    };
+    setEditGoal(formattedGoal);
     setShowEdit(true);
   };
   const handleEditClose = () => {
@@ -105,83 +115,23 @@ export default function Goal() {
 
   // Effects
   useEffect(() => {
-    if (!user) {
+    if (!isAuthenticated || !user) {
       setGoals([]);
       nav("/");
     } else {
       fetchGoals();
       fetchHabits();
     }
-  }, []);
+  }, [isAuthenticated, user, nav]);
 
   useEffect(() => {
     if (user) {
-      let url = `http://localhost:8080/goals?userId=${user.id}`;
-
-      if (filters.status !== "all") {
-        url += `&status=${filters.status}`;
-      }
-      if (filters.priority !== "all") {
-        url += `&priority=${filters.priority}`;
-      }
-
       const fetchFilteredGoals = async () => {
         try {
-          const res = await fetch(url);
-          if (!res.ok) throw new Error("Fetch failed");
-          let data = await res.json();
-
-          // sort client cho tất cả sortBy
-          if (filters.sortBy) {
-            data.sort((a, b) => {
-              let valueA, valueB;
-
-              switch (filters.sortBy) {
-                case "progress":
-                  valueA = a.currentValue / a.targetValue;
-                  valueB = b.currentValue / b.targetValue;
-                  break;
-                case "deadline":
-                  valueA = new Date(a.deadline);
-                  valueB = new Date(b.deadline);
-                  break;
-                case "createdDate":
-                  valueA = new Date(a.createdDate);
-                  valueB = new Date(b.createdDate);
-                  break;
-                case "priority":
-                  // nếu priority là string "high"/"medium"/"low" → map sang số cho dễ sort
-                  const priorityMap = { high: 3, medium: 2, low: 1 };
-                  valueA = priorityMap[a.priority] || 0;
-                  valueB = priorityMap[b.priority] || 0;
-                  break;
-                default:
-                  valueA = a[filters.sortBy];
-                  valueB = b[filters.sortBy];
-              }
-
-              if (valueA instanceof Date && valueB instanceof Date) {
-                return filters.sortOrder === "asc"
-                  ? valueA - valueB
-                  : valueB - valueA;
-              } else if (
-                typeof valueA === "string" &&
-                typeof valueB === "string"
-              ) {
-                return filters.sortOrder === "asc"
-                  ? valueA.localeCompare(valueB)
-                  : valueB.localeCompare(valueA);
-              } else {
-                return filters.sortOrder === "asc"
-                  ? valueA - valueB
-                  : valueB - valueA;
-              }
-            });
-          }
-
+          const data = await getGoalsWithFilters(user.id, filters);
           setGoals(data);
         } catch (err) {
-          console.error(err);
+          console.error("Error fetching filtered goals:", err);
         }
       };
 
@@ -194,27 +144,26 @@ export default function Goal() {
       const goal = goals.find((g) => g.id === goalId);
       if (!goal) return;
 
-      let updatedValue = goal.currentValue + numberOfUnits;
+      const currentVal = goal.current_value || goal.currentValue || 0;
+      const targetVal = goal.target_value || goal.targetValue || 1;
+      let updatedValue = currentVal + numberOfUnits;
 
-      if (updatedValue > goal.targetValue) {
-        updatedValue = goal.targetValue;
+      if (updatedValue > targetVal) {
+        updatedValue = targetVal;
       }
 
       const updatedGoal = {
         ...goal,
+        current_value: updatedValue,
         currentValue: updatedValue,
-        status: updatedValue >= goal.targetValue ? "completed" : goal.status,
+        status: updatedValue >= targetVal ? "completed" : goal.status,
       };
 
-      const res = await axios.put(
-        `http://localhost:8080/goals/${goalId}`,
-        updatedGoal,
-        { headers: { "Content-Type": "application/json" } }
-      );
+      const res = await updateGoal(updatedGoal);
 
       if (res.status === 200) {
         setGoals((prev) =>
-          prev.map((g) => (g.id === goalId ? updatedGoal : g))
+          prev.map((g) => (g.id === goalId ? { ...g, current_value: updatedValue, currentValue: updatedValue, status: updatedGoal.status } : g))
         );
       }
     } catch (err) {
@@ -230,24 +179,22 @@ export default function Goal() {
       const goal = goals.find((g) => g.id === goalId);
       if (!goal) return;
 
-      let updatedValue = goal.currentValue - numberOfUnits;
+      const currentVal = goal.current_value || goal.currentValue || 0;
+      let updatedValue = currentVal - numberOfUnits;
       if (updatedValue < 0) updatedValue = 0;
 
       const updatedGoal = {
         ...goal,
+        current_value: updatedValue,
         currentValue: updatedValue,
-        status: updatedValue >= goal.targetValue ? "completed" : "in_progress",
+        status: updatedValue >= (goal.target_value || goal.targetValue) ? "completed" : "in_progress",
       };
 
-      const res = await axios.put(
-        `http://localhost:8080/goals/${goalId}`,
-        updatedGoal,
-        { headers: { "Content-Type": "application/json" } }
-      );
+      const res = await updateGoal(updatedGoal);
 
       if (res.status === 200) {
         setGoals((prev) =>
-          prev.map((g) => (g.id === goalId ? updatedGoal : g))
+          prev.map((g) => (g.id === goalId ? { ...g, current_value: updatedValue, currentValue: updatedValue, status: updatedGoal.status } : g))
         );
       }
     } catch (err) {
@@ -261,34 +208,31 @@ export default function Goal() {
       if (!goal) return;
 
       const confirmInput = window.prompt(
-        `Bạn có chắc muốn reset goal "${goal.name}" về 0? Nhập "YES" để xác nhận.`
+        `Are you sure you want to reset goal "${goal.name}" to 0? Type "YES" to confirm.`
       );
 
       if (confirmInput !== "YES") {
-        alert("Reset bị hủy. Bạn cần nhập chính xác YES.");
+        alert("Reset cancelled. You need to type exactly YES.");
         return;
       }
 
       const updatedGoal = {
         ...goal,
+        current_value: 0,
         currentValue: 0,
-        status: "in_progress", // hoặc giữ nguyên goal.status nếu bạn muốn
+        status: "in_progress",
       };
 
-      const res = await axios.put(
-        `http://localhost:8080/goals/${goalId}`,
-        updatedGoal,
-        { headers: { "Content-Type": "application/json" } }
-      );
+      const res = await updateGoal(updatedGoal);
 
       if (res.status === 200) {
         setGoals((prev) =>
-          prev.map((g) => (g.id === goalId ? updatedGoal : g))
+          prev.map((g) => (g.id === goalId ? { ...g, current_value: 0, currentValue: 0, status: "in_progress" } : g))
         );
-        alert("Reset thành công!");
+        alert("Reset successful!");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Reset error:", err);
     }
   };
 
@@ -353,23 +297,27 @@ export default function Goal() {
 
     try {
       const data = await createGoal(newGoal);
-      newGoal.linkedHabits.forEach(async (habitId) => {
+
+      // Update linked habits with isInGoals flag
+      for (const habitId of newGoal.linkedHabits) {
         try {
-          await fetch(`http://localhost:8080/habits/${habitId}`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ isInGoals: true }),
-          });
+          const habit = habits.find(h => h.id === habitId);
+          if (habit) {
+            await updateHabit(habitId, {
+              ...habit,
+              is_in_goals: true,
+              isInGoals: true
+            });
+          }
           console.log(`Habit ${habitId} updated with isInGoals:true`);
         } catch (error) {
           console.error(`Failed to update habit ${habitId}:`, error);
         }
-      });
-      alert("Thêm mục tiêu thành công!");
+      }
+
+      alert("Goal created successfully!");
       handleClose();
-      setGoals((prev) => [...prev, newGoal]);
+      fetchGoals(); // Refetch goals to get the new one
 
       // Reset state to default
       setNewGoal({
@@ -380,14 +328,14 @@ export default function Goal() {
         deadline: "",
         priority: "medium",
         status: "in_progress",
-        type: "manual", // mặc định tạo mới là manual
-        targetValue: 0,
+        type: "manual",
+        targetValue: 1,
         currentValue: 0,
         unit: "",
         linkedHabits: [],
       });
     } catch (err) {
-      alert("Thêm mục tiêu thất bại!");
+      alert("Failed to create goal!");
       console.error(err);
     }
   };
@@ -397,12 +345,12 @@ export default function Goal() {
     if (!editGoal) return;
 
     try {
-      const res = await updateGoal(editGoal); // gọi service
+      const res = await updateGoal(editGoal);
 
       if (res.status === 200) {
-        alert("Cập nhật mục tiêu thành công!");
+        alert("Goal updated successfully!");
 
-        // gọi lại API để đồng bộ state với DB
+        // Fetch updated data
         const goalsData = await getGoalsByUserID(user.id);
         setGoals(goalsData);
 
@@ -411,26 +359,28 @@ export default function Goal() {
 
         handleEditClose();
       } else {
-        alert("Cập nhật thất bại!");
+        alert("Update failed!");
       }
     } catch (error) {
-      alert("Cập nhật thất bại!");
+      alert("Update failed!");
+      console.error("Update error:", error);
     }
   };
 
   const handleDelete = async (goalID) => {
-    if (window.confirm("Sure delete?")) {
+    if (window.confirm("Are you sure you want to delete this goal?")) {
       try {
         const res = await deleteGoal(goalID);
 
         if (res.data) {
-          alert("Xoá mục tiêu thành công!");
+          alert("Goal deleted successfully!");
           setGoals((prev) => prev.filter((goal) => goal.id !== goalID));
         } else {
-          alert("Xoá mục tiêu thất bại!");
+          alert("Failed to delete goal!");
         }
       } catch (error) {
-        alert("Xoá mục tiêu thất bại!");
+        alert("Failed to delete goal!");
+        console.error("Delete error:", error);
       }
     }
   };
@@ -445,7 +395,7 @@ export default function Goal() {
       updatedHabits = updatedHabits.filter((id) => id !== habitId);
     }
 
-    // Tính total targetValue từ các habit đã chọn
+    // Calculate total targetValue from selected habits
     let totalTarget = 0;
     updatedHabits.forEach((id) => {
       const habit = habits.find((h) => h.id === id);
@@ -472,23 +422,27 @@ export default function Goal() {
     if (e.target.checked) {
       setEditGoal({
         ...editGoal,
-        linkedHabits: [...editGoal.linkedHabits, habitId],
+        linkedHabits: [...(editGoal.linkedHabits || []), habitId],
       });
     } else {
       setEditGoal({
         ...editGoal,
-        linkedHabits: editGoal.linkedHabits.filter((id) => id !== habitId),
+        linkedHabits: (editGoal.linkedHabits || []).filter((id) => id !== habitId),
       });
     }
   };
 
-  // Calculate stats
+  // Calculate stats - handle both field formats
   const stats = {
     total: goals.length,
     completed: goals.filter(g => g.status === "completed").length,
     inProgress: goals.filter(g => g.status === "in_progress").length,
     averageProgress: goals.length > 0
-      ? (goals.reduce((sum, g) => sum + (g.currentValue / g.targetValue) * 100, 0) / goals.length).toFixed(1)
+      ? (goals.reduce((sum, g) => {
+        const current = g.current_value || g.currentValue || 0;
+        const target = g.target_value || g.targetValue || 1;
+        return sum + (current / target) * 100;
+      }, 0) / goals.length).toFixed(1)
       : 0
   };
 
@@ -510,31 +464,34 @@ export default function Goal() {
         {/* Stats Cards */}
         <Row className="g-4 mb-4">
           <Col md={3}>
-            <div className="bg-primary text-white rounded-3 p-4 text-center">
-              <Target size={24} className="mb-2" />
-              <h3 className="fw-bold mb-1">{stats.total}</h3>
-              <small>Total Goals</small>
+            <div className="rounded-3 p-4 text-center shadow-sm" style={{ backgroundColor: "#E3F2FD" }}>
+              <Target size={28} className="mb-2 text-primary" />
+              <h3 className="fw-bold mb-1 text-dark">{stats.total}</h3>
+              <small className="text-muted">Total Goals</small>
             </div>
           </Col>
+
           <Col md={3}>
-            <div className="bg-success text-white rounded-3 p-4 text-center">
-              <Award size={24} className="mb-2" />
-              <h3 className="fw-bold mb-1">{stats.completed}</h3>
-              <small>Completed</small>
+            <div className="rounded-3 p-4 text-center shadow-sm" style={{ backgroundColor: "#E8F5E9" }}>
+              <Award size={28} className="mb-2 text-success" />
+              <h3 className="fw-bold mb-1 text-dark">{stats.completed}</h3>
+              <small className="text-muted">Completed</small>
             </div>
           </Col>
+
           <Col md={3}>
-            <div className="bg-warning text-white rounded-3 p-4 text-center">
-              <TrendingUp size={24} className="mb-2" />
-              <h3 className="fw-bold mb-1">{stats.inProgress}</h3>
-              <small>In Progress</small>
+            <div className="rounded-3 p-4 text-center shadow-sm" style={{ backgroundColor: "#FFF9E6" }}>
+              <TrendingUp size={28} className="mb-2 text-warning" />
+              <h3 className="fw-bold mb-1 text-dark">{stats.inProgress}</h3>
+              <small className="text-muted">In Progress</small>
             </div>
           </Col>
+
           <Col md={3}>
-            <div className="bg-info text-white rounded-3 p-4 text-center">
-              <TrendingUp size={24} className="mb-2" />
-              <h3 className="fw-bold mb-1">{stats.averageProgress}%</h3>
-              <small>Avg Progress</small>
+            <div className="rounded-3 p-4 text-center shadow-sm" style={{ backgroundColor: "#F3E5F5" }}>
+              <TrendingUp size={28} className="mb-2 text-purple" />
+              <h3 className="fw-bold mb-1 text-dark">{stats.averageProgress}%</h3>
+              <small className="text-muted">Avg Progress</small>
             </div>
           </Col>
         </Row>

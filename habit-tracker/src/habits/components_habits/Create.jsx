@@ -21,6 +21,36 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
 
     const today = new Date().toISOString().split('T')[0];
 
+    // Helper function to transform component data to Supabase format
+    const transformToSupabaseFormat = (habitData) => ({
+        name: habitData.name,
+        description: habitData.description,
+        type: habitData.type,
+        frequency: habitData.frequency,
+        startDate: habitData.startDate, // Will be converted to start_date in service
+        endDate: habitData.endDate, // Will be converted to end_date in service
+        priority: habitData.priority,
+        isActive: habitData.isActive, // Will be converted to is_active in service
+        isInGoals: habitData.isInGoals || false
+    });
+
+    // Helper function to transform Supabase data to component format
+    const transformFromSupabaseFormat = (supabaseData) => ({
+        id: supabaseData.id,
+        name: supabaseData.name,
+        description: supabaseData.description,
+        type: supabaseData.type,
+        frequency: supabaseData.frequency,
+        startDate: supabaseData.start_date,
+        endDate: supabaseData.end_date,
+        priority: supabaseData.priority,
+        isActive: supabaseData.is_active,
+        isInGoals: supabaseData.is_in_goals,
+        userId: supabaseData.user_id,
+        createdAt: supabaseData.created_at,
+        updatedAt: supabaseData.updated_at
+    });
+
     const getMaxDayInRange = (startDate, endDate) => {
         if (!startDate) return 31;
         const start = new Date(startDate);
@@ -286,30 +316,41 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
                     endTime: timeFrame.endTime
                 }));
             }
-            const createdHabit = await createHabit(formattedHabit);
-            setHabits(prev => [...prev, createdHabit]);
-            setFilteredHabits(prev => [...prev, createdHabit]);
-            setNewHabit({
-                name: '',
-                description: '',
-                type: 'daily',
-                frequency: { startTime: '00:00:00', endTime: '00:30:00' },
-                startDate: '',
-                endDate: '',
-                priority: 'medium',
-                isActive: true,
-                userId: user.id
-            });
-            setWeeklyDays([]);
-            setMonthlyDays([]);
-            setTimeFrame({ startTime: '00:00:00', endTime: '00:30:00' });
-            setShowCreateModal(false);
-            setSuccess('Habit created successfully');
-            setTimeout(() => setSuccess(null), 3000);
-            setError(null);
+
+            // Transform to Supabase format
+            const supabaseFormatHabit = transformToSupabaseFormat(formattedHabit);
+            const response = await createHabit(supabaseFormatHabit);
+            
+            if (response.success) {
+                const createdHabit = transformFromSupabaseFormat(response.data);
+                setHabits(prev => [...prev, createdHabit]);
+                setFilteredHabits(prev => [...prev, createdHabit]);
+                
+                // Reset form
+                setNewHabit({
+                    name: '',
+                    description: '',
+                    type: 'daily',
+                    frequency: { startTime: '00:00:00', endTime: '00:30:00' },
+                    startDate: '',
+                    endDate: '',
+                    priority: 'medium',
+                    isActive: true,
+                    userId: user.id
+                });
+                setWeeklyDays([]);
+                setMonthlyDays([]);
+                setTimeFrame({ startTime: '00:00:00', endTime: '00:30:00' });
+                setShowCreateModal(false);
+                setSuccess(response.message || 'Habit created successfully');
+                setTimeout(() => setSuccess(null), 3000);
+                setError(null);
+            } else {
+                throw new Error(response.message || 'Failed to create habit');
+            }
         } catch (err) {
-            const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || 'Failed to create habit';
-            setError(errorMessage);
+            console.error("Create habit error:", err);
+            setError(err.message || 'Failed to create habit');
         } finally {
             setLoading(false);
         }
@@ -364,7 +405,7 @@ export default function Create({ user, setHabits, setFilteredHabits, setSuccess,
             <Button variant="success" onClick={() => setShowCreateModal(true)} disabled={loading}>
                 +
             </Button>
-            <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)}>
+            <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>Create New Habit</Modal.Title>
                 </Modal.Header>

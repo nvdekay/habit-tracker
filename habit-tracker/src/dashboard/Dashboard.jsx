@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Line, Bar, Doughnut } from "react-chartjs-2";
 import { useAuth } from "../context/AuthContext";
-import api from "../services/api";
+import { getHabitsByUserId } from "../services/habitService";
+import { getGoalsByUserID } from "../services/goalService";
+import { getCheckInHistory } from "../services/checkInService";
+import { supabase } from "../services/supabaseConfig";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -29,41 +32,59 @@ ChartJS.register(
     Legend
 );
 
-// Dashboard API functions
+// Dashboard API functions for Supabase
 const dashboardAPI = {
     getDashboardData: async (userId) => {
         try {
-            const [habitsRes, goalsRes, checkinsRes, statsRes] = await Promise.all([
-                api.get(`/habits?userId=${userId}`),
-                api.get(`/goals?userId=${userId}`),
-                api.get(`/checkins?userId=${userId}`),
-                api.get(`/statistics?userId=${userId}`),
+            const [habits, goals, checkins, statistics] = await Promise.all([
+                getHabitsByUserId(userId),
+                getGoalsByUserID(userId),
+                getCheckInHistory(
+                    new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0], // Start of year
+                    new Date().toISOString().split('T')[0] // Today
+                ),
+                getDashboardStatistics(userId)
             ]);
 
             return {
                 success: true,
                 data: {
-                    habits: habitsRes.data,
-                    goals: goalsRes.data,
-                    checkins: checkinsRes.data,
-                    statistics: statsRes.data,
+                    habits: habits || [],
+                    goals: goals || [],
+                    checkins: checkins || [],
+                    statistics: statistics || [],
                 },
             };
         } catch (error) {
             console.error("Dashboard API Error:", error);
             return {
                 success: false,
-                message:
-                    error.response?.data?.message ||
-                    error.message ||
-                    "Failed to fetch dashboard data",
+                message: error.message || "Failed to fetch dashboard data",
             };
         }
     },
 };
 
+// Get dashboard statistics from Supabase
+const getDashboardStatistics = async (userId) => {
+    try {
+        const { data, error } = await supabase
+            .from('statistics')
+            .select('*')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false })
+            .limit(12); // Last 12 months
+
+        if (error) throw error;
+        return data || [];
+    } catch (error) {
+        console.error("Failed to fetch statistics:", error);
+        return [];
+    }
+};
+
 export default function Dashboard() {
-    const { user } = useAuth();
+    const { user, isAuthenticated } = useAuth();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [dashboardData, setDashboardData] = useState({
@@ -78,11 +99,10 @@ export default function Dashboard() {
     const [topHabits, setTopHabits] = useState([]);
 
     useEffect(() => {
-        if (user && user.id) {
+        if (isAuthenticated && user && user.id) {
             fetchDashboardData();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
+    }, [user, isAuthenticated]);
 
     const fetchDashboardData = async () => {
         try {
@@ -109,8 +129,10 @@ export default function Dashboard() {
     const calculateDashboardData = (habits, goals, checkins, statistics) => {
         const today = new Date().toISOString().split("T")[0];
 
-        // 1. Active Habits
-        const activeHabits = habits.filter((habit) => habit.isActive).length;
+        // 1. Active Habits - handle both field name formats
+        const activeHabits = habits.filter((habit) => 
+            habit.is_active !== undefined ? habit.is_active : habit.isActive
+        ).length;
 
         // 2. Completed Today
         const todayCheckins = checkins.filter(
@@ -124,15 +146,33 @@ export default function Dashboard() {
                 ? Math.round((completedToday / activeHabits) * 100)
                 : 0;
 
-        // 4. Longest Streak
-        const longestStreak = habits.reduce(
-            (max, habit) => Math.max(max, habit.longestStreak || 0),
-            0
-        );
+        // 4. Longest Streak - calculate from habits data
+        const longestStreak = habits.reduce((max, habit) => {
+            // Calculate streak from checkins if not available in habit data
+            const habitCheckins = checkins
+                .filter(c => c.habit_id === habit.id && c.completed)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            let currentStreak = 0;
+            let maxStreak = 0;
+            let lastDate = null;
+
+            for (const checkin of habitCheckins) {
+                const checkinDate = new Date(checkin.date);
+                if (!lastDate || (lastDate - checkinDate) / (1000 * 60 * 60 * 24) === 1) {
+                    currentStreak++;
+                    maxStreak = Math.max(maxStreak, currentStreak);
+                } else {
+                    currentStreak = 1;
+                }
+                lastDate = checkinDate;
+            }
+
+            return Math.max(max, maxStreak);
+        }, 0);
 
         // 5. Goals Progress
-        const completedGoals = goals.filter((goal) => goal.status === "completed")
-            .length;
+        const completedGoals = goals.filter((goal) => goal.status === "completed").length;
         const totalGoals = goals.length;
 
         // 6. Weekly Completion Rate
@@ -141,10 +181,32 @@ export default function Dashboard() {
         // 7. Monthly Progress
         const monthlyProgressData = calculateMonthlyProgress(statistics, habits);
 
-        // 8. Top Maintained Habits
-        const sortedHabits = [...habits]
-            .filter((h) => h.isActive)
-            .sort((a, b) => (b.currentStreak || 0) - (a.currentStreak || 0))
+        // 8. Top Maintained Habits - calculate current streaks
+        const habitsWithStreaks = habits
+            .filter((h) => h.is_active !== undefined ? h.is_active : h.isActive)
+            .map(habit => {
+                // Calculate current streak from checkins
+                const habitCheckins = checkins
+                    .filter(c => c.habit_id === habit.id && c.completed)
+                    .sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                let currentStreak = 0;
+                const today = new Date();
+                
+                for (const checkin of habitCheckins) {
+                    const checkinDate = new Date(checkin.date);
+                    const daysDiff = Math.floor((today - checkinDate) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysDiff === currentStreak) {
+                        currentStreak++;
+                    } else {
+                        break;
+                    }
+                }
+
+                return { ...habit, currentStreak };
+            })
+            .sort((a, b) => b.currentStreak - a.currentStreak)
             .slice(0, 4);
 
         setDashboardData({
@@ -156,13 +218,15 @@ export default function Dashboard() {
             weeklyData: weeklyCompletionData,
             monthlyData: monthlyProgressData,
         });
-        setTopHabits(sortedHabits);
+        setTopHabits(habitsWithStreaks);
     };
 
     const calculateWeeklyCompletion = (checkins, habits) => {
         const weeks = [];
         const weekLabels = [];
-        const activeHabitsCount = habits.filter((h) => h.isActive).length;
+        const activeHabitsCount = habits.filter((h) => 
+            h.is_active !== undefined ? h.is_active : h.isActive
+        ).length;
 
         for (let i = 5; i >= 0; i--) {
             const weekStart = new Date();
@@ -212,19 +276,23 @@ export default function Dashboard() {
         const months = statistics.slice(-5);
 
         if (months.length === 0) {
+            // Create default data if no statistics available
+            const completedHabits = habits.reduce((sum, h) => {
+                // Count completed habits from checkins if available
+                return sum + 1; // Simplified for now
+            }, 0);
+
             return {
-                labels: ["Aug"],
+                labels: ["Current"],
                 datasets: [
                     {
                         label: "Habits Completed",
-                        data: [
-                            habits.reduce((sum, h) => sum + (h.totalCompletions || 0), 0),
-                        ],
+                        data: [completedHabits],
                         backgroundColor: "#3b82f6",
                     },
                     {
                         label: "New Habits Added",
-                        data: [0],
+                        data: [habits.length],
                         backgroundColor: "#22c55e",
                     },
                 ],
@@ -232,12 +300,12 @@ export default function Dashboard() {
         }
 
         const labels = months.map((stat) => {
-            const date = new Date(stat.month);
+            const date = new Date(stat.month + '-01'); // Add day to make valid date
             return date.toLocaleDateString("en-US", { month: "short" });
         });
 
-        const completedData = months.map((stat) => stat.totalCheckins || 0);
-        const habitsCreatedData = months.map((stat) => stat.habitsCreated || 0);
+        const completedData = months.map((stat) => stat.total_checkins || 0);
+        const habitsCreatedData = months.map((stat) => stat.habits_created || 0);
 
         return {
             labels,
@@ -320,7 +388,7 @@ export default function Dashboard() {
             {/* Header */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2 className="fw-bold">Welcome back, {user?.fullName || "User"}!</h2>
+                    <h2 className="fw-bold">Welcome back, {user?.fullName || user?.full_name || "User"}!</h2>
                     <p className="fs-6">Track your habits and achieve your goals</p>
                 </div>
                 <div>

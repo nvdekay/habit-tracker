@@ -15,17 +15,19 @@ export const CreateGoalModal = ({
   onSubmit,
   handleCheckLinkedHabit,
 }) => {
-  // Lọc habit để hiển thị dựa vào startDate của goal
+  // Filter habits to display based on goal's start date - handle both field formats
   const filteredHabits = useMemo(() => {
     if (!newGoal.startDate) return habits || [];
-    return habits.filter(
-      (habit) =>
-        new Date(newGoal.startDate) >= new Date(habit.startDate) &&
-        new Date(newGoal.startDate) <= new Date(habit.endDate)
-    );
+    return habits.filter((habit) => {
+      const habitStartDate = new Date(habit.start_date || habit.startDate);
+      const habitEndDate = new Date(habit.end_date || habit.endDate);
+      const goalStartDate = new Date(newGoal.startDate);
+      
+      return goalStartDate >= habitStartDate && goalStartDate <= habitEndDate;
+    });
   }, [habits, newGoal.startDate]);
 
-  // Tính tổng target dựa vào tất cả habit đã chọn (luôn dùng habits, không dùng filteredHabits)
+  // Calculate total target based on all selected habits (always use habits, not filteredHabits)
   const totalTarget = useMemo(() => {
     if (!newGoal.linkedHabits || newGoal.linkedHabits.length === 0) return 0;
 
@@ -100,6 +102,7 @@ export const CreateGoalModal = ({
                 >
                   <option value="medium">Medium Priority</option>
                   <option value="high">High Priority</option>
+                  <option value="low">Low Priority</option>
                 </Form.Select>
               </div>
             </Col>
@@ -165,9 +168,12 @@ export const CreateGoalModal = ({
                   min={newGoal.startDate}
                   disabled={!newGoal.startDate}
                   value={newGoal.deadline || ""}
-                  onChange={(e) =>
-                    setNewGoal({ ...newGoal, deadline: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setNewGoal({ ...newGoal, deadline: e.target.value });
+                    if (e.target.value) {
+                      setError((prev) => ({ ...prev, deadline: "" }));
+                    }
+                  }}
                 />
                 {error.deadline && (
                   <div className="invalid-feedback">{error.deadline}</div>
@@ -261,7 +267,7 @@ export const CreateGoalModal = ({
                       min={1}
                       value={newGoal.targetValue || ""}
                       onChange={(e) =>
-                        setNewGoal({ ...newGoal, targetValue: e.target.value })
+                        setNewGoal({ ...newGoal, targetValue: parseInt(e.target.value) || 0 })
                       }
                     />
                     {error.targetValue && (
@@ -297,7 +303,7 @@ export const CreateGoalModal = ({
                         <div className="d-flex justify-content-between align-items-center">
                           <span className="fw-semibold">{habit.name}</span>
                           <small className="text-muted">
-                            {new Date(habit.startDate).toLocaleDateString()} - {new Date(habit.endDate).toLocaleDateString()}
+                            {new Date(habit.start_date || habit.startDate).toLocaleDateString()} - {new Date(habit.end_date || habit.endDate).toLocaleDateString()}
                           </small>
                         </div>
                       </label>

@@ -68,10 +68,40 @@ export default function Navbar() {
               <NotificationBell />
             </div>
 
-            {/* User Info */}
+            {/* User Avatar and Info */}
             <div className="d-flex align-items-center me-3">
-              <User size={18} className="me-1" />
-              <span>{user.fullName}</span>
+              {/* User Avatar */}
+              <div className="me-2">
+                {user.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user.fullName || user.username}
+                    className="rounded-circle"
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      objectFit: 'cover',
+                      border: '2px solid #e9ecef'
+                    }}
+                    onError={(e) => {
+                      // Fallback to User icon if image fails to load
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'inline-block';
+                    }}
+                  />
+                ) : (
+                  <User
+                    size={32}
+                    className="rounded-circle"
+                    style={{ border: '2px solid #e9ecef' }}
+                  />
+                )}
+              </div>
+
+              {/* User Name */}
+              <span className="text-dark fw-medium">
+                {user.fullName || user.username}
+              </span>
             </div>
 
             {/* Logout Button */}
