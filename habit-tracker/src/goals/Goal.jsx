@@ -309,7 +309,7 @@ export default function Goal() {
               isInGoals: true
             });
           }
-          console.log(`Habit ${habitId} updated with isInGoals:true`);
+          
         } catch (error) {
           console.error(`Failed to update habit ${habitId}:`, error);
         }
@@ -408,7 +408,7 @@ export default function Goal() {
       }
     });
 
-    console.log("Total target: " + totalTarget);
+    
 
     setNewGoal({
       ...newGoal,

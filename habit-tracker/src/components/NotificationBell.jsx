@@ -41,8 +41,6 @@ const NotificationBell = () => {
                 prev.filter(n => n.habitId !== habitId)
             );
             
-            // Show success feedback (optional)
-            console.log(`Successfully checked in: ${habitName}`);
         } catch (error) {
             console.error('Failed to check in habit:', error);
         }
@@ -175,7 +173,7 @@ const NotificationBell = () => {
                 )}
             </Dropdown.Menu>
 
-            <style jsx>{`
+            <style jsx={true}>{`
                 .dropdown-toggle::after {
                     display: none;
                 }

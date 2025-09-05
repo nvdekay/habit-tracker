@@ -49,9 +49,7 @@ export const AuthProvider = ({ children }) => {
   // Simplified user profile creation with timeout and fallback
   const getOrCreateUserProfile = useCallback(async (authUser) => {
     return new Promise(async (resolve, reject) => {
-      // Timeout after 5 seconds
       const timeout = setTimeout(() => {
-        console.warn('User profile creation timeout - using fallback');
         resolve({
           id: authUser.id,
           username: authUser.email.split('@')[0],
@@ -60,10 +58,11 @@ export const AuthProvider = ({ children }) => {
           avatar: authUser.user_metadata?.avatar_url || null,
           preferences: { darkMode: false, notifications: true, language: 'en' },
         });
-      }, 5000);
+      }, 3000);
 
       try {
-        console.log('Getting/creating user profile for:', authUser.id);
+
+
         
         // Try to get existing user first
         const { data: existingUser, error: fetchError } = await supabase
@@ -78,7 +77,6 @@ export const AuthProvider = ({ children }) => {
         if (fetchError && fetchError.code !== 'PGRST116') {
           console.error('Error fetching user:', fetchError);
           // Use fallback instead of failing
-          console.log('Using fallback user data due to fetch error');
           resolve({
             id: authUser.id,
             username: authUser.email.split('@')[0],
@@ -91,7 +89,8 @@ export const AuthProvider = ({ children }) => {
         }
 
         if (existingUser) {
-          console.log('Found existing user:', existingUser.email);
+  
+
           resolve({
             id: existingUser.id,
             username: existingUser.username,
@@ -103,7 +102,8 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        console.log('Creating new user profile...');
+
+
         // Create new user
         const baseUsername = authUser.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
         const newUser = {
@@ -126,7 +126,8 @@ export const AuthProvider = ({ children }) => {
         if (createError) {
           console.error('Error creating user:', createError);
           // Use fallback instead of failing
-          console.log('Using fallback user data due to creation error');
+  
+
           resolve({
             id: authUser.id,
             username: baseUsername,
@@ -138,7 +139,8 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        console.log('Created new user:', createdUser.email);
+
+
         resolve({
           id: createdUser.id,
           username: createdUser.username,
@@ -152,7 +154,8 @@ export const AuthProvider = ({ children }) => {
         clearTimeout(timeout);
         console.error('Unexpected error in getOrCreateUserProfile:', error);
         // Use fallback for any unexpected error
-        console.log('Using fallback user data due to unexpected error');
+
+
         resolve({
           id: authUser.id,
           username: authUser.email.split('@')[0],
@@ -168,11 +171,12 @@ export const AuthProvider = ({ children }) => {
   // Handle authentication session
   const handleAuthSession = useCallback(
     async (session) => {
-      console.log('Handling auth session:', !!session, session?.user?.email);
+
       
       try {
         if (!session?.user) {
-          console.log('No session or user, setting unauthenticated state');
+  
+
           dispatch({
             type: 'SET_AUTH_STATE',
             payload: { isAuthenticated: false, user: null, session: null },
@@ -180,9 +184,11 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        console.log('Processing user data...');
+
+
         const userData = await getOrCreateUserProfile(session.user);
-        console.log('Successfully processed user data:', userData.email);
+
+
         
         dispatch({
           type: 'SET_AUTH_STATE',
@@ -195,7 +201,8 @@ export const AuthProvider = ({ children }) => {
         
         // Clean up URL parameters
         if (window.location.search.includes('code=') || window.location.search.includes('access_token=')) {
-          console.log('Cleaning up OAuth URL parameters');
+  
+
           window.history.replaceState({}, document.title, window.location.pathname);
         }
         
@@ -217,7 +224,8 @@ export const AuthProvider = ({ children }) => {
 
     const initAuth = async () => {
       try {
-        console.log('Initializing auth...');
+
+
         
         const { data: { session }, error } = await supabase.auth.getSession();
         
@@ -232,7 +240,8 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        console.log('Initial session check:', !!session?.user);
+
+
         if (isMounted) {
           await handleAuthSession(session);
         }
@@ -264,7 +273,8 @@ export const AuthProvider = ({ children }) => {
     // Auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, !!session?.user);
+
+
         
         if (!isMounted) return;
 
@@ -279,15 +289,18 @@ export const AuthProvider = ({ children }) => {
             case 'SIGNED_IN':
             case 'TOKEN_REFRESHED':
             case 'USER_UPDATED':
-              console.log('User authenticated, processing session...');
+      
+
               await handleAuthSession(session);
               break;
             case 'SIGNED_OUT':
-              console.log('User signed out');
+      
+
               dispatch({ type: 'LOGOUT' });
               break;
             default:
-              console.log('Other auth event, handling session...');
+      
+
               await handleAuthSession(session);
               break;
           }
@@ -318,7 +331,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'CLEAR_ERROR' });
     
     try {
-      console.log('Starting Google login...');
+
       const result = await signInWithGoogle();
       
       if (!result.success) {
@@ -340,7 +353,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      console.log('Logging out...');
+
       const result = await signOut();
       dispatch({ type: 'LOGOUT' });
     } catch (error) {

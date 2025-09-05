@@ -1,4 +1,4 @@
-// services/habitService.js
+// services/habitService.js - Cleaned version
 import { supabase, handleSupabaseError, handleSupabaseSuccess } from './supabaseConfig';
 
 // Get all habits for current user
@@ -20,12 +20,10 @@ export async function getHabits(userId = null) {
         }
 
         const { data, error } = await query;
-
         if (error) throw error;
 
         return handleSupabaseSuccess(data);
     } catch (error) {
-        console.error("Failed to fetch habits:", error);
         return handleSupabaseError(error);
     }
 }
@@ -41,10 +39,8 @@ export async function getHabitsByUserId(userId) {
             .order('created_at', { ascending: false });
 
         if (error) throw error;
-
         return data || [];
     } catch (error) {
-        console.error("Failed to fetch habits by user ID:", error);
         throw error;
     }
 }
@@ -77,10 +73,8 @@ export async function createHabit(habitData) {
             .single();
 
         if (error) throw error;
-
         return handleSupabaseSuccess(data, 'Habit created successfully');
     } catch (error) {
-        console.error("Failed to create habit:", error);
         return handleSupabaseError(error);
     }
 }
@@ -117,10 +111,8 @@ export async function updateHabit(habitId, habitData) {
             .single();
 
         if (error) throw error;
-
         return handleSupabaseSuccess(data, 'Habit updated successfully');
     } catch (error) {
-        console.error("Failed to update habit:", error);
         return handleSupabaseError(error);
     }
 }
@@ -134,10 +126,8 @@ export async function deleteHabit(habitId) {
             .eq('id', habitId);
 
         if (error) throw error;
-
         return handleSupabaseSuccess(null, 'Habit deleted successfully');
     } catch (error) {
-        console.error("Failed to delete habit:", error);
         return handleSupabaseError(error);
     }
 }
@@ -160,12 +150,10 @@ export async function getActiveHabits(userId = null) {
         }
 
         const { data, error } = await query;
-
         if (error) throw error;
 
         return data || [];
     } catch (error) {
-        console.error("Failed to fetch active habits:", error);
         throw error;
     }
 }
@@ -207,7 +195,6 @@ export async function getHabitsForDate(date, userId = null) {
 
         return activeHabitsForDate;
     } catch (error) {
-        console.error("Failed to get habits for date:", error);
         throw error;
     }
 }
@@ -227,10 +214,8 @@ export async function bulkUpdateHabits(habitIds, updates) {
             .select();
 
         if (error) throw error;
-
         return handleSupabaseSuccess(data, 'Habits updated successfully');
     } catch (error) {
-        console.error("Failed to bulk update habits:", error);
         return handleSupabaseError(error);
     }
 }

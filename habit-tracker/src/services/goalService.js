@@ -1,4 +1,4 @@
-// services/goalService.js
+// services/goalService.js - Cleaned version
 import { supabase, handleSupabaseError, handleSupabaseSuccess } from './supabaseConfig';
 
 // Get all goals for a user
@@ -18,12 +18,10 @@ export const getGoalsByUserID = async (userId = null) => {
         }
 
         const { data, error } = await query;
-
         if (error) throw error;
 
         return data || [];
     } catch (error) {
-        console.error("Failed to fetch goals:", error);
         throw error;
     }
 };
@@ -46,12 +44,10 @@ export const getHabits = async (userId = null) => {
         }
 
         const { data, error } = await query;
-
         if (error) throw error;
 
         return data || [];
     } catch (error) {
-        console.error("Failed to fetch habits:", error);
         throw error;
     }
 };
@@ -89,10 +85,8 @@ export async function updateGoal(goal) {
             .single();
 
         if (error) throw error;
-
         return { data, status: 200 };
     } catch (error) {
-        console.error("Error updating goal:", error);
         throw error;
     }
 }
@@ -106,10 +100,8 @@ export async function deleteGoal(goalId) {
             .eq('id', goalId);
 
         if (error) throw error;
-
         return { data: true };
     } catch (error) {
-        console.error("Error deleting goal:", error);
         throw error;
     }
 }
@@ -143,10 +135,8 @@ export async function createGoal(newGoal) {
             .single();
 
         if (error) throw error;
-
         return data;
     } catch (error) {
-        console.error("Error creating goal:", error);
         throw error;
     }
 }
@@ -208,10 +198,8 @@ export const getGoalsForDate = async (userId, date) => {
             .neq('status', 'completed');
 
         if (error) throw error;
-
         return goals || [];
     } catch (error) {
-        console.error("Failed to fetch goals:", error);
         return [];
     }
 };
@@ -230,10 +218,8 @@ export const updateGoalStatus = async (goalId, newStatus) => {
             .single();
 
         if (error) throw error;
-
         return data;
     } catch (error) {
-        console.error("Failed to update goal status:", error);
         throw error;
     }
 };
@@ -271,7 +257,6 @@ export const getGoalsWithFilters = async (userId, filters = {}) => {
                     query = query.order('created_at', { ascending });
                     break;
                 case 'priority':
-                    // Custom priority ordering
                     query = query.order('priority', { ascending });
                     break;
                 default:
@@ -282,12 +267,10 @@ export const getGoalsWithFilters = async (userId, filters = {}) => {
         }
 
         const { data, error } = await query;
-
         if (error) throw error;
 
         return data || [];
     } catch (error) {
-        console.error("Failed to fetch goals with filters:", error);
         throw error;
     }
 };
@@ -307,10 +290,8 @@ export const bulkUpdateGoals = async (goalIds, updates) => {
             .select();
 
         if (error) throw error;
-
         return data;
     } catch (error) {
-        console.error("Failed to bulk update goals:", error);
         throw error;
     }
 };

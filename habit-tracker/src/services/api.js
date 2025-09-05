@@ -1,10 +1,8 @@
-// api.js - Updated for Google OAuth (removed authAPI dependency)
+// api.js - Cleaned version
 import { supabase, handleSupabaseError, handleSupabaseSuccess, getCurrentUserId } from './supabaseConfig';
 
 // API utility functions for common operations
 export const api = {
-    // Generic CRUD operations that can be reused across different entities
-
     // Get data with optional filters and pagination
     async getData(table, options = {}) {
         try {
@@ -44,7 +42,6 @@ export const api = {
             }
 
             const { data, error } = await query;
-
             if (error) throw error;
 
             return handleSupabaseSuccess(data);
@@ -76,7 +73,6 @@ export const api = {
                 .single();
 
             if (error) throw error;
-
             return handleSupabaseSuccess(result, 'Created successfully');
 
         } catch (error) {
@@ -105,7 +101,6 @@ export const api = {
                 .single();
 
             if (error) throw error;
-
             return handleSupabaseSuccess(data, 'Updated successfully');
 
         } catch (error) {
@@ -122,7 +117,6 @@ export const api = {
                 .eq('id', id);
 
             if (error) throw error;
-
             return handleSupabaseSuccess(null, 'Deleted successfully');
 
         } catch (error) {
@@ -140,7 +134,6 @@ export const api = {
                 .single();
 
             if (error) throw error;
-
             return handleSupabaseSuccess(data);
 
         } catch (error) {
@@ -168,7 +161,6 @@ export const api = {
                 .select();
 
             if (error) throw error;
-
             return handleSupabaseSuccess(data, 'Bulk create successful');
 
         } catch (error) {
@@ -190,7 +182,6 @@ export const api = {
             }
 
             const { data, error } = await query.select();
-
             if (error) throw error;
 
             return handleSupabaseSuccess(data, 'Bulk update successful');
@@ -208,7 +199,6 @@ export const api = {
                 .in('id', ids);
 
             if (error) throw error;
-
             return handleSupabaseSuccess(null, 'Bulk delete successful');
 
         } catch (error) {
@@ -232,7 +222,6 @@ export const specificAPI = {
                 .single();
 
             if (error) throw error;
-
             return handleSupabaseSuccess(data);
 
         } catch (error) {
@@ -257,7 +246,6 @@ export const specificAPI = {
                 .single();
 
             if (error) throw error;
-
             return handleSupabaseSuccess(data, 'Preferences updated');
 
         } catch (error) {

@@ -1,4 +1,4 @@
-// services/checkInService.js
+// services/checkInService.js - Cleaned version
 import { supabase } from './supabaseConfig';
 
 // Get current user ID
@@ -7,7 +7,6 @@ const getCurrentUserId = async () => {
         const { data: { user } } = await supabase.auth.getUser();
         return user ? user.id : null;
     } catch (error) {
-        console.error('Error getting current user ID:', error);
         return null;
     }
 };
@@ -63,7 +62,6 @@ export async function checkInHabit(habitId, date, completed, notes = '') {
             return data;
         }
     } catch (error) {
-        console.error('Error in checkInHabit:', error);
         throw error;
     }
 }
@@ -146,7 +144,6 @@ export async function getCheckInsForDate(date) {
             completedHabits: completedCount
         };
     } catch (error) {
-        console.error('Error in getCheckInsForDate:', error);
         throw error;
     }
 }
@@ -168,7 +165,6 @@ export async function getCheckInHistory(startDate, endDate) {
         if (error) throw error;
         return data || [];
     } catch (error) {
-        console.error('Error in getCheckInHistory:', error);
         throw error;
     }
 }
@@ -244,7 +240,6 @@ export async function getCalendarData(year, month) {
 
         return calendarData;
     } catch (error) {
-        console.error('Error in getCalendarData:', error);
         throw error;
     }
 }
@@ -272,7 +267,6 @@ export async function getWeeklySummary(startDate, endDate) {
                     totalHabits: dayData.totalHabits
                 });
             } catch (dayError) {
-                console.error(`Error getting data for ${dateStr}:`, dayError);
                 // Add empty data for failed days
                 weekData.push({
                     date: dateStr,
@@ -286,7 +280,6 @@ export async function getWeeklySummary(startDate, endDate) {
 
         return weekData;
     } catch (error) {
-        console.error('Error in getWeeklySummary:', error);
         return [];
     }
 }
@@ -374,7 +367,6 @@ export async function checkTimeConflicts(date) {
 
         return conflicts;
     } catch (error) {
-        console.error('Error checking time conflicts:', error);
         return [];
     }
 }

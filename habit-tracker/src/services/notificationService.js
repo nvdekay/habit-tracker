@@ -1,4 +1,4 @@
-// services/notificationService.js
+// services/notificationService.js - Cleaned version
 import { supabase } from './supabaseConfig';
 
 // Get current user ID
@@ -7,7 +7,6 @@ const getCurrentUserId = async () => {
         const { data: { user } } = await supabase.auth.getUser();
         return user ? user.id : null;
     } catch (error) {
-        console.error('Error getting current user ID:', error);
         return null;
     }
 };
@@ -137,7 +136,6 @@ export const getUpcomingHabits = async () => {
 
         return upcomingHabits;
     } catch (error) {
-        console.error('Error getting upcoming habits:', error);
         return [];
     }
 };
@@ -207,7 +205,6 @@ export const checkTimeConflicts = async (date = null) => {
 
         return conflicts;
     } catch (error) {
-        console.error('Error checking time conflicts:', error);
         return [];
     }
 };
@@ -218,7 +215,6 @@ export const getNotificationCount = async () => {
         const upcomingHabits = await getUpcomingHabits();
         return upcomingHabits.length;
     } catch (error) {
-        console.error('Error getting notification count:', error);
         return 0;
     }
 };
@@ -245,7 +241,6 @@ export const createReminder = async (habitId, reminderData) => {
         if (error) throw error;
         return data;
     } catch (error) {
-        console.error('Error creating reminder:', error);
         throw error;
     }
 };
@@ -272,7 +267,6 @@ export const getReminders = async (userId = null) => {
         if (error) throw error;
         return data || [];
     } catch (error) {
-        console.error('Error getting reminders:', error);
         return [];
     }
 };
@@ -290,7 +284,6 @@ export const updateReminder = async (reminderId, updates) => {
         if (error) throw error;
         return data;
     } catch (error) {
-        console.error('Error updating reminder:', error);
         throw error;
     }
 };
@@ -306,7 +299,6 @@ export const deleteReminder = async (reminderId) => {
         if (error) throw error;
         return true;
     } catch (error) {
-        console.error('Error deleting reminder:', error);
         throw error;
     }
 };

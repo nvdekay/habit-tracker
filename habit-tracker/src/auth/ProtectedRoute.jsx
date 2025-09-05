@@ -8,13 +8,7 @@ const ProtectedRoute = ({ children }) => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log('ProtectedRoute - Auth State:', { 
-      isAuthenticated, 
-      loading, 
-      hasUser: !!user, 
-      error: !!error,
-      path: location.pathname 
-    });
+    
   }, [isAuthenticated, loading, user, error, location.pathname]);
 
   // Show loading spinner while checking authentication
@@ -70,7 +64,7 @@ const ProtectedRoute = ({ children }) => {
   // Redirect to login if not authenticated
   // The isAuthenticated check is the primary guard
   if (!isAuthenticated) {
-    console.log('ProtectedRoute - User not authenticated, redirecting to login');
+
     return (
       <Navigate
         to="/login"
@@ -82,7 +76,7 @@ const ProtectedRoute = ({ children }) => {
 
   // Additional safety check for user object
   if (!user) {
-    console.log('ProtectedRoute - No user object available, redirecting to login');
+
     return (
       <Navigate
         to="/login"
@@ -93,7 +87,7 @@ const ProtectedRoute = ({ children }) => {
   }
 
   // Authentication successful, render protected content
-  console.log('ProtectedRoute - Authentication successful, rendering children');
+
   return children;
 };
 
